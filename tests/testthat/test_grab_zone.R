@@ -21,6 +21,6 @@ test_that("Input is correct", {
 test_that("Assignment of validity", {
 
   invalid_zip <- grab_zone_from_origin(0)
-  expect_equal(attributes(invalid_zip)$validity == "invalid")
+  expect_equal(attributes(invalid_zip)$validity, "invalid")
 
 })

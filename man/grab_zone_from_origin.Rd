@@ -20,11 +20,11 @@ grab_zone_from_origin(origin_zip, as_range = FALSE, show_modifiers = FALSE,
 }
 \value{
 A tibble with origin zip and destination zips (in ranges or unspooled) and the USPS zones the origin-destination pair corresponds to.
-Validity attribute lets you know whether the origin zip code is in use (see also https://en.wikipedia.org/wiki/List_of_ZIP_code_prefixes)
+Validity attribute lets you know whether the origin zip code is in use (see also \url{https://en.wikipedia.org/wiki/List_of_ZIP_code_prefixes})
 }
 \description{
 For a given 3-digit origin zip code, grab all destination zips and their corresponding zones.
 }
 \details{
-https://postcalc.usps.com/
+\url{https://postcalc.usps.com/}
 }

@@ -8,10 +8,10 @@
 #' @param verbose Message what's going on?
 #' @param ... Other arguments
 #'
-#' @details https://postcalc.usps.com/
+#' @details \url{https://postcalc.usps.com/}
 #'
 #'
-#' @examples
+#' @examples \dontrun{
 #'
 #' a_zip <- grab_zone_from_origin(123)
 #' nrow(a_zip)
@@ -20,8 +20,8 @@
 #' attr(double_oh_seven, "validity")}
 #'
 #' @return A tibble with origin zip and destination zips (in ranges or unspooled) and the USPS zones the origin-destination pair corresponds to.
-#' Validity attribute lets you know whether the origin zip code is in use (see also https://en.wikipedia.org/wiki/List_of_ZIP_code_prefixes)
-#'
+#' Validity attribute lets you know whether the origin zip code is in use (see also \url{https://en.wikipedia.org/wiki/List_of_ZIP_code_prefixes})
+#' @import tidyverse
 #' @export
 
 grab_zone_from_origin <- function(origin_zip, as_range = FALSE, show_modifiers = FALSE,

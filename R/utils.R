@@ -1,3 +1,5 @@
+#' @import magrittr
+#' @import tidyverse
 
 base_url <- "https://postcalc.usps.com/DomesticZoneChart/GetZoneChart?zipCode3Digit="
 
