@@ -10,24 +10,24 @@
 #'
 #' @details \url{https://postcalc.usps.com/}
 #'
+#' @importFrom magrittr %>%
 #'
 #' @examples \dontrun{
 #'
 #' a_zip <- grab_zone_from_origin(123)
 #' nrow(a_zip)
 #'
-#' (double_oh_seven <- grab_zone_from_origin("007, as_range = TRUE))
+#' (double_oh_seven <- grab_zone_from_origin("007", as_range = TRUE))
 #' attr(double_oh_seven, "validity")}
 #'
 #' @return A tibble with origin zip and destination zips (in ranges or unspooled) and the USPS zones the origin-destination pair corresponds to.
 #' Validity attribute lets you know whether the origin zip code is in use (see also \url{https://en.wikipedia.org/wiki/List_of_ZIP_code_prefixes})
-#' @import tidyverse
 #' @export
 
 grab_zone_from_origin <- function(origin_zip, as_range = FALSE, show_modifiers = FALSE,
                      verbose = TRUE, ...) {
 
-  if (str_detect(origin_zip, "[^0-9]")) {
+  if (stringr::str_detect(origin_zip, "[^0-9]")) {
     stop("Invalid origin_zip; only numeric characters are allowed.")
   }
 
@@ -43,26 +43,30 @@ grab_zone_from_origin <- function(origin_zip, as_range = FALSE, show_modifiers =
   }
 
   origin_zip <- origin_zip %>%
+    as.character() %>%
     prepend_zeros()
 
   out <-
     origin_zip %>%
-    get_zones(verbose = verbose,
-              sleep_time = sleep_time)
+    get_zones(verbose = verbose)
 
-  if (attributes(out)$validity == "valid") {
-    if (as_range == FALSE) {
+  if (as_range == FALSE) {
+    # if (attributes(out)$validity == "valid") {
       out <-
         out %>%
         interpolate_zips()
-    }
+    # }
+    # out <-
+    #   out %>%
+    #   dplyr::select(origin_zip, dest_zip, zone)
   }
 
   if (show_modifiers == FALSE) {
     out <-
       out %>%
-      select(-starts_with("modifier"))
+      dplyr::select(-dplyr::starts_with("modifier"))
   }
 
   return(out)
 }
+

@@ -28,3 +28,13 @@ For a given 3-digit origin zip code, grab all destination zips and their corresp
 \details{
 \url{https://postcalc.usps.com/}
 }
+\examples{
+\dontrun{
+
+a_zip <- grab_zone_from_origin(123)
+nrow(a_zip)
+
+(double_oh_seven <- grab_zone_from_origin("007", as_range = TRUE))
+attr(double_oh_seven, "validity")}
+
+}

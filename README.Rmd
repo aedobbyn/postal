@@ -1,0 +1,23 @@
+usps
+====
+
+A tidy interface to the USPS API.
+
+### Installation Instructions
+
+`if (!require("devtools")) install.packages("devtools")`
+
+`devtools::install_github('aedobbyn/usps')`
+
+<br>
+
+![](https://media.giphy.com/media/iVoiJfBtSsi0o/giphy.gif)
+
+### Usage
+
+```{r}
+library(usps)
+
+purrr::map_dfr(c(1, "007", 123), grab_zone_from_origin)
+```
+

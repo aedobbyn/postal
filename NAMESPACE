@@ -2,4 +2,4 @@
 
 export(grab_zone_from_origin)
 import(magrittr)
-import(tidyverse)
+importFrom(magrittr,"%>%")
