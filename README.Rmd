@@ -9,6 +9,7 @@ knitr::opts_chunk$set(
   fig.path = "man/figures/README-",
   out.width = "100%"
 )
+library(magrittr)
 ```
 
 usps
@@ -18,9 +19,11 @@ A tidy interface to the USPS API.
 
 ### Installation Instructions
 
-`if (!require("devtools")) install.packages("devtools")`
+```{r, eval=FALSE}
+if (!require("devtools")) install.packages("devtools")
+devtools::install_github('aedobbyn/usps')
+```
 
-`devtools::install_github('aedobbyn/usps')`
 
 <br>
 
@@ -34,6 +37,34 @@ A tidy interface to the USPS API.
 ```{r}
 library(usps)
 
-purrr::map_dfr(c(1, "007", 123), grab_zone_from_origin)
+origin_zips <- c(1, "007", 123)
+
+origin_zips %>% 
+  purrr::map_dfr(grab_zone_from_origin)
+```
+
+
+<br>
+<br>
+
+The USPS web interface defaults to destination zip code ranges:
+
+<p align="center">
+  <img src="./img/post_calc.jpg" alt="post_calc">
+</p>
+
+
+<br>
+
+which you can ask for by setting `as_range = TRUE`. Instead of a `dest_zip` column, you'll get a marker of the beginning of and end of the range range in `dest_zip_start` and `dest_zip_end`.
+
+<br>
+
+You can optionally display the `*` and `+` modifiers.
+
+```{r}
+grab_zone_from_origin(42, 
+                      as_range = TRUE, 
+                      show_modifiers = TRUE)
 ```
 
