@@ -1,7 +1,31 @@
-
+#' Grab destination zones
+#'
+#' For a given 3-digit origin zip code, grab all destination zips and their corresponding zones.
+#'
+#' @param origin_zip A single origin zip, numeric or character
+#' @param as_range Do you want zones corresponding to a range of destination zips or a full listing of them?
+#' @param show_modifiers Should columns pertaining to the modifiers * and + be retained?
+#' @param verbose Message what's going on?
+#' @param ... Other arguments
+#'
+#' @details https://postcalc.usps.com/
+#'
+#'
+#' @examples
+#'
+#' a_zip <- grab_zone_from_origin(123)
+#' nrow(a_zip)
+#'
+#' (double_oh_seven <- grab_zone_from_origin("007, as_range = TRUE))
+#' attr(double_oh_seven, "validity")}
+#'
+#' @return A tibble with origin zip and destination zips (in ranges or unspooled) and the USPS zones the origin-destination pair corresponds to.
+#' Validity attribute lets you know whether the origin zip code is in use (see also https://en.wikipedia.org/wiki/List_of_ZIP_code_prefixes)
+#'
+#' @export
 
 grab_zone_from_origin <- function(origin_zip, as_range = FALSE, show_modifiers = FALSE,
-                     verbose = TRUE, sleep_time = 1, ...) {
+                     verbose = TRUE, ...) {
 
   if (str_detect(origin_zip, "[^0-9]")) {
     stop("Invalid origin_zip; only numeric characters are allowed.")

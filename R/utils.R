@@ -1,9 +1,7 @@
 
 base_url <- "https://postcalc.usps.com/DomesticZoneChart/GetZoneChart?zipCode3Digit="
 
-
-to_ignore <- c("ZIPCodeError", "PageError", "Zip5Digit")  # TODO: address Zip5Digit
-
+to_ignore <- c("ZIPCodeError", "PageError", "Zip5Digit")
 
 all_possible_origins <- 0:999 %>%
   as.character() %>%
@@ -88,7 +86,7 @@ interpolate_zips <- function(df) {
 }
 
 
-get_zones <- function(inp, sleep_time = 1, verbose = TRUE, ...) {
+get_zones <- function(inp, verbose = TRUE, ...) {
 
   if (verbose) {
     message(glue("Grabbing origin ZIP {inp}"))
@@ -123,10 +121,6 @@ get_zones <- function(inp, sleep_time = 1, verbose = TRUE, ...) {
     })
   }
 
-  Sys.sleep(sleep_time + runif(1))
-
   return(out)
 }
-
-
 

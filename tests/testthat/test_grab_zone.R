@@ -17,6 +17,7 @@ test_that("Input is correct", {
             "data.frame")
 })
 
+
 test_that("Assignment of validity", {
 
   invalid_zip <- grab_zone_from_origin(0)
