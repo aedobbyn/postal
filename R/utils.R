@@ -88,36 +88,42 @@ interpolate_zips <- function(df) {
 }
 
 
-get_zones <- function(vec, sleep_time = 1, verbose = TRUE, ...) {
-  out <- NULL
+get_zones <- function(inp, sleep_time = 1, verbose = TRUE, ...) {
 
-  for (i in seq_along(vec)) {
-    if (verbose) {
-      message(glue("Grabbing origin ZIP {vec[i]}"))
-    }
-
-    this_url <- str_c(base_url, vec[i], collapse = "")
-    this_origin <- get_data(this_url)
-
-    if (this_origin$PageError == "No Zones found for the entered ZIP Code.") {
-      this_origin <- NULL
-      message(glue("Origin zip {vec[i]} is not in use."))
-
-    } else {
-      suppressWarnings({
-        this_origin <- get_data(this_url) %>%
-          clean_data(o_zip = vec[i])
-
-        if (verbose) {
-          message(glue("Recieved {as.numeric(max(this_origin$dest_zip_end)) - as.numeric(min(this_origin$dest_zip_start))} destination ZIPs for {as.numeric(max(this_origin$zone)) - as.numeric(min(this_origin$zone))} zones."))
-        }
-      })
-    }
-
-    Sys.sleep(sleep_time + runif(1))
-
-    out <- out %>% bind_rows(this_origin)
+  if (verbose) {
+    message(glue("Grabbing origin ZIP {inp}"))
   }
+
+  this_url <- str_c(base_url, inp, collapse = "")
+  out <- get_data(this_url)
+
+  if (out$PageError == "No Zones found for the entered ZIP Code.") {
+    out <- tibble(
+      origin_zip = NA_character_,
+      dest_zip_start = NA_character_,
+      dest_zip_end = NA_character_,
+      zone = NA_character_,
+      modifier_1 = NA_character_,
+      modifier_2 = NA_character_
+    )
+    attributes(out)$validity <- "invalid"
+
+    message(glue("Origin zip {inp} is not in use."))
+
+  } else {
+    suppressWarnings({
+      out <- get_data(this_url) %>%
+        clean_data(o_zip = inp)
+
+      attributes(out)$validity <- "valid"
+
+      if (verbose) {
+        message(glue("Recieved {as.numeric(max(out$dest_zip_end)) - as.numeric(min(out$dest_zip_start))} destination ZIPs for {as.numeric(max(out$zone)) - as.numeric(min(out$zone))} zones."))
+      }
+    })
+  }
+
+  Sys.sleep(sleep_time + runif(1))
 
   return(out)
 }

@@ -3,11 +3,11 @@
 grab_zone_from_origin <- function(origin_zip, as_range = FALSE, show_modifiers = FALSE,
                      verbose = TRUE, sleep_time = 1, ...) {
 
-  if (any(str_detect(origin_zip, "[^0-9]"))) {
+  if (str_detect(origin_zip, "[^0-9]")) {
     stop("Invalid origin_zip; only numeric characters are allowed.")
   }
 
-  if (any(nchar(origin_zip) > 3)) {
+  if (nchar(origin_zip) > 3) {
     stop("origin_zip can be at most 3 characters.")
   }
 
@@ -18,9 +18,6 @@ grab_zone_from_origin <- function(origin_zip, as_range = FALSE, show_modifiers =
     }
   }
 
-  # assertthat::assert_that(!(is.null(origin_zip)),
-  #                         msg = "origin_zip must be non-NULL.")
-
   origin_zip <- origin_zip %>%
     prepend_zeros()
 
@@ -29,10 +26,12 @@ grab_zone_from_origin <- function(origin_zip, as_range = FALSE, show_modifiers =
     get_zones(verbose = verbose,
               sleep_time = sleep_time)
 
-  if (as_range == FALSE) {
-    out <-
-      out %>%
-      interpolate_zips()
+  if (attributes(out)$validity == "valid") {
+    if (as_range == FALSE) {
+      out <-
+        out %>%
+        interpolate_zips()
+    }
   }
 
   if (show_modifiers == FALSE) {
