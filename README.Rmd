@@ -1,3 +1,16 @@
+---
+output: github_document
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
 usps
 ====
 
@@ -11,7 +24,10 @@ A tidy interface to the USPS API.
 
 <br>
 
-![](https://media.giphy.com/media/iVoiJfBtSsi0o/giphy.gif)
+<p align="center">
+  <img src="https://media.giphy.com/media/iVoiJfBtSsi0o/giphy.gif" alt="owl">
+</p>
+
 
 ### Usage
 
