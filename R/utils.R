@@ -1,7 +1,13 @@
 
 base_url <- "https://postcalc.usps.com/DomesticZoneChart/GetZoneChart?zipCode3Digit="
 
+
 to_ignore <- c("ZIPCodeError", "PageError", "Zip5Digit")  # TODO: address Zip5Digit
+
+
+all_possible_origins <- 0:999 %>%
+  as.character() %>%
+  map_chr(prepend_zeros)
 
 
 replace_x <- function(x, replacement = NA_character_) {
@@ -11,6 +17,7 @@ replace_x <- function(x, replacement = NA_character_) {
     x
   }
 }
+
 
 prepend_zeros <- function(x) {
   if (nchar(x) == 1) {
@@ -63,28 +70,6 @@ clean_data <- function(dat, o_zip) {
 }
 
 
-get_zones <- function(vec) {
-  out <- NULL
-
-  for (i in seq_along(vec)) {
-    this_url <- str_c(base_url, vec[i], collapse = "")
-
-    suppressWarnings({
-      this_origin <- get_data(this_url) %>%
-        clean_data(o_zip = vec[i])
-    })
-
-
-    Sys.sleep(1)
-
-    out <- out %>% bind_rows(this_origin)
-  }
-
-  return(out)
-}
-
-
-
 interpolate_zips <- function(df) {
   out <- df %>%
     rowwise() %>%
@@ -98,6 +83,41 @@ interpolate_zips <- function(df) {
     ) %>%
     select(origin_zip, dest_zip, zone) %>%
     ungroup()
+
+  return(out)
+}
+
+
+get_zones <- function(vec, sleep_time = 1, verbose = TRUE, ...) {
+  out <- NULL
+
+  for (i in seq_along(vec)) {
+    if (verbose) {
+      message(glue("Grabbing origin ZIP {vec[i]}"))
+    }
+
+    this_url <- str_c(base_url, vec[i], collapse = "")
+    this_origin <- get_data(this_url)
+
+    if (this_origin$PageError == "No Zones found for the entered ZIP Code.") {
+      this_origin <- NULL
+      message(glue("Origin zip {vec[i]} is not in use."))
+
+    } else {
+      suppressWarnings({
+        this_origin <- get_data(this_url) %>%
+          clean_data(o_zip = vec[i])
+
+        if (verbose) {
+          message(glue("Recieved {as.numeric(max(this_origin$dest_zip_end)) - as.numeric(min(this_origin$dest_zip_start))} destination ZIPs for {as.numeric(max(this_origin$zone)) - as.numeric(min(this_origin$zone))} zones."))
+        }
+      })
+    }
+
+    Sys.sleep(sleep_time + runif(1))
+
+    out <- out %>% bind_rows(this_origin)
+  }
 
   return(out)
 }

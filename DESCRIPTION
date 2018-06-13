@@ -17,3 +17,5 @@ Imports:
     purrr,
     stringr
     tidyr
+Suggests: 
+    testthat
