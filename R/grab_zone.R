@@ -3,6 +3,7 @@
 #' For a given 3-digit origin zip code, grab all destination zips and their corresponding zones.
 #'
 #' @param origin_zip A single origin zip, numeric or character
+#' @param destination_zip Optional destination zip. If not included, returns all possible desinations for the origin provided.
 #' @param as_range Do you want zones corresponding to a range of destination zips or a full listing of them?
 #' @param show_modifiers Should columns pertaining to the modifiers * and + be retained?
 #' @param verbose Message what's going on?
@@ -24,41 +25,39 @@
 #' Validity attribute lets you know whether the origin zip code is in use (see also \url{https://en.wikipedia.org/wiki/List_of_ZIP_code_prefixes})
 #' @export
 
-grab_zone_from_origin <- function(origin_zip, as_range = FALSE, show_modifiers = FALSE,
+grab_zone_from_origin <- function(origin_zip = NULL, destination_zip = NULL, as_range = FALSE, show_modifiers = FALSE,
                      verbose = TRUE, ...) {
 
-  if (stringr::str_detect(origin_zip, "[^0-9]")) {
-    stop("Invalid origin_zip; only numeric characters are allowed.")
-  }
+  if (is.null(origin_zip)) stop("origin_zip must be non-null.")
 
-  if (nchar(origin_zip) > 3) {
-    stop("origin_zip can be at most 3 characters.")
-  }
+  origin_zip <-
+    origin_zip %>% prep_zip()
 
-  if (!is.numeric(origin_zip)) {
-    origin_zip <- origin_zip %>% as.numeric()
-    if (is.na(origin_zip) | origin_zip < 0) {
-      stop("Invalid origin_zip.")
-    }
-  }
-
-  origin_zip <- origin_zip %>%
-    as.character() %>%
-    prepend_zeros()
+  destination_zip <-
+    destination_zip %>% prep_zip()
 
   out <-
     origin_zip %>%
     get_zones(verbose = verbose)
 
   if (as_range == FALSE) {
-    # if (attributes(out)$validity == "valid") {
       out <-
         out %>%
         interpolate_zips()
-    # }
-    # out <-
-    #   out %>%
-    #   dplyr::select(origin_zip, dest_zip, zone)
+
+      if (!is.null(destination_zip)) {
+        out <-
+          out %>%
+          dplyr::filter(dest_zip == destination_zip)
+      }
+
+  } else {
+    if (!is.null(destination_zip)) {
+      out <-
+        out %>%
+        dplyr::filter(as.numeric(dest_zip_start) <= as.numeric(destination_zip) &
+                 as.numeric(dest_zip_end) >= as.numeric(destination_zip))
+    }
   }
 
   if (show_modifiers == FALSE) {

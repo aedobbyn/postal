@@ -28,6 +28,30 @@ replace_x <- function(x, replacement = NA_character_) {
 }
 
 
+prep_zip <- function(zip) {
+  if (stringr::str_detect(zip, "[^0-9]")) {
+    stop("Invalid zip; only numeric characters are allowed.")
+  }
+
+  if (nchar(zip) > 3) {
+    stop("zip can be at most 3 characters.")
+  }
+
+  if (!is.numeric(zip)) {
+    zip <- zip %>% as.numeric()
+    if (is.na(zip) | zip < 0) {
+      stop("Invalid zip.")
+    }
+  }
+
+  zip <- zip %>%
+    as.character() %>%
+    prepend_zeros()
+
+  return(zip)
+}
+
+
 get_data <- function(url) {
   url %>%
     jsonlite::fromJSON()
@@ -117,7 +141,7 @@ interpolate_zips <- function(df) {
       dplyr::mutate(dest_zip = NA_character_) %>%
       dplyr::select(origin_zip, dest_zip, zone)
 
-    # attributes(df)$validity <- "invalid"
+    attributes(out)$validity <- "invalid"   # TODO: use sticky() instead
     return(out)
   }
 
