@@ -30,17 +30,18 @@ replace_x <- function(x, replacement = NA_character_) {
 
 prep_zip <- function(zip) {
   if (stringr::str_detect(zip, "[^0-9]")) {
-    stop("Invalid zip; only numeric characters are allowed.")
+    stop(glue::glue("Invalid zip {zip}; only numeric characters are allowed."))
   }
 
   if (nchar(zip) > 3) {
-    stop("zip can be at most 3 characters.")
+    warning(glue::glue("zip can be at most 3 characters; trimming {zip} to {substr(zip, 1, 3)}."))
+    zip <- zip %>% substr(1, 3)
   }
 
   if (!is.numeric(zip)) {
     zip <- zip %>% as.numeric()
     if (is.na(zip) | zip < 0) {
-      stop("Invalid zip.")
+      stop(glue::glue("Invalid zip {zip}."))
     }
   }
 
@@ -111,6 +112,7 @@ get_zones <- function(inp, verbose = TRUE, ...) {
       modifier_1 = NA_character_,
       modifier_2 = NA_character_
     )
+
     out %<>% sticky::sticky()
     attributes(out)$validity <- "invalid"
 
@@ -120,8 +122,8 @@ get_zones <- function(inp, verbose = TRUE, ...) {
     suppressWarnings({
       out <- get_data(this_url) %>%
         clean_data(o_zip = inp)
-      out %<>% sticky::sticky()
 
+      out <- out %<>% sticky::sticky()
       attributes(out)$validity <- "valid"
 
       if (verbose) {

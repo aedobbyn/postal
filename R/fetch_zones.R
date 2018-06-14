@@ -1,4 +1,4 @@
-#' Grab destination zones
+#' Fetch zones for a 3-digit origin zip or an origin-destination pair
 #'
 #' For a given 3-digit origin zip code, grab all destination zips and their corresponding zones.
 #'
@@ -15,26 +15,33 @@
 #'
 #' @examples \dontrun{
 #'
-#' a_zip <- grab_zone_from_origin(123)
+#' a_zip <- fetch_zones(123)
 #' nrow(a_zip)
 #'
-#' (double_oh_seven <- grab_zone_from_origin("007", as_range = TRUE))
+#' fetch_zones(123, 456, show_modifiers = TRUE)
+#'
+#' (double_oh_seven <- fetch_zones("007", as_range = TRUE))
 #' attr(double_oh_seven, "validity")}
 #'
 #' @return A tibble with origin zip and destination zips (in ranges or unspooled) and the USPS zones the origin-destination pair corresponds to.
 #' Validity attribute lets you know whether the origin zip code is in use (see also \url{https://en.wikipedia.org/wiki/List_of_ZIP_code_prefixes})
 #' @export
 
-grab_zone_from_origin <- function(origin_zip = NULL, destination_zip = NULL, as_range = FALSE, show_modifiers = FALSE,
-                     verbose = TRUE, ...) {
+fetch_zones <- function(origin_zip = NULL,
+                        destination_zip = NULL,
+                        as_range = FALSE,
+                        show_modifiers = FALSE,
+                        verbose = FALSE, ...) {
 
   if (is.null(origin_zip)) stop("origin_zip must be non-null.")
 
   origin_zip <-
     origin_zip %>% prep_zip()
 
-  destination_zip <-
-    destination_zip %>% prep_zip()
+  if (!is.null(destination_zip)) {
+    destination_zip <-
+      destination_zip %>% prep_zip()
+  }
 
   out <-
     origin_zip %>%

@@ -1,7 +1,9 @@
 
-# usps
+# usps 📫
 
-A tidy interface to the USPS API.
+Need to get the USPS shipping zone for two zip codes? `usps` provides a
+tidy interface to the [USPS zone calc
+API](https://postcalc.usps.com/DomesticZoneChart/).
 
 ### Installation Instructions
 
@@ -20,19 +22,38 @@ devtools::install_github('aedobbyn/usps')
 
 ### Usage
 
+Supply an origin and, optionally, a destination zip as character or
+numeric.
+
 ``` r
 library(usps)
 
+fetch_zones(origin_zip = "123", 
+            destination_zip = "581")
+#> # A tibble: 1 x 3
+#>   origin_zip dest_zip zone 
+#>   <chr>      <chr>    <chr>
+#> 1 123        581      6
+```
+
+If no destination is supplied, all desination zips and their zones are
+returned.
+
+<br>
+
+#### Multiple origins
+
+You can provide a vector of zips and map them nicely into a dataframe.
+
+Rows corresponding to origin zones that are not in use get `NA`s in
+their destination and zone columns.
+
+``` r
 origin_zips <- c(1, "007", 123)
 
 origin_zips %>% 
-  purrr::map_dfr(grab_zone_from_origin)
-#> Grabbing origin ZIP 001
+  purrr::map_dfr(fetch_zones)
 #> Origin zip 001 is not in use.
-#> Grabbing origin ZIP 007
-#> Recieved 994 destination ZIPs for 8 zones.
-#> Grabbing origin ZIP 123
-#> Recieved 994 destination ZIPs for 8 zones.
 #> # A tibble: 1,861 x 3
 #>    origin_zip dest_zip zone 
 #>    <chr>      <chr>    <chr>
@@ -49,7 +70,24 @@ origin_zips %>%
 #> # ... with 1,851 more rows
 ```
 
+Map over both origin and destination zips and end up at a dataframe:
+
+``` r
+dest_zips <- c("867", "53", "09")
+
+purrr::map2_dfr(origin_zips, dest_zips, 
+                fetch_zones)
+#> Origin zip 001 is not in use.
+#> # A tibble: 2 x 3
+#>   origin_zip dest_zip zone 
+#>   <chr>      <chr>    <chr>
+#> 1 007        053      7    
+#> 2 123        009      7
+```
+
 <br> <br>
+
+#### Ranges
 
 The USPS web interface defaults to destination zip code ranges:
 
@@ -61,32 +99,47 @@ The USPS web interface defaults to destination zip code ranges:
 
 <br>
 
-which you can ask for by setting `as_range`. Instead of a `dest_zip`
-column, you’ll get a marker of the beginning of and end of the range
-range in `dest_zip_start` and `dest_zip_end`.
+which you can ask for by setting `as_range = TRUE`. Instead of a
+`dest_zip` column, you’ll get a marker of the beginning of and end of
+the range range in `dest_zip_start` and `dest_zip_end`.
 
 <br>
 
 You can optionally display the `*` and `+` modifiers.
 
 ``` r
-grab_zone_from_origin(42, 
-                      as_range = TRUE, 
-                      show_modifiers = TRUE)
-#> Grabbing origin ZIP 042
-#> Recieved 994 destination ZIPs for 8 zones.
-#> # A tibble: 127 x 6
-#>    origin_zip dest_zip_start dest_zip_end zone  modifier_1 modifier_2
-#>  * <chr>      <chr>          <chr>        <chr> <chr>      <chr>     
-#>  1 042        005            005          3     <NA>       <NA>      
-#>  2 042        006            009          7     <NA>       <NA>      
-#>  3 042        010            012          3     *          <NA>      
-#>  4 042        013            038          2     *          <NA>      
-#>  5 042        039            043          1     *          <NA>      
-#>  6 042        044            044          2     *          <NA>      
-#>  7 042        045            045          1     *          <NA>      
-#>  8 042        046            047          2     *          <NA>      
-#>  9 042        048            048          1     *          <NA>      
-#> 10 042        049            059          2     *          <NA>      
-#> # ... with 117 more rows
+fetch_zones(42, 42,
+            as_range = TRUE, 
+            show_modifiers = TRUE)
+#> # A tibble: 1 x 6
+#>   origin_zip dest_zip_start dest_zip_end zone  modifier_1 modifier_2
+#>   <chr>      <chr>          <chr>        <chr> <chr>      <chr>     
+#> 1 042        039            043          1     *          <NA>
 ```
+
+<br>
+
+If more than three digits are supplied, the zip is truncated to the
+first three with a warning.
+
+``` r
+fetch_zones(origin_zip = 1235813213455, 
+            destination_zip = 89144233377)
+#> Warning in prep_zip(.): zip can be at most 3 characters; trimming
+#> 1235813213455 to 123.
+#> Warning in prep_zip(.): zip can be at most 3 characters; trimming
+#> 89144233377 to 891.
+#> # A tibble: 1 x 3
+#>   origin_zip dest_zip zone 
+#>   <chr>      <chr>    <chr>
+#> 1 123        891      8
+```
+
+Happy fetching
+🐶
+
+<p align="center">
+
+<img src="https://media.giphy.com/media/2fTYDdciZFEKZJgY7g/giphy.gif" alt="dog">
+
+</p>

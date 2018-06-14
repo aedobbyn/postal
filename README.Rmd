@@ -12,10 +12,9 @@ knitr::opts_chunk$set(
 library(magrittr)
 ```
 
-usps
-====
+# usps `r emo::ji("mailbox")`
 
-Need to calculate the zone between two zips? `usps` provides a tidy interface to the USPS zone calc API.
+Need to get the USPS shipping zone for two zip codes? `usps` provides a tidy interface to the [USPS zone calc API](https://postcalc.usps.com/DomesticZoneChart/).
 
 ### Installation Instructions
 
@@ -34,18 +33,49 @@ devtools::install_github('aedobbyn/usps')
 
 ### Usage
 
+Supply an origin and, optionally, a destination zip as character or numeric.
+
 ```{r}
 library(usps)
 
-origin_zips <- c(1, "007", 123)
-
-origin_zips %>% 
-  purrr::map_dfr(grab_zone_from_origin)
+fetch_zones(origin_zip = "123", 
+            destination_zip = "581")
 ```
 
 
+If no destination is supplied, all desination zips and their zones are returned.
+
+<br>
+
+#### Multiple origins
+
+You can provide a vector of zips and map them nicely into a dataframe. 
+
+Rows corresponding to origin zones that are not in use get `NA`s in their destination and zone columns.
+
+```{r}
+origin_zips <- c(1, "007", 123)
+
+origin_zips %>% 
+  purrr::map_dfr(fetch_zones)
+```
+
+
+Map over both origin and destination zips and end up at a dataframe:
+
+```{r}
+dest_zips <- c("867", 53, "09")
+
+purrr::map2_dfr(origin_zips, dest_zips, 
+                fetch_zones)
+```
+
+
+
 <br>
 <br>
+
+#### Ranges
 
 The USPS web interface defaults to destination zip code ranges:
 
@@ -63,8 +93,29 @@ which you can ask for by setting `as_range = TRUE`. Instead of a `dest_zip` colu
 You can optionally display the `*` and `+` modifiers.
 
 ```{r}
-grab_zone_from_origin(42, 
-                      as_range = TRUE, 
-                      show_modifiers = TRUE)
+fetch_zones(42, 42,
+            as_range = TRUE, 
+            show_modifiers = TRUE)
 ```
+
+
+<br>
+
+If more than three digits are supplied, the zip is truncated to the first three with a warning.
+
+```{r}
+fetch_zones(origin_zip = 1235813213455, 
+            destination_zip = 89144233377)
+```
+
+<br>
+
+Happy fetching `r emo::ji("dog")`
+
+<p align="center">
+  <img src="https://media.giphy.com/media/2fTYDdciZFEKZJgY7g/giphy.gif" alt="dog">
+</p>
+
+
+
 

@@ -16,6 +16,7 @@ Imports:
     knitr,
     magrittr,
     purrr,
+    sticky,
     stringr,
     tidyr
 Suggests: 
