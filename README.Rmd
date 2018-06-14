@@ -15,7 +15,7 @@ library(magrittr)
 usps
 ====
 
-A tidy interface to the USPS API.
+Need to calculate the zone between two zips? `usps` provides a tidy interface to the USPS zone calc API.
 
 ### Installation Instructions
 
