@@ -46,6 +46,7 @@ fetch_zones <- function(origin_zip = NULL,
   out <-
     origin_zip %>%
     get_zones(verbose = verbose)
+  out %<>% sticky::sticky()
 
   if (as_range == FALSE) {
       out <-
@@ -71,7 +72,8 @@ fetch_zones <- function(origin_zip = NULL,
   if (show_modifiers == FALSE) {
     out <-
       out %>%
-      dplyr::select(-same_ndc,
+      dplyr::select(-mail_service,
+                    -same_ndc,
                     -has_five_digit_exceptions)
   }
 

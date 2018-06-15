@@ -174,17 +174,18 @@ get_zones <- function(inp, verbose = TRUE, ...) {
 
 
 interpolate_zips <- function(df) {
-  if ((attributes(df)$validity == "invalid")) {
-    out <-
-      df %>%
-      dplyr::mutate(dest_zip = NA_character_) %>%
-      dplyr::select(origin_zip, dest_zip, zone)
+  df %<>% sticky::sticky()
 
-    attributes(out)$validity <- "invalid"   # TODO: use sticky() instead
-    return(out)
+  if ((attributes(df)$validity == "invalid")) {
+    df %<>% sticky::sticky()
+    df <-
+      df %>%
+      dplyr::mutate(dest_zip = NA_character_)
+
+    return(df)
   }
 
-  out <- df %>%
+  df <- df %>%
     dplyr::rowwise() %>%
     dplyr::mutate(
       houser = as.numeric(dest_zip_start):as.numeric(dest_zip_end) %>% list()
@@ -194,10 +195,9 @@ interpolate_zips <- function(df) {
     dplyr::mutate(
       dest_zip = as.character(houser) %>% prepend_zeros()
     ) %>%
-    dplyr::ungroup() %>%
-    dplyr::select(origin_zip, dest_zip, zone)
+    dplyr::ungroup()
 
-  return(out)
+  return(df)
 }
 
 
