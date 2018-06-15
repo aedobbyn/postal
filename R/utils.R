@@ -45,9 +45,11 @@ prep_zip <- function(zip) {
     as.character() %>%
     prepend_zeros()
 
-  if (nchar(zip) > 3) {
-    warning(glue::glue("zip can be at most 3 characters; trimming {zip} to {substr(zip, 1, 3)}."))
-    zip <- zip %>% substr(1, 3)
+  if (nchar(zip) > 5) {
+    if (verbose) {
+      message(glue::glue("zip can be at most 5 characters. Only 3 can be sent to the API. Trimming {zip} to {substr(zip, 1, 5)}."))
+    }
+    zip <- zip %>% substr(1, 5)
   }
 
   return(zip)
@@ -113,10 +115,12 @@ clean_data <- function(dat, o_zip) {
       ),
     ) %>%
     dplyr::select(-Zone, -MailService,
-                  -modifier_star, -modifier_plus) %>%
+                  -modifier_star, -modifier_plus,
+                  -n_digits) %>%
     dplyr::mutate(
       origin_zip = o_zip
     ) %>%
+    dplyr::distinct(origin_zip, dest_zip_start, dest_zip_end, zone, .keep_all = TRUE) %>%
     dplyr::select(origin_zip, dplyr::everything()) %>%
     dplyr::arrange(dest_zip_start, dest_zip_end)
 

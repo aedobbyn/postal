@@ -44,7 +44,7 @@ fetch_zones <- function(origin_zip = NULL,
   }
 
   out <-
-    origin_zip %>%
+    substr(origin_zip, 1, 3) %>%   # We trimmed to first 5, but only send first 3
     get_zones(verbose = verbose)
   out %<>% sticky::sticky()
 
