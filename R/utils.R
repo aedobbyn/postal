@@ -2,7 +2,7 @@
 
 base_url <- "https://postcalc.usps.com/DomesticZoneChart/GetZoneChart?zipCode3Digit="
 
-to_ignore <- c("ZIPCodeError", "PageError")
+to_ignore <- c("ZIPCodeError", "PageError", "Zip5Digit")
 
 prepend_zeros <- function(x) {
   if (nchar(x) == 1) {
