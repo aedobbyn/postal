@@ -29,13 +29,9 @@ replace_x <- function(x, replacement = NA_character_) {
 
 
 prep_zip <- function(zip) {
+
   if (stringr::str_detect(zip, "[^0-9]")) {
     stop(glue::glue("Invalid zip {zip}; only numeric characters are allowed."))
-  }
-
-  if (nchar(zip) > 3) {
-    warning(glue::glue("zip can be at most 3 characters; trimming {zip} to {substr(zip, 1, 3)}."))
-    zip <- zip %>% substr(1, 3)
   }
 
   if (!is.numeric(zip)) {
@@ -48,6 +44,11 @@ prep_zip <- function(zip) {
   zip <- zip %>%
     as.character() %>%
     prepend_zeros()
+
+  if (nchar(zip) > 3) {
+    warning(glue::glue("zip can be at most 3 characters; trimming {zip} to {substr(zip, 1, 3)}."))
+    zip <- zip %>% substr(1, 3)
+  }
 
   return(zip)
 }

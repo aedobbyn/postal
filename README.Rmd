@@ -47,11 +47,11 @@ If no destination is supplied, all desination zips and their zones are returned.
 
 <br>
 
-#### Multiple origins
+#### Multiple zips
 
 You can provide a vector of zips and map them nicely into a dataframe. 
 
-Rows corresponding to origin zones that are not in use get `NA`s in their destination and zone columns.
+If an origin zip is supplied that is not in use (see a list of these), it is messaged and included in the output with missing values in the other columns.
 
 ```{r}
 origin_zips <- c(1, "007", 123)
@@ -75,12 +75,12 @@ purrr::map2_dfr(origin_zips, dest_zips,
 <br>
 <br>
 
-#### Ranges
+#### Ranges and other features
 
-The USPS web interface defaults to destination zip code ranges:
+The USPS web interface displays zones only as they pertain to destination zip code *ranges*:
 
 <p align="center">
-  <img src="./img/post_calc.jpg" alt="post_calc">
+  <img src="./img/post_calc.jpg" alt="post_calc" width="60%">
 </p>
 
 
@@ -89,6 +89,7 @@ The USPS web interface defaults to destination zip code ranges:
 which you can ask for by setting `as_range = TRUE`. Instead of a `dest_zip` column, you'll get a marker of the beginning of and end of the range range in `dest_zip_start` and `dest_zip_end`.
 
 <br>
+
 
 You can optionally display the `*` and `+` modifiers.
 
@@ -110,7 +111,7 @@ fetch_zones(origin_zip = 1235813213455,
 
 <br>
 
-Happy fetching `r emo::ji("dog")`
+Bug reports and PRs welcome.
 
 <p align="center">
   <img src="https://media.giphy.com/media/2fTYDdciZFEKZJgY7g/giphy.gif" alt="dog">

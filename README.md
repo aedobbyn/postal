@@ -41,12 +41,13 @@ returned.
 
 <br>
 
-#### Multiple origins
+#### Multiple zips
 
 You can provide a vector of zips and map them nicely into a dataframe.
 
-Rows corresponding to origin zones that are not in use get `NA`s in
-their destination and zone columns.
+If an origin zip is supplied that is not in use (see a list of these),
+it is messaged and included in the output with missing values in the
+other columns.
 
 ``` r
 origin_zips <- c(1, "007", 123)
@@ -73,7 +74,7 @@ origin_zips %>%
 Map over both origin and destination zips and end up at a dataframe:
 
 ``` r
-dest_zips <- c("867", "53", "09")
+dest_zips <- c("867", 53, "09")
 
 purrr::map2_dfr(origin_zips, dest_zips, 
                 fetch_zones)
@@ -87,13 +88,14 @@ purrr::map2_dfr(origin_zips, dest_zips,
 
 <br> <br>
 
-#### Ranges
+#### Ranges and other features
 
-The USPS web interface defaults to destination zip code ranges:
+The USPS web interface displays zones only as they pertain to
+destination zip code *ranges*:
 
 <p align="center">
 
-<img src="./img/post_calc.jpg" alt="post_calc">
+<img src="./img/post_calc.jpg" alt="post_calc" width="60%">
 
 </p>
 
@@ -135,8 +137,10 @@ fetch_zones(origin_zip = 1235813213455,
 #> 1 123        891      8
 ```
 
-Happy fetching
-🐶
+<br>
+
+Bug reports and PRs
+welcome.
 
 <p align="center">
 

@@ -2,8 +2,8 @@
 #'
 #' For a given 3-digit origin zip code, grab all destination zips and their corresponding zones.
 #'
-#' @param origin_zip A single origin zip, numeric or character
-#' @param destination_zip Optional destination zip. If not included, returns all possible desinations for the origin provided.
+#' @param origin_zip A single origin zip, numeric or character. If > 3 digits and contains leading zeros, make sure to supply as character.
+#' @param destination_zip Optional destination zip. If not included, returns all possible desinations for the origin provided. If > 3 digits and contains leading zeros, make sure to supply as character.
 #' @param as_range Do you want zones corresponding to a range of destination zips or a full listing of them?
 #' @param show_modifiers Should columns pertaining to the modifiers * and + be retained?
 #' @param verbose Message what's going on?
@@ -63,7 +63,8 @@ fetch_zones <- function(origin_zip = NULL,
       out <-
         out %>%
         dplyr::filter(as.numeric(dest_zip_start) <= as.numeric(destination_zip) &
-                 as.numeric(dest_zip_end) >= as.numeric(destination_zip))
+                 as.numeric(dest_zip_end) >= as.numeric(destination_zip) |
+                   is.na(dest_zip_start) & is.na(dest_zip_end))  # Or we have a missing origin
     }
   }
 
