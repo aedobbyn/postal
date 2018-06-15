@@ -30,26 +30,23 @@ replace_x <- function(x, replacement = NA_character_) {
 
 prep_zip <- function(zip) {
 
+  if (!is.character(zip)) {
+    stop(glue::glue("Invalid zip {zip}; must be of type character."))
+  }
+
   if (stringr::str_detect(zip, "[^0-9]")) {
     stop(glue::glue("Invalid zip {zip}; only numeric characters are allowed."))
   }
 
-  if (!is.numeric(zip)) {
-    zip <- zip %>% as.numeric()
-    if (is.na(zip) | zip < 0) {
-      stop(glue::glue("Invalid zip {zip}."))
-    }
-  }
-
   zip <- zip %>%
-    as.character() %>%
     prepend_zeros()
 
   if (nchar(zip) > 5) {
-    if (verbose) {
-      message(glue::glue("zip can be at most 5 characters. Only 3 can be sent to the API. Trimming {zip} to {substr(zip, 1, 5)}."))
-    }
+    warning(glue::glue("Zip can be at most 5 characters. Trimming {zip} to {substr(zip, 1, 5)}."))
     zip <- zip %>% substr(1, 5)
+  }
+  if (nchar(zip) > 3 & verbose) {
+    message(glue::glue("Only 3 characters can be sent to the API. Zip {zip} will be requested as {substr(zip, 1, 3)}."))
   }
 
   return(zip)
