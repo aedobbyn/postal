@@ -2,7 +2,7 @@
 
 base_url <- "https://postcalc.usps.com/DomesticZoneChart/GetZoneChart?zipCode3Digit="
 
-to_ignore <- c("ZIPCodeError", "PageError", "Zip5Digit")
+to_ignore <- c("ZIPCodeError", "PageError")
 
 prepend_zeros <- function(x) {
   if (nchar(x) == 1) {
@@ -104,6 +104,10 @@ get_zones <- function(inp, verbose = TRUE, ...) {
   this_url <- stringr::str_c(base_url, inp, collapse = "")
   out <- get_data(this_url)
 
+  if (out$ZipCodeError != "") {
+    stop("Non-empty ZIPCodeError returned from the API.")
+  }
+
   if (out$PageError == "No Zones found for the entered ZIP Code.") {
     out <- tibble::tibble(
       origin_zip = inp,
@@ -112,7 +116,9 @@ get_zones <- function(inp, verbose = TRUE, ...) {
       zone = NA_character_,
       modifier_1 = NA_character_,
       modifier_2 = NA_character_
-    )
+    ) else if (out$PageError != "") {
+      stop("Non-empty PageError returned from the API.")
+    }
 
     out %<>% sticky::sticky()
     attributes(out)$validity <- "invalid"
