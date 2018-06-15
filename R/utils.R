@@ -101,18 +101,27 @@ clean_data <- function(dat, o_zip) {
     dplyr::mutate(
       zone = stringr::str_extract_all(Zone, "[0-9]", simplify = TRUE),
       mail_service = MailService,
-      modifier_1 = stringr::str_extract(Zone, "[*]"),
-      modifier_2 = stringr::str_extract(Zone, "[+]")
+      modifier_star = stringr::str_extract(Zone, "[*]"),
+      modifier_plus = stringr::str_extract(Zone, "[+]"),
+      same_ndc = dplyr::case_when(
+        !is.na(modifier_star) ~ TRUE,
+        is.na(modifier_star) ~ FALSE
+      ),
+      has_five_digit_exceptions = dplyr::case_when(
+        !is.na(modifier_plus) ~ TRUE,
+        is.na(modifier_plus) ~ FALSE
+      ),
     ) %>%
-    dplyr::select(-Zone, -MailService) %>%
+    dplyr::select(-Zone, -MailService,
+                  -modifier_star, -modifier_plus) %>%
     dplyr::mutate(
       origin_zip = o_zip
     ) %>%
     dplyr::select(origin_zip, dplyr::everything()) %>%
     dplyr::arrange(dest_zip_start, dest_zip_end)
 
-  out$modifier_1 %<>% purrr::map_chr(replace_x)
-  out$modifier_2 %<>% purrr::map_chr(replace_x)
+  out$same_ndc %<>% purrr::map_chr(replace_x)
+  out$has_five_digit_exceptions %<>% purrr::map_chr(replace_x)
 
   return(out)
 }
@@ -134,8 +143,8 @@ get_zones <- function(inp, verbose = TRUE, ...) {
         dest_zip_start = NA_character_,
         dest_zip_end = NA_character_,
         zone = NA_character_,
-        modifier_1 = NA_character_,
-        modifier_2 = NA_character_
+        same_ndc = NA_character_,
+        has_five_digit_exceptions = NA_character_
       )
     } else {
       stop("Non-empty PageError returned from the API.")

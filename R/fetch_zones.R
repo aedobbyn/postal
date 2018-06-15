@@ -71,7 +71,8 @@ fetch_zones <- function(origin_zip = NULL,
   if (show_modifiers == FALSE) {
     out <-
       out %>%
-      dplyr::select(-dplyr::starts_with("modifier"))
+      dplyr::select(-same_ndc,
+                    -has_five_digit_exceptions)
   }
 
   return(out)
