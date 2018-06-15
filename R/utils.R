@@ -61,14 +61,35 @@ get_data <- function(url) {
 
 
 clean_data <- function(dat, o_zip) {
+  if (dat$ZIPCodeError != "") {
+    stop("Non-empty ZIPCodeError returned from the API.")
+  }
+
   dat <- dat[!names(dat) %in% to_ignore]
 
-  out <- dat %>%
+  if ("Zip5Digit" %in% names(dat)) {
+    five_digit_zips <-
+      dat$Zip5Digit %>%
+      dplyr::mutate(
+        n_digits = 5
+      )
+  } else {
+    five_digit_zips <- tibble::tibble()
+  }
+
+  three_digit_zips <-
+    dat[!names(dat) %in% to_ignore] %>%
     dplyr::bind_rows() %>%
+    dplyr::mutate(
+      n_digits = 3
+    ) %>%
     tibble::as_tibble()
 
+  out <-
+    five_digit_zips %>%
+    dplyr::bind_rows(three_digit_zips)
+
   out <- out %>%
-    dplyr::select(-MailService) %>%
     tidyr::separate(ZipCodes,
              into = c("dest_zip_start", "dest_zip_end"),
              sep = "---") %>%
@@ -79,14 +100,16 @@ clean_data <- function(dat, o_zip) {
     dplyr::ungroup() %>%
     dplyr::mutate(
       zone = stringr::str_extract_all(Zone, "[0-9]", simplify = TRUE),
+      mail_service = MailService,
       modifier_1 = stringr::str_extract(Zone, "[*]"),
       modifier_2 = stringr::str_extract(Zone, "[+]")
     ) %>%
-    dplyr::select(-Zone) %>%
+    dplyr::select(-Zone, -MailService) %>%
     dplyr::mutate(
       origin_zip = o_zip
     ) %>%
-    dplyr::select(origin_zip, dplyr::everything())
+    dplyr::select(origin_zip, dplyr::everything()) %>%
+    dplyr::arrange(dest_zip_start, dest_zip_end)
 
   out$modifier_1 %<>% purrr::map_chr(replace_x)
   out$modifier_2 %<>% purrr::map_chr(replace_x)
@@ -104,19 +127,17 @@ get_zones <- function(inp, verbose = TRUE, ...) {
   this_url <- stringr::str_c(base_url, inp, collapse = "")
   out <- get_data(this_url)
 
-  if (out$ZipCodeError != "") {
-    stop("Non-empty ZIPCodeError returned from the API.")
-  }
-
-  if (out$PageError == "No Zones found for the entered ZIP Code.") {
-    out <- tibble::tibble(
-      origin_zip = inp,
-      dest_zip_start = NA_character_,
-      dest_zip_end = NA_character_,
-      zone = NA_character_,
-      modifier_1 = NA_character_,
-      modifier_2 = NA_character_
-    ) else if (out$PageError != "") {
+  if (out$PageError != "") {
+    if (out$PageError == "No Zones found for the entered ZIP Code.") {
+      out <- tibble::tibble(
+        origin_zip = inp,
+        dest_zip_start = NA_character_,
+        dest_zip_end = NA_character_,
+        zone = NA_character_,
+        modifier_1 = NA_character_,
+        modifier_2 = NA_character_
+      )
+    } else {
       stop("Non-empty PageError returned from the API.")
     }
 
