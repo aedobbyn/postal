@@ -28,26 +28,25 @@ replace_x <- function(x, replacement = NA_character_) {
 }
 
 
-prep_zip <- function(zip) {
+prep_zip <- function(zip, verbose = FALSE) {
+
+  if (!is.character(zip)) {
+    stop(glue::glue("Invalid zip {zip}; must be of type character."))
+  }
 
   if (stringr::str_detect(zip, "[^0-9]")) {
     stop(glue::glue("Invalid zip {zip}; only numeric characters are allowed."))
   }
 
-  if (!is.numeric(zip)) {
-    zip <- zip %>% as.numeric()
-    if (is.na(zip) | zip < 0) {
-      stop(glue::glue("Invalid zip {zip}."))
-    }
-  }
-
   zip <- zip %>%
-    as.character() %>%
     prepend_zeros()
 
-  if (nchar(zip) > 3) {
-    warning(glue::glue("zip can be at most 3 characters; trimming {zip} to {substr(zip, 1, 3)}."))
-    zip <- zip %>% substr(1, 3)
+  if (nchar(zip) > 5) {
+    warning(glue::glue("Zip can be at most 5 characters. Trimming {zip} to {substr(zip, 1, 5)}."))
+    zip <- zip %>% substr(1, 5)
+  }
+  if (nchar(zip) > 3 & verbose) {
+    message(glue::glue("Only 3 characters can be sent to the API. Zip {zip} will be requested as {substr(zip, 1, 3)}."))
   }
 
   return(zip)
@@ -61,14 +60,35 @@ get_data <- function(url) {
 
 
 clean_data <- function(dat, o_zip) {
+  if (dat$ZIPCodeError != "") {
+    stop("Non-empty ZIPCodeError returned from the API.")
+  }
+
   dat <- dat[!names(dat) %in% to_ignore]
 
-  out <- dat %>%
+  if ("Zip5Digit" %in% names(dat)) {
+    five_digit_zips <-
+      dat$Zip5Digit %>%
+      dplyr::mutate(
+        n_digits = 5
+      )
+  } else {
+    five_digit_zips <- tibble::tibble()
+  }
+
+  three_digit_zips <-
+    dat[!names(dat) %in% to_ignore] %>%
     dplyr::bind_rows() %>%
+    dplyr::mutate(
+      n_digits = 3
+    ) %>%
     tibble::as_tibble()
 
+  out <-
+    five_digit_zips %>%
+    dplyr::bind_rows(three_digit_zips)
+
   out <- out %>%
-    dplyr::select(-MailService) %>%
     tidyr::separate(ZipCodes,
              into = c("dest_zip_start", "dest_zip_end"),
              sep = "---") %>%
@@ -79,17 +99,33 @@ clean_data <- function(dat, o_zip) {
     dplyr::ungroup() %>%
     dplyr::mutate(
       zone = stringr::str_extract_all(Zone, "[0-9]", simplify = TRUE),
-      modifier_1 = stringr::str_extract(Zone, "[*]"),
-      modifier_2 = stringr::str_extract(Zone, "[+]")
+      modifier_star = stringr::str_extract(Zone, "[*]"),
+      modifier_plus = stringr::str_extract(Zone, "[+]"),
+      same_ndc = dplyr::case_when(
+        !is.na(modifier_star) ~ TRUE,
+        is.na(modifier_star) ~ FALSE
+      ),
+      has_five_digit_exceptions = dplyr::case_when(
+        !is.na(modifier_plus) ~ TRUE,
+        is.na(modifier_plus) ~ FALSE
+      ),
+      specific_to_priority_mail = dplyr::case_when(
+        MailService == "Priority Mail" ~ TRUE,
+        MailService == "" ~ FALSE
+      )
     ) %>%
-    dplyr::select(-Zone) %>%
+    dplyr::select(-Zone, -MailService,
+                  -modifier_star, -modifier_plus,
+                  -n_digits) %>%
     dplyr::mutate(
       origin_zip = o_zip
     ) %>%
-    dplyr::select(origin_zip, dplyr::everything())
+    dplyr::distinct(origin_zip, dest_zip_start, dest_zip_end, zone, .keep_all = TRUE) %>%
+    dplyr::select(origin_zip, dplyr::everything()) %>%
+    dplyr::arrange(dest_zip_start, dest_zip_end)
 
-  out$modifier_1 %<>% purrr::map_chr(replace_x)
-  out$modifier_2 %<>% purrr::map_chr(replace_x)
+  out$same_ndc %<>% purrr::map_chr(replace_x)
+  out$has_five_digit_exceptions %<>% purrr::map_chr(replace_x)
 
   return(out)
 }
@@ -104,24 +140,24 @@ get_zones <- function(inp, verbose = TRUE, ...) {
   this_url <- stringr::str_c(base_url, inp, collapse = "")
   out <- get_data(this_url)
 
-  if (out$ZipCodeError != "") {
-    stop("Non-empty ZIPCodeError returned from the API.")
-  }
-
-  if (out$PageError == "No Zones found for the entered ZIP Code.") {
-    out <- tibble::tibble(
-      origin_zip = inp,
-      dest_zip_start = NA_character_,
-      dest_zip_end = NA_character_,
-      zone = NA_character_,
-      modifier_1 = NA_character_,
-      modifier_2 = NA_character_
-    ) else if (out$PageError != "") {
+  if (out$PageError != "") {
+    if (out$PageError == "No Zones found for the entered ZIP Code.") {
+      out <- tibble::tibble(
+        origin_zip = inp,
+        dest_zip_start = NA_character_,
+        dest_zip_end = NA_character_,
+        specific_to_priority_mail = NA_character_,
+        zone = NA_character_,
+        same_ndc = NA_character_,
+        has_five_digit_exceptions = NA_character_
+      )
+    } else {
       stop("Non-empty PageError returned from the API.")
     }
 
-    out %<>% sticky::sticky()
-    attributes(out)$validity <- "invalid"
+    out <-
+      out %>%
+      dplyr::mutate(validity = "invalid")
 
     message(glue::glue("Origin zip {inp} is not in use."))
 
@@ -130,8 +166,9 @@ get_zones <- function(inp, verbose = TRUE, ...) {
       out <- get_data(this_url) %>%
         clean_data(o_zip = inp)
 
-      out <- out %<>% sticky::sticky()
-      attributes(out)$validity <- "valid"
+      out <-
+        out %>%
+        dplyr::mutate(validity = "valid")
 
       if (verbose) {
         message(glue::glue("Recieved {as.numeric(max(out$dest_zip_end)) - as.numeric(min(out$dest_zip_start))} destination ZIPs for {as.numeric(max(out$zone)) - as.numeric(min(out$zone))} zones."))
@@ -144,17 +181,20 @@ get_zones <- function(inp, verbose = TRUE, ...) {
 
 
 interpolate_zips <- function(df) {
-  if ((attributes(df)$validity == "invalid")) {
-    out <-
-      df %>%
-      dplyr::mutate(dest_zip = NA_character_) %>%
-      dplyr::select(origin_zip, dest_zip, zone)
+  df %<>% sticky::sticky()
 
-    attributes(out)$validity <- "invalid"   # TODO: use sticky() instead
-    return(out)
+  if (df$validity == "invalid") {
+    df %<>% sticky::sticky()
+    df <-
+      df %>%
+      dplyr::mutate(dest_zip = NA_character_)
+
+    return(df)
   }
 
-  out <- df %>%
+  df %<>% sticky::sticky()
+
+  df <- df %>%
     dplyr::rowwise() %>%
     dplyr::mutate(
       houser = as.numeric(dest_zip_start):as.numeric(dest_zip_end) %>% list()
@@ -165,9 +205,9 @@ interpolate_zips <- function(df) {
       dest_zip = as.character(houser) %>% prepend_zeros()
     ) %>%
     dplyr::ungroup() %>%
-    dplyr::select(origin_zip, dest_zip, zone)
+    dplyr::select(-houser)
 
-  return(out)
+  return(df)
 }
 
 

@@ -33,7 +33,7 @@ devtools::install_github('aedobbyn/usps')
 
 ### Usage
 
-Supply an origin and, optionally, a destination zip as character or numeric.
+Supply an origin and, optionally, a destination zip as character.
 
 ```{r}
 library(usps)
