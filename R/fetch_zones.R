@@ -9,7 +9,8 @@
 #' @param verbose Message what's going on?
 #' @param ... Other arguments
 #'
-#' @details \url{https://postcalc.usps.com/}
+#' @details The result of a call to \url{https://postcalc.usps.com/DomesticZoneChart/GetZoneChart?zipCode3Digit=}.
+#'
 #'
 #' @importFrom magrittr %>%
 #'
@@ -24,7 +25,7 @@
 #' attr(double_oh_seven, "validity")}
 #'
 #' @return A tibble with origin zip and destination zips (in ranges or unspooled) and the USPS zones the origin-destination pair corresponds to.
-#' Validity attribute lets you know whether the origin zip code is in use (see also \url{https://en.wikipedia.org/wiki/List_of_ZIP_code_prefixes})
+#' Validity attribute lets you know whether the origin zip code is in use (see also \url{https://en.wikipedia.org/wiki/List_of_ZIP_code_prefixes}).
 #' @export
 
 fetch_zones <- function(origin_zip = NULL,
@@ -33,19 +34,24 @@ fetch_zones <- function(origin_zip = NULL,
                         show_modifiers = FALSE,
                         verbose = FALSE, ...) {
 
-  if (is.null(origin_zip)) stop("origin_zip must be non-null.")
+  if (is.null(origin_zip) | is.na((origin_zip))) stop("origin_zip cannot be missing.")
+
+  origin_zip_original <- origin_zip
+  destination_zip_original <- destination_zip
 
   origin_zip <-
-    origin_zip %>% prep_zip()
+    origin_zip_original %>% prep_zip(verbose = verbose)
 
   if (!is.null(destination_zip)) {
     destination_zip <-
-      destination_zip %>% prep_zip()
+      destination_zip %>% prep_zip(verbose = verbose)
   }
 
   out <-
     substr(origin_zip, 1, 3) %>%   # We trimmed to first 5, but only send first 3
-    get_zones(verbose = verbose)
+    get_zones(verbose = verbose) %>%
+    dplyr::filter(origin_zip == origin_zip_original)
+
   out %<>% sticky::sticky()
 
   if (as_range == FALSE) {
