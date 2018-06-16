@@ -54,7 +54,7 @@ You can provide a vector of zips and map them nicely into a dataframe.
 If an origin zip is supplied that is not in use (see a list of these), it is messaged and included in the output with missing values in the other columns.
 
 ```{r}
-origin_zips <- c(1, "007", 123)
+origin_zips <- c("1", "007", "123")
 
 origin_zips %>% 
   purrr::map_dfr(fetch_zones)
@@ -64,7 +64,7 @@ origin_zips %>%
 Map over both origin and destination zips and end up at a dataframe:
 
 ```{r}
-dest_zips <- c("867", 53, "09")
+dest_zips <- c("867", "53", "09")
 
 purrr::map2_dfr(origin_zips, dest_zips, 
                 fetch_zones)
@@ -91,12 +91,12 @@ which you can ask for by setting `as_range = TRUE`. Instead of a `dest_zip` colu
 <br>
 
 
-You can optionally display the `*` and `+` modifiers.
+You can optionally display other details about the zips, zones, and type of postage it applies to.
 
 ```{r}
-fetch_zones(42, 42,
+fetch_zones("42", "42",
             as_range = TRUE, 
-            show_modifiers = TRUE)
+            show_details = TRUE)
 ```
 
 
@@ -105,8 +105,8 @@ fetch_zones(42, 42,
 If more than three digits are supplied, the zip is truncated to the first three with a warning.
 
 ```{r}
-fetch_zones(origin_zip = 1235813213455, 
-            destination_zip = 89144233377)
+fetch_zones(origin_zip = "1235813213455", 
+            destination_zip = "89144233377")
 ```
 
 <br>

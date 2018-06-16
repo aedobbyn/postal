@@ -50,20 +50,15 @@ fetch_zones <- function(origin_zip = NULL,
     substr(origin_zip, 1, 3) %>%   # We trimmed to first 5, but only send first 3
     get_zones(verbose = verbose)
 
-  out %<>% sticky::sticky()
-
   if (as_range == FALSE) {
     out <-
       out %>%
-      sticky::sticky() %>%
       interpolate_zips() %>%
-      sticky::sticky() %>%
       dplyr::select(origin_zip, dest_zip, zone, validity, specific_to_priority_mail, same_ndc, has_five_digit_exceptions)
 
     if (!is.null(destination_zip)) {
       out <-
         out %>%
-        sticky::sticky() %>%
         dplyr::filter(dest_zip == destination_zip)
     }
 
@@ -78,12 +73,9 @@ fetch_zones <- function(origin_zip = NULL,
     }
   }
 
-  out %<>% sticky::sticky()
-
   if (show_details == FALSE) {
     out <-
       out %>%
-      sticky::sticky() %>%
       dplyr::select(-validity,
                     -specific_to_priority_mail,
                     -same_ndc,
@@ -91,7 +83,6 @@ fetch_zones <- function(origin_zip = NULL,
   } else {
     out <-
       out %>%
-      sticky::sticky() %>%
       dplyr::select(dplyr::everything(), specific_to_priority_mail, same_ndc, has_five_digit_exceptions)
   }
 

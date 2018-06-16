@@ -22,8 +22,7 @@ devtools::install_github('aedobbyn/usps')
 
 ### Usage
 
-Supply an origin and, optionally, a destination zip as character or
-numeric.
+Supply an origin and, optionally, a destination zip as character.
 
 ``` r
 library(usps)
@@ -50,7 +49,7 @@ it is messaged and included in the output with missing values in the
 other columns.
 
 ``` r
-origin_zips <- c(1, "007", 123)
+origin_zips <- c("1", "007", "123")
 
 origin_zips %>% 
   purrr::map_dfr(fetch_zones)
@@ -74,7 +73,7 @@ origin_zips %>%
 Map over both origin and destination zips and end up at a dataframe:
 
 ``` r
-dest_zips <- c("867", 53, "09")
+dest_zips <- c("867", "53", "09")
 
 purrr::map2_dfr(origin_zips, dest_zips, 
                 fetch_zones)
@@ -107,16 +106,18 @@ the range range in `dest_zip_start` and `dest_zip_end`.
 
 <br>
 
-You can optionally display the `*` and `+` modifiers.
+You can optionally display other details about the zips, zones, and type
+of postage it applies to.
 
 ``` r
-fetch_zones(42, 42,
+fetch_zones("42", "42",
             as_range = TRUE, 
-            show_modifiers = TRUE)
-#> # A tibble: 1 x 6
-#>   origin_zip dest_zip_start dest_zip_end zone  modifier_1 modifier_2
-#>   <chr>      <chr>          <chr>        <chr> <chr>      <chr>     
-#> 1 042        039            043          1     *          <NA>
+            show_details = TRUE)
+#> # A tibble: 1 x 7
+#>   origin_zip dest_zip_start dest_zip_end zone  specific_to_prior… same_ndc
+#>   <chr>      <chr>          <chr>        <chr> <lgl>              <chr>   
+#> 1 042        039            043          1     FALSE              TRUE    
+#> # ... with 1 more variable: has_five_digit_exceptions <chr>
 ```
 
 <br>
@@ -125,16 +126,14 @@ If more than three digits are supplied, the zip is truncated to the
 first three with a warning.
 
 ``` r
-fetch_zones(origin_zip = 1235813213455, 
-            destination_zip = 89144233377)
-#> Warning in prep_zip(.): zip can be at most 3 characters; trimming
-#> 1235813213455 to 123.
-#> Warning in prep_zip(.): zip can be at most 3 characters; trimming
-#> 89144233377 to 891.
-#> # A tibble: 1 x 3
-#>   origin_zip dest_zip zone 
-#>   <chr>      <chr>    <chr>
-#> 1 123        891      8
+fetch_zones(origin_zip = "1235813213455", 
+            destination_zip = "89144233377")
+#> Warning in prep_zip(., verbose = verbose): Zip can be at most 5 characters.
+#> Trimming 1235813213455 to 12358.
+#> Warning in prep_zip(., verbose = verbose): Zip can be at most 5 characters.
+#> Trimming 89144233377 to 89144.
+#> # A tibble: 0 x 3
+#> # ... with 3 variables: origin_zip <chr>, dest_zip <chr>, zone <chr>
 ```
 
 <br>

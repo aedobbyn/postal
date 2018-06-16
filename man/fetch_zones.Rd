@@ -5,16 +5,16 @@
 \title{Fetch zones for a 3-digit origin zip or an origin-destination pair}
 \usage{
 fetch_zones(origin_zip = NULL, destination_zip = NULL, as_range = FALSE,
-  show_modifiers = FALSE, verbose = FALSE, ...)
+  show_details = FALSE, verbose = FALSE, ...)
 }
 \arguments{
-\item{origin_zip}{A single origin zip, numeric or character}
+\item{origin_zip}{A single origin zip as character. If > 3 digits and contains leading zeros, make sure to supply as character.}
 
-\item{destination_zip}{Optional destination zip. If not included, returns all possible desinations for the origin provided.}
+\item{destination_zip}{Optional destination zip. If not included, returns all possible desinations for the origin provided. If > 3 digits and contains leading zeros, make sure to supply as character.}
 
 \item{as_range}{Do you want zones corresponding to a range of destination zips or a full listing of them?}
 
-\item{show_modifiers}{Should columns pertaining to the modifiers * and + be retained?}
+\item{show_details}{Should columns with more details be retained?}
 
 \item{verbose}{Message what's going on?}
 
@@ -22,13 +22,13 @@ fetch_zones(origin_zip = NULL, destination_zip = NULL, as_range = FALSE,
 }
 \value{
 A tibble with origin zip and destination zips (in ranges or unspooled) and the USPS zones the origin-destination pair corresponds to.
-Validity attribute lets you know whether the origin zip code is in use (see also \url{https://en.wikipedia.org/wiki/List_of_ZIP_code_prefixes})
+Validity attribute lets you know whether the origin zip code is in use (see also \url{https://en.wikipedia.org/wiki/List_of_ZIP_code_prefixes}).
 }
 \description{
 For a given 3-digit origin zip code, grab all destination zips and their corresponding zones.
 }
 \details{
-\url{https://postcalc.usps.com/}
+The result of a call to \url{https://postcalc.usps.com/DomesticZoneChart/GetZoneChart?zipCode3Digit=}.
 }
 \examples{
 \dontrun{
@@ -36,7 +36,7 @@ For a given 3-digit origin zip code, grab all destination zips and their corresp
 a_zip <- fetch_zones(123)
 nrow(a_zip)
 
-fetch_zones(123, 456, show_modifiers = TRUE)
+fetch_zones(123, 456, show_details = TRUE)
 
 (double_oh_seven <- fetch_zones("007", as_range = TRUE))
 attr(double_oh_seven, "validity")}

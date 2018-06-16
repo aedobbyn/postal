@@ -28,7 +28,7 @@ replace_x <- function(x, replacement = NA_character_) {
 }
 
 
-prep_zip <- function(zip, verbose = FALSE) {
+prep_zip <- function(zip, verbose = FALSE, ...) {
 
   if (!is.character(zip)) {
     stop(glue::glue("Invalid zip {zip}; must be of type character."))
@@ -131,7 +131,7 @@ clean_data <- function(dat, o_zip) {
 }
 
 
-get_zones <- function(inp, verbose = TRUE, ...) {
+get_zones <- function(inp, verbose = FALSE, ...) {
 
   if (verbose) {
     message(glue::glue("Grabbing origin ZIP {inp}"))
@@ -181,18 +181,14 @@ get_zones <- function(inp, verbose = TRUE, ...) {
 
 
 interpolate_zips <- function(df) {
-  df %<>% sticky::sticky()
 
-  if (df$validity == "invalid") {
-    df %<>% sticky::sticky()
+  if (df$validity[1] == "invalid") {
     df <-
       df %>%
       dplyr::mutate(dest_zip = NA_character_)
 
     return(df)
   }
-
-  df %<>% sticky::sticky()
 
   df <- df %>%
     dplyr::rowwise() %>%
