@@ -99,7 +99,6 @@ clean_data <- function(dat, o_zip) {
     dplyr::ungroup() %>%
     dplyr::mutate(
       zone = stringr::str_extract_all(Zone, "[0-9]", simplify = TRUE),
-      mail_service = MailService,
       modifier_star = stringr::str_extract(Zone, "[*]"),
       modifier_plus = stringr::str_extract(Zone, "[+]"),
       same_ndc = dplyr::case_when(
@@ -110,6 +109,10 @@ clean_data <- function(dat, o_zip) {
         !is.na(modifier_plus) ~ TRUE,
         is.na(modifier_plus) ~ FALSE
       ),
+      specific_to_priority_mail = dplyr::case_when(
+        MailService == "Priority Mail" ~ TRUE,
+        MailService == "" ~ FALSE
+      )
     ) %>%
     dplyr::select(-Zone, -MailService,
                   -modifier_star, -modifier_plus,
@@ -143,6 +146,7 @@ get_zones <- function(inp, verbose = TRUE, ...) {
         origin_zip = inp,
         dest_zip_start = NA_character_,
         dest_zip_end = NA_character_,
+        specific_to_priority_mail = NA_character_,
         zone = NA_character_,
         same_ndc = NA_character_,
         has_five_digit_exceptions = NA_character_
@@ -151,8 +155,9 @@ get_zones <- function(inp, verbose = TRUE, ...) {
       stop("Non-empty PageError returned from the API.")
     }
 
-    out %<>% sticky::sticky()
-    attributes(out)$validity <- "invalid"
+    out <-
+      out %>%
+      dplyr::mutate(validity = "invalid")
 
     message(glue::glue("Origin zip {inp} is not in use."))
 
@@ -161,8 +166,9 @@ get_zones <- function(inp, verbose = TRUE, ...) {
       out <- get_data(this_url) %>%
         clean_data(o_zip = inp)
 
-      out <- out %<>% sticky::sticky()
-      attributes(out)$validity <- "valid"
+      out <-
+        out %>%
+        dplyr::mutate(validity = "valid")
 
       if (verbose) {
         message(glue::glue("Recieved {as.numeric(max(out$dest_zip_end)) - as.numeric(min(out$dest_zip_start))} destination ZIPs for {as.numeric(max(out$zone)) - as.numeric(min(out$zone))} zones."))
@@ -177,7 +183,7 @@ get_zones <- function(inp, verbose = TRUE, ...) {
 interpolate_zips <- function(df) {
   df %<>% sticky::sticky()
 
-  if ((attributes(df)$validity == "invalid")) {
+  if (df$validity == "invalid") {
     df %<>% sticky::sticky()
     df <-
       df %>%
@@ -185,6 +191,8 @@ interpolate_zips <- function(df) {
 
     return(df)
   }
+
+  df %<>% sticky::sticky()
 
   df <- df %>%
     dplyr::rowwise() %>%
