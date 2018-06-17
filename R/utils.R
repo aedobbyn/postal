@@ -1,6 +1,10 @@
 #' @import magrittr
 
-base_url <- "https://postcalc.usps.com/DomesticZoneChart/GetZoneChart?zipCode3Digit="
+three_digit_base_url <-
+  "https://postcalc.usps.com/DomesticZoneChart/GetZoneChart?zipCode3Digit="
+
+five_digit_base_url <-
+  "https://postcalc.usps.com/DomesticZoneChart/GetZone"
 
 to_ignore <- c("ZIPCodeError", "PageError")
 
@@ -47,7 +51,7 @@ replace_x <- function(x, replacement = NA_character_) {
 }
 
 
-prep_zip <- function(zip, verbose = FALSE, ...) {
+prep_zip <- function(zip, ...) {
 
   if (!is.character(zip)) {
     stop(glue::glue("Invalid zip {zip}; must be of type character."))
@@ -63,9 +67,6 @@ prep_zip <- function(zip, verbose = FALSE, ...) {
   if (nchar(zip) > 5) {
     warning(glue::glue("Zip can be at most 5 characters. Trimming {zip} to {substr(zip, 1, 5)}."))
     zip <- zip %>% substr(1, 5)
-  }
-  if (nchar(zip) > 3 & verbose) {
-    message(glue::glue("Only 3 characters can be sent to the API. Zip {zip} will be requested as {substr(zip, 1, 3)}."))
   }
 
   return(zip)
@@ -157,11 +158,11 @@ get_zones <- function(inp, verbose = FALSE, ...) {
     message(glue::glue("Grabbing origin ZIP {inp}"))
   }
 
-  this_url <- stringr::str_c(base_url, inp, collapse = "")
+  this_url <- stringr::str_c(three_digit_base_url, inp, collapse = "")
   out <- get_data(this_url)
 
   if (out$PageError != "") {
-    if (out$PageError == "No Zones found for the entered ZIP Code.") {
+    if (out$PageError == "No Zones found for the entered ZIP code.") {
       out <- tibble::tibble(
         origin_zip = inp,
         dest_zip_start = NA_character_,

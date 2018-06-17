@@ -4,8 +4,9 @@
 \alias{fetch_zones}
 \title{Fetch zones for a 3-digit origin zip or an origin-destination pair}
 \usage{
-fetch_zones(origin_zip = NULL, destination_zip = NULL, as_range = FALSE,
-  show_details = FALSE, verbose = FALSE, ...)
+fetch_zones(origin_zip = NULL, destination_zip = NULL,
+  exact_destination = FALSE, as_range = FALSE, show_details = FALSE,
+  verbose = FALSE, ...)
 }
 \arguments{
 \item{origin_zip}{A single origin zip as character. If > 3 digits and contains leading zeros, make sure to supply as character.}
@@ -22,23 +23,10 @@ fetch_zones(origin_zip = NULL, destination_zip = NULL, as_range = FALSE,
 }
 \value{
 A tibble with origin zip and destination zips (in ranges or unspooled) and the USPS zones the origin-destination pair corresponds to.
-Validity attribute lets you know whether the origin zip code is in use (see also \url{https://en.wikipedia.org/wiki/List_of_ZIP_code_prefixes}).
 }
 \description{
 For a given 3-digit origin zip code, grab all destination zips and their corresponding zones.
 }
 \details{
-The result of a call to \url{https://postcalc.usps.com/DomesticZoneChart/GetZoneChart?zipCode3Digit=}.
-}
-\examples{
-\dontrun{
-
-a_zip <- fetch_zones(123)
-nrow(a_zip)
-
-fetch_zones(123, 456, show_details = TRUE)
-
-(double_oh_seven <- fetch_zones("007", as_range = TRUE))
-attr(double_oh_seven, "validity")}
-
+Displays the result of a query to the ["Get Zone Chart"](https://postcalc.usps.com/DomesticZoneChart/) tab.
 }

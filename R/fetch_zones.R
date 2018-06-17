@@ -9,8 +9,7 @@
 #' @param verbose Message what's going on?
 #' @param ... Other arguments
 #'
-#' @details The result of a call to \url{https://postcalc.usps.com/DomesticZoneChart/GetZoneChart?zipCode3Digit=}.
-#'
+#' @details Displays the result of a query to the ["Get Zone Chart"](https://postcalc.usps.com/DomesticZoneChart/) tab.
 #'
 #' @importFrom magrittr %>%
 #'
@@ -35,39 +34,48 @@ fetch_zones <- function(origin_zip = NULL,
 
   if (is.null(origin_zip) | is.na((origin_zip))) stop("origin_zip cannot be missing.")
 
-  destination_zip_trim <-
-    destination_zip %>%
-    substr(1, 3)
+  if (nchar(origin_zip) > 3 & verbose) {
+    message(glue::glue("Only 3 characters can be sent to the API. Zip {origin_zip} will be requested as {substr(origin_zip, 1, 3)}."))
+  }
 
   origin_zip <-
-    origin_zip %>% prep_zip(verbose = verbose)
+    origin_zip %>%
+    prep_zip(verbose = verbose) %>%
+    substr(1, 3)
 
   if (!is.null(destination_zip)) {
     destination_zip <-
       destination_zip %>%
       prep_zip(verbose = verbose)
+
+    destination_zip_trim <-
+      destination_zip %>%
+      substr(1, 3)
   }
 
   out <-
-    substr(origin_zip, 1, 3) %>%   # We trimmed to first 5, but only send first 3
+    origin_zip %>%
     get_zones(verbose = verbose)
 
   if (as_range == FALSE) {
     out <-
       out %>%
       interpolate_zips() %>%
-      dplyr::select(origin_zip, dest_zip, zone, specific_to_priority_mail, same_ndc, has_five_digit_exceptions)
+      dplyr::select(origin_zip, dest_zip, zone,
+                    specific_to_priority_mail, same_ndc, has_five_digit_exceptions)
 
     if (!is.null(destination_zip)) {
       out <-
         out %>%
         dplyr::filter(dest_zip == destination_zip |
-                        dest_zip == destination_zip_trim)
+                        dest_zip == destination_zip_trim |
+                        is.na(dest_zip))
 
       if (exact_destination == TRUE) {
         out <-
           out %>%
-          dplyr::filter(dest_zip == destination_zip)
+          dplyr::filter(dest_zip == destination_zip |
+                          is.na(dest_zip))
       }
     }
 
