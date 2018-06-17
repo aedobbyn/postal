@@ -18,9 +18,9 @@ detail_definitions <-
   tibble::tribble(
     ~name, ~definition,
     "specific_to_priority_mail",
-      "This zone designation applies to Priority Mail only",
+      "This 5 digit zone designation applies to Priority Mail only; for Standard, refer to the 3 digit zone designation.",
     "same_ndc",
-      "The origin and destination zips are in the same Network Distribution Center",
+      "The origin and destination zips are in the same Network Distribution Center.",
     "has_five_digit_exceptions",
       "This 3 digit destination zip prefix appears at the beginning of certain 5 digit destination zips that correspond to a different zone."
   )

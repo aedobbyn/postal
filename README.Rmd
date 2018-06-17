@@ -71,7 +71,7 @@ You can provide a vector of zips and map them nicely into a dataframe. Here we a
 
 
 ```{r}
-origin_zips <- c("271", "8281828459", "045235")
+origin_zips <- c("271", "8281828459", "04523")
 
 origin_zips %>% 
   purrr::map_dfr(fetch_zones)

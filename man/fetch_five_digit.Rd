@@ -4,12 +4,14 @@
 \alias{fetch_five_digit}
 \title{Fetch zones for a 5-digit origin origin-destination pair}
 \usage{
-fetch_five_digit(origin_zip, destination_zip, ...)
+fetch_five_digit(origin_zip, destination_zip, show_details = FALSE, ...)
 }
 \arguments{
 \item{origin_zip}{A single origin zip as 5-digit character.}
 
 \item{destination_zip}{Optional destination zip as 5-digit character.}
+
+\item{show_details}{Extract extra stuff from the response?}
 
 \item{...}{Other arguments}
 }
@@ -25,6 +27,12 @@ Displays the result of a query to the ["Get Zone for ZIP Code Pair"](https://pos
 \examples{
 \dontrun{
 fetch_five_digit("90210", "20500")
+
+fetch_five_digit("40360", "09756", show_details = TRUE)
+
+purrr::map2_dfr(c("11238", "60647", "80205"),
+                c("98109", "02210", "94707"),
+      fetch_five_digit)
 }
 
 }

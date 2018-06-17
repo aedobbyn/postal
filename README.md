@@ -79,14 +79,12 @@ Here we ask for all destination zips for these three origin zips.
 <!-- The origin "001" is not a valid 3-digit zip. -->
 
 ``` r
-origin_zips <- c("271", "8281828459", "045235")
+origin_zips <- c("271", "8281828459", "04523")
 
 origin_zips %>% 
   purrr::map_dfr(fetch_zones)
 #> Warning in prep_zip(., verbose = verbose): Zip can be at most 5 characters.
 #> Trimming 8281828459 to 82818.
-#> Warning in prep_zip(., verbose = verbose): Zip can be at most 5 characters.
-#> Trimming 045235 to 04523.
 #> # A tibble: 7,266 x 3
 #>    origin_zip dest_zip zone 
 #>    <chr>      <chr>    <chr>
@@ -115,14 +113,12 @@ purrr::map2_dfr(origin_zips, dest_zips,
 #> Grabbing origin ZIP 271
 #> Recieved 994 destination ZIPs for 8 zones.
 #> No zones found for the 271 to 867 pair.
-#> Only 3 characters can be sent to the API. Zip 8281828459 will be requested as 828.
 #> Warning in prep_zip(., verbose = verbose): Zip can be at most 5 characters.
 #> Trimming 8281828459 to 82818.
+#> Only 3-character origin zips can be sent to the API. Zip 82818 will be requested as 828.
 #> Grabbing origin ZIP 828
 #> Recieved 994 destination ZIPs for 8 zones.
-#> Only 3 characters can be sent to the API. Zip 045235 will be requested as 045.
-#> Warning in prep_zip(., verbose = verbose): Zip can be at most 5 characters.
-#> Trimming 045235 to 04523.
+#> Only 3-character origin zips can be sent to the API. Zip 04523 will be requested as 045.
 #> Grabbing origin ZIP 045
 #> Recieved 994 destination ZIPs for 8 zones.
 #> # A tibble: 2 x 3
@@ -178,11 +174,13 @@ detail_definitions %>%
 
 | name                         | definition                                                                                                                            |
 | :--------------------------- | :------------------------------------------------------------------------------------------------------------------------------------ |
-| specific\_to\_priority\_mail | This zone designation applies to Priority Mail only                                                                                   |
-| same\_ndc                    | The origin and destination zips are in the same Network Distribution Center                                                           |
+| specific\_to\_priority\_mail | This 5 digit zone designation applies to Priority Mail only; for Standard, refer to the 3 digit zone designation.                     |
+| same\_ndc                    | The origin and destination zips are in the same Network Distribution Center.                                                          |
 | has\_five\_digit\_exceptions | This 3 digit destination zip prefix appears at the beginning of certain 5 digit destination zips that correspond to a different zone. |
 
-#### 5 digits
+<br>
+
+### 5 digits
 
 `fetch_zones` should cover most 5 digit cases and supply the most
 information when `show_details` is `TRUE`, but if you just want to use
@@ -191,11 +189,13 @@ Pair”](https://postcalc.usps.com/DomesticZoneChart/) tab, you can use
 `fetch_five_digit`.
 
 ``` r
-fetch_five_digit("31415", "92653")
-#> # A tibble: 1 x 4
-#>   origin_zip destination_zip zone  full_response                          
-#>   <chr>      <chr>           <chr> <chr>                                  
-#> 1 31415      92653           8     The Zone is 8. This is not a Local Zon…
+fetch_five_digit("31415", "92653",
+                 show_details = TRUE)
+#> # A tibble: 1 x 7
+#>   origin_zip destination_zip zone  priority_exception_zone local same_ndc
+#>   <chr>      <chr>           <chr> <chr>                   <lgl> <lgl>   
+#> 1 31415      92653           8     <NA>                    FALSE FALSE   
+#> # ... with 1 more variable: full_response <chr>
 ```
 
 <br>

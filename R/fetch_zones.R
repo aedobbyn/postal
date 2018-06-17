@@ -36,13 +36,18 @@ fetch_zones <- function(origin_zip = NULL,
 
   if (is.null(origin_zip) | is.na((origin_zip))) stop("origin_zip cannot be missing.")
 
+
+
+  origin_zip <-
+    origin_zip %>%
+    prep_zip(verbose = verbose)
+
   if (nchar(origin_zip) > 3 & verbose) {
-    message(glue::glue("Only 3 characters can be sent to the API. Zip {origin_zip} will be requested as {substr(origin_zip, 1, 3)}."))
+    message(glue::glue("Only 3-character origin zips can be sent to the API. Zip {origin_zip} will be requested as {substr(origin_zip, 1, 3)}."))
   }
 
   origin_zip <-
     origin_zip %>%
-    prep_zip(verbose = verbose) %>%
     substr(1, 3)
 
   if (!is.null(destination_zip)) {

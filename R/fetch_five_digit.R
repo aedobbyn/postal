@@ -13,6 +13,12 @@
 #'
 #' @examples \dontrun{
 #' fetch_five_digit("90210", "20500")
+#'
+#' fetch_five_digit("40360", "09756", show_details = TRUE)
+#'
+#' purrr::map2_dfr(c("11238", "60647", "80205"),
+#'                 c("98109", "02210", "94707"),
+#'       fetch_five_digit)
 #' }
 #'
 #' @return A tibble with origin zip and destination zips (in ranges or unspooled) and the USPS zones the origin-destination pair corresponds to.
@@ -39,7 +45,7 @@ fetch_five_digit <- function(origin_zip, destination_zip,
 
   zone <-
     resp$ZoneInformation %>%
-    stringr::str_extract("The Zone is [0-9]+") %>%
+    stringr::str_extract("The Zone is [0-9]") %>%
     stringr::str_extract("[0-9]+")
 
   full_response <-
@@ -50,19 +56,32 @@ fetch_five_digit <- function(origin_zip, destination_zip,
       origin_zip = origin_zip,
       destination_zip = destination_zip,
       zone = zone,
+      priority_mail_zone = NA_character_,
       full_response = full_response
     )
 
   if (show_details == TRUE) {
     out <- out %>%
-      mutate(
-        local = ifelse(stringr::str_detect(
-          full_response, "This is not a Local Zone"),
+      dplyr::mutate(
+        priority_exception_zone = full_response %>%
+          stringr::str_extract(
+            "except for Priority Mail services where the Zone is [0-9]") %>%
+          stringr::str_extract("[0-9]"),
+
+        local = ifelse(
+          stringr::str_detect(
+            full_response, "This is not a Local Zone"),
           FALSE, TRUE),
-        same_ndc = ifelse(stringr::str_detect(
-          full_response, "The destination ZIP Code is not within the same NDC as the origin ZIP Code"),
+
+        same_ndc = ifelse(
+          stringr::str_detect(
+            full_response, "The destination ZIP Code is not within the same NDC as the origin ZIP Code"),
           FALSE, TRUE),
-      )
+      ) %>%
+      dplyr::select(origin_zip, destination_zip, zone, priority_exception_zone, local, same_ndc, full_response)
+  } else {
+    out <- out %>%
+      dplyr::select(origin_zip, destination_zip, zone, priority_exception_zone)
   }
 
   return(out)
