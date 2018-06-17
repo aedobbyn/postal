@@ -70,7 +70,7 @@ fetch_zones <- function(origin_zip = NULL,
     if (!is.null(destination_zip)) {
       out <-
         out %>%
-        dplyr::filter(as.numeric(dest_zip_start) <= as.numeric(destination_zip) &
+        dplyr::filter(as.numeric(dest_zip_start) <= as.numeric(destination_zip) &  # TODO: see if leading 0s breaks this
                  as.numeric(dest_zip_end) >= as.numeric(destination_zip) |
                    is.na(dest_zip_start) & is.na(dest_zip_end)) %>%   # Or we have a missing origin
         dplyr::select(origin_zip, dest_zip_start, dest_zip_end, zone, specific_to_priority_mail, same_ndc, has_five_digit_exceptions)
