@@ -6,9 +6,8 @@ three_digit_base_url <-
 five_digit_base_url <-
   "https://postcalc.usps.com/DomesticZoneChart/GetZone"
 
-to_ignore <- c("ZIPCodeError", "PageError")
 
-#' Pipe operator
+#' Details
 #'
 #' @name detail_definitions
 #' @rdname detail_definitions
@@ -35,7 +34,8 @@ prepend_zeros <- function(x) {
 }
 
 
-all_possible_origins <- 0:999 %>%
+all_possible_origins <-
+  0:999 %>%
   as.character() %>%
   purrr::map_chr(prepend_zeros)
 
@@ -63,13 +63,13 @@ prep_zip <- function(zip, ...) {
     stop(glue::glue("Invalid zip {zip}; don't know whether 4 digit zip supplied should be interpreted as 3 or 5 digits."))
   }
 
-  zip <- zip %>%
-    prepend_zeros()
-
   if (nchar(zip) > 5) {
-    warning(glue::glue("Zip can be at most 5 characters. Trimming {zip} to {substr(zip, 1, 5)}."))
+    warning(glue::glue("Zip can be at most 5 characters; trimming {zip} to {substr(zip, 1, 5)}."))
     zip <- zip %>% substr(1, 5)
   }
+
+  zip <- zip %>%
+    prepend_zeros()
 
   return(zip)
 }
@@ -83,17 +83,16 @@ get_data <- function(url) {
 
 clean_data <- function(dat, o_zip) {
   if (dat$ZIPCodeError != "") {
-    stop("Non-empty ZIPCodeError returned from the API.")
+    stop(glue::glue("ZIPCodeError returned from API for {o_zip}: {dat$ZIPCodeError}"))
   }
+
+  to_ignore <- c("ZIPCodeError", "PageError")
 
   dat <- dat[!names(dat) %in% to_ignore]
 
   if ("Zip5Digit" %in% names(dat)) {
     five_digit_zips <-
-      dat$Zip5Digit %>%
-      dplyr::mutate(
-        n_digits = 5
-      )
+      dat$Zip5Digit
   } else {
     five_digit_zips <- tibble::tibble()
   }
@@ -101,9 +100,6 @@ clean_data <- function(dat, o_zip) {
   three_digit_zips <-
     dat[!names(dat) %in% to_ignore] %>%
     dplyr::bind_rows() %>%
-    dplyr::mutate(
-      n_digits = 3
-    ) %>%
     tibble::as_tibble()
 
   out <-
@@ -137,8 +133,7 @@ clean_data <- function(dat, o_zip) {
       )
     ) %>%
     dplyr::select(-Zone, -MailService,
-                  -modifier_star, -modifier_plus,
-                  -n_digits) %>%
+                  -modifier_star, -modifier_plus) %>%
     dplyr::mutate(
       origin_zip = o_zip
     ) %>%
@@ -163,7 +158,7 @@ get_zones <- function(inp, verbose = FALSE, ...) {
   out <- get_data(this_url)
 
   if (out$PageError != "") {
-    if (out$PageError == "No Zones found for the entered ZIP code.") {
+    if (out$PageError == "No Zones found for the entered ZIP Code.") {
       out <- tibble::tibble(
         origin_zip = inp,
         dest_zip_start = NA_character_,
@@ -173,8 +168,8 @@ get_zones <- function(inp, verbose = FALSE, ...) {
         same_ndc = NA_character_,
         has_five_digit_exceptions = NA_character_
       )
-    } else {
-      stop("Non-empty PageError returned from the API.")
+    } else if (out$PageError != "") {
+      stop(glue::glue("PageError returned from API for {inp}: {out$PageError}"))
     }
 
     out <-

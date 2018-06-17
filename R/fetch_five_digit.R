@@ -58,16 +58,17 @@ fetch_five_digit <- function(origin_zip, destination_zip,
       zone = zone,
       priority_mail_zone = NA_character_,
       full_response = full_response
+    ) %>%
+    dplyr::mutate(
+      priority_mail_zone = full_response %>%
+        stringr::str_extract(
+          "except for Priority Mail services where the Zone is [0-9]") %>%
+        stringr::str_extract("[0-9]")
     )
 
   if (show_details == TRUE) {
     out <- out %>%
       dplyr::mutate(
-        priority_exception_zone = full_response %>%
-          stringr::str_extract(
-            "except for Priority Mail services where the Zone is [0-9]") %>%
-          stringr::str_extract("[0-9]"),
-
         local = ifelse(
           stringr::str_detect(
             full_response, "This is not a Local Zone"),
@@ -78,10 +79,10 @@ fetch_five_digit <- function(origin_zip, destination_zip,
             full_response, "The destination ZIP Code is not within the same NDC as the origin ZIP Code"),
           FALSE, TRUE),
       ) %>%
-      dplyr::select(origin_zip, destination_zip, zone, priority_exception_zone, local, same_ndc, full_response)
+      dplyr::select(origin_zip, destination_zip, zone, priority_mail_zone, local, same_ndc, full_response)
   } else {
     out <- out %>%
-      dplyr::select(origin_zip, destination_zip, zone, priority_exception_zone)
+      dplyr::select(origin_zip, destination_zip, zone)
   }
 
   return(out)

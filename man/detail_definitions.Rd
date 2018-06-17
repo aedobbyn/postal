@@ -3,12 +3,12 @@
 \docType{data}
 \name{detail_definitions}
 \alias{detail_definitions}
-\title{Pipe operator}
+\title{Details}
 \format{An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 3 rows and 2 columns.}
 \usage{
 detail_definitions
 }
 \description{
-Pipe operator
+Details
 }
 \keyword{datasets}
