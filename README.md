@@ -22,7 +22,8 @@ devtools::install_github('aedobbyn/usps')
 
 ### Usage
 
-Supply an origin and, optionally, a destination zip as character.
+Supply an origin and, optionally, a destination zip to find their
+corresponding zone.
 
 ``` r
 library(usps)
@@ -35,8 +36,38 @@ fetch_zones(origin_zip = "123",
 #> 1 123        581      6
 ```
 
-If no destination is supplied, all desination zips and their zones are
-returned.
+#### Details
+
+  - If no destination is supplied, all desination zips and their zones
+    are returned for the origin
+  - If an origin zip is supplied that is not in use ([see a list of
+    these](https://en.wikipedia.org/wiki/List_of_ZIP_code_prefixes)), it
+    is messaged and included in the output with `NA`s in the other
+    columns
+  - Number of digits:
+      - This API endpoint accepts exactly 3 digit origin zips; it mostly
+        returns 3 digit destination zips, but notes 5 digit exceptions.
+        For that reason,
+      - If fewer than three digits are supplied, leading zeroes are
+        added with a message
+      - If more than five digits are supplied, the zip is truncated to
+        the first five with a warning
+          - The first three digits of the origin zip are sent to the API
+          - If destination is supplied, we filter the results to the
+            first 5 digits
+
+<!-- end list -->
+
+``` r
+fetch_zones(origin_zip = "1235813213455", 
+            destination_zip = "89144233377")
+#> Warning in prep_zip(., verbose = verbose): Zip can be at most 5 characters.
+#> Trimming 1235813213455 to 12358.
+#> Warning in prep_zip(., verbose = verbose): Zip can be at most 5 characters.
+#> Trimming 89144233377 to 89144.
+#> # A tibble: 0 x 3
+#> # ... with 3 variables: origin_zip <chr>, dest_zip <chr>, zone <chr>
+```
 
 <br>
 
@@ -44,33 +75,37 @@ returned.
 
 You can provide a vector of zips and map them nicely into a dataframe.
 
-If an origin zip is supplied that is not in use (see a list of these),
-it is messaged and included in the output with missing values in the
-other columns.
+Here we ask for all destination zips for these three origin zips. The
+origin “001” is not a valid origin.
 
 ``` r
-origin_zips <- c("1", "007", "123")
+origin_zips <- c("1", "235813213455", "89144233377")
 
 origin_zips %>% 
   purrr::map_dfr(fetch_zones)
 #> Origin zip 001 is not in use.
+#> Warning in prep_zip(., verbose = verbose): Zip can be at most 5 characters.
+#> Trimming 235813213455 to 23581.
+#> Warning in prep_zip(., verbose = verbose): Zip can be at most 5 characters.
+#> Trimming 89144233377 to 89144.
 #> # A tibble: 1,861 x 3
 #>    origin_zip dest_zip zone 
 #>    <chr>      <chr>    <chr>
 #>  1 001        <NA>     <NA> 
-#>  2 007        005      7    
-#>  3 007        006      1    
-#>  4 007        007      1    
-#>  5 007        008      1    
-#>  6 007        009      1    
-#>  7 007        010      7    
-#>  8 007        011      7    
-#>  9 007        012      7    
-#> 10 007        013      7    
+#>  2 235        005      3    
+#>  3 235        006      6    
+#>  4 235        007      6    
+#>  5 235        008      6    
+#>  6 235        009      6    
+#>  7 235        010      4    
+#>  8 235        011      4    
+#>  9 235        012      4    
+#> 10 235        013      4    
 #> # ... with 1,851 more rows
 ```
 
-Map over both origin and destination zips and end up at a dataframe:
+Similarly, map over both origin and destination zips and end up at a
+dataframe:
 
 ``` r
 dest_zips <- c("867", "53", "09")
@@ -78,31 +113,35 @@ dest_zips <- c("867", "53", "09")
 purrr::map2_dfr(origin_zips, dest_zips, 
                 fetch_zones)
 #> Origin zip 001 is not in use.
+#> Warning in prep_zip(., verbose = verbose): Zip can be at most 5 characters.
+#> Trimming 235813213455 to 23581.
+#> Warning in prep_zip(., verbose = verbose): Zip can be at most 5 characters.
+#> Trimming 89144233377 to 89144.
 #> # A tibble: 2 x 3
 #>   origin_zip dest_zip zone 
 #>   <chr>      <chr>    <chr>
-#> 1 007        053      7    
-#> 2 123        009      7
+#> 1 235        053      4    
+#> 2 891        009      8
 ```
 
 <br> <br>
 
 #### Ranges and other features
 
-The USPS web interface displays zones only as they pertain to
+The USPS zone calc web interface displays zones only as they pertain to
 destination zip code *ranges*:
 
 <p align="center">
 
-<img src="./img/post_calc.jpg" alt="post_calc" width="60%">
+<img src="./img/post_calc.jpg" alt="post_calc" width="70%">
 
 </p>
 
 <br>
 
-which you can ask for by setting `as_range = TRUE`. Instead of a
-`dest_zip` column, you’ll get a marker of the beginning of and end of
-the range range in `dest_zip_start` and `dest_zip_end`.
+If you prefer the range representation, you can set `as_range = TRUE`.
+Instead of a `dest_zip` column, you’ll get a marker of the beginning of
+and end of the range range in `dest_zip_start` and `dest_zip_end`.
 
 <br>
 
@@ -122,24 +161,8 @@ fetch_zones("42", "42",
 
 <br>
 
-If more than three digits are supplied, the zip is truncated to the
-first three with a warning.
-
-``` r
-fetch_zones(origin_zip = "1235813213455", 
-            destination_zip = "89144233377")
-#> Warning in prep_zip(., verbose = verbose): Zip can be at most 5 characters.
-#> Trimming 1235813213455 to 12358.
-#> Warning in prep_zip(., verbose = verbose): Zip can be at most 5 characters.
-#> Trimming 89144233377 to 89144.
-#> # A tibble: 0 x 3
-#> # ... with 3 variables: origin_zip <chr>, dest_zip <chr>, zone <chr>
-```
-
-<br>
-
 Bug reports and PRs
-welcome.
+welcome\!
 
 <p align="center">
 

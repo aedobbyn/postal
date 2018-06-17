@@ -33,7 +33,7 @@ devtools::install_github('aedobbyn/usps')
 
 ### Usage
 
-Supply an origin and, optionally, a destination zip as character.
+Supply an origin and, optionally, a destination zip to find their corresponding zone.
 
 ```{r}
 library(usps)
@@ -43,7 +43,23 @@ fetch_zones(origin_zip = "123",
 ```
 
 
-If no destination is supplied, all desination zips and their zones are returned.
+#### Details
+
+* If no destination is supplied, all desination zips and their zones are returned for the origin
+* If an origin zip is supplied that is not in use ([see a list of these](https://en.wikipedia.org/wiki/List_of_ZIP_code_prefixes)), it is messaged and included in the output with `NA`s in the other columns
+* Number of digits: 
+    * This API endpoint accepts exactly 3 digit origin zips; it mostly returns 3 digit destination zips, but notes 5 digit exceptions. For that reason,
+    * If fewer than three digits are supplied, leading zeroes are added with a message
+    * If more than five digits are supplied, the zip is truncated to the first five with a warning
+        * The first three digits of the origin zip are sent to the API
+        * If destination is supplied, we filter the results to the first 5 digits
+
+
+```{r}
+fetch_zones(origin_zip = "1235813213455", 
+            destination_zip = "89144233377")
+```
+
 
 <br>
 
@@ -51,17 +67,18 @@ If no destination is supplied, all desination zips and their zones are returned.
 
 You can provide a vector of zips and map them nicely into a dataframe. 
 
-If an origin zip is supplied that is not in use (see a list of these), it is messaged and included in the output with missing values in the other columns.
+Here we ask for all destination zips for these three origin zips. The origin "001" is not a valid origin.
+
 
 ```{r}
-origin_zips <- c("1", "007", "123")
+origin_zips <- c("1", "235813213455", "89144233377")
 
 origin_zips %>% 
   purrr::map_dfr(fetch_zones)
 ```
 
 
-Map over both origin and destination zips and end up at a dataframe:
+Similarly, map over both origin and destination zips and end up at a dataframe:
 
 ```{r}
 dest_zips <- c("867", "53", "09")
@@ -77,16 +94,16 @@ purrr::map2_dfr(origin_zips, dest_zips,
 
 #### Ranges and other features
 
-The USPS web interface displays zones only as they pertain to destination zip code *ranges*:
+The USPS zone calc web interface displays zones only as they pertain to destination zip code *ranges*:
 
 <p align="center">
-  <img src="./img/post_calc.jpg" alt="post_calc" width="60%">
+  <img src="./img/post_calc.jpg" alt="post_calc" width="70%">
 </p>
 
 
 <br>
 
-which you can ask for by setting `as_range = TRUE`. Instead of a `dest_zip` column, you'll get a marker of the beginning of and end of the range range in `dest_zip_start` and `dest_zip_end`.
+If you prefer the range representation, you can set `as_range = TRUE`. Instead of a `dest_zip` column, you'll get a marker of the beginning of and end of the range range in `dest_zip_start` and `dest_zip_end`.
 
 <br>
 
@@ -102,16 +119,7 @@ fetch_zones("42", "42",
 
 <br>
 
-If more than three digits are supplied, the zip is truncated to the first three with a warning.
-
-```{r}
-fetch_zones(origin_zip = "1235813213455", 
-            destination_zip = "89144233377")
-```
-
-<br>
-
-Bug reports and PRs welcome.
+Bug reports and PRs welcome!
 
 <p align="center">
   <img src="https://media.giphy.com/media/2fTYDdciZFEKZJgY7g/giphy.gif" alt="dog">
