@@ -36,11 +36,9 @@ fetch_zones <- function(origin_zip = NULL,
 
   if (is.null(origin_zip) | is.na((origin_zip))) stop("origin_zip cannot be missing.")
 
-
-
   origin_zip <-
     origin_zip %>%
-    prep_zip(verbose = verbose)
+    prep_zip()
 
   if (nchar(origin_zip) > 3 & verbose) {
     message(glue::glue("Only 3-character origin zips can be sent to the API. Zip {origin_zip} will be requested as {substr(origin_zip, 1, 3)}."))
@@ -53,7 +51,7 @@ fetch_zones <- function(origin_zip = NULL,
   if (!is.null(destination_zip)) {
     destination_zip <-
       destination_zip %>%
-      prep_zip(verbose = verbose)
+      prep_zip()
 
     destination_zip_trim <-
       destination_zip %>%
@@ -95,8 +93,9 @@ fetch_zones <- function(origin_zip = NULL,
         out %>%
         dplyr::filter(as.numeric(dest_zip_start) <= as.numeric(destination_zip) &
                  as.numeric(dest_zip_end) >= as.numeric(destination_zip) |
-                   is.na(dest_zip_start) & is.na(dest_zip_end)) %>%   # Or we have a missing origin
-        dplyr::select(origin_zip, dest_zip_start, dest_zip_end, zone, specific_to_priority_mail, same_ndc, has_five_digit_exceptions)
+                   is.na(dest_zip_start) & is.na(dest_zip_end)) %>%   # Or our origin isn't in use
+        dplyr::select(origin_zip, dest_zip_start, dest_zip_end, zone,
+                      specific_to_priority_mail, same_ndc, has_five_digit_exceptions)
     }
   }
 

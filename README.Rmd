@@ -14,7 +14,7 @@ library(magrittr)
 
 # usps `r emo::ji("mailbox")`
 
-Need to get the USPS shipping zone for two zip codes? `usps` provides a tidy interface to the [USPS zone calc API](https://postcalc.usps.com/DomesticZoneChart/).
+Need to get the USPS shipping zone for two zip codes? `usps` provides a tidy interface to the [USPS domestic zone calc API](https://postcalc.usps.com/DomesticZoneChart/).
 
 ### Installation Instructions
 
@@ -33,7 +33,7 @@ devtools::install_github('aedobbyn/usps')
 
 ### Usage
 
-Supply an origin and, optionally, a destination zip to find their corresponding zone.
+Supply a 3-digit origin and, optionally, destination zip to find their corresponding zone. If no destination is supplied, all desination zips and their zones are returned for the origin.
 
 ```{r}
 library(usps)
@@ -43,35 +43,19 @@ fetch_zones(origin_zip = "123",
 ```
 
 
-#### Details
-
-* If no destination is supplied, all desination zips and their zones are returned for the origin
-* If an origin zip is supplied that is [not in use](https://en.wikipedia.org/wiki/List_of_ZIP_code_prefixes), it is messaged and included in the output with `NA`s in the other columns
-* Number of digits: 
-    * This API endpoint accepts exactly 3 digit origin zips; it mostly returns 3 digit destination zips, but notes 5 digit exceptions. For that reason,
-    * If fewer than three digits are supplied, leading zeroes are added with a message
-    * If more than five digits are supplied, the zip is truncated to the first five with a warning
-      * The first three digits of the origin zip are sent to the API
-      * If destination is supplied, we filter the results to the first 3 digits if `exact_destination` is `FALSE`; otherwise we return only the exact destination
-
-
-```{r}
-fetch_zones(origin_zip = "12358132134558", 
-            destination_zip = "91442")     
-```
-
-
 <br>
 
 #### Multiple zips
 
 You can provide a vector of zips and map them nicely into a dataframe. Here we ask for all destination zips for these three origin zips. 
 
-<!-- The origin "001" is not a valid 3-digit zip. -->
+If an origin zip is supplied that is [not in use](https://en.wikipedia.org/wiki/List_of_ZIP_code_prefixes), it is messaged and included in the output with `NA`s in the other columns.
+
+The origin "004" is not a valid 3-digit zip.
 
 
 ```{r}
-origin_zips <- c("271", "8281828459", "04523")
+origin_zips <- c("27182818284590", "4", "52353")
 
 origin_zips %>% 
   purrr::map_dfr(fetch_zones)
@@ -106,18 +90,19 @@ The USPS zone calc web interface displays zones only as they pertain to destinat
 
 If you prefer the range representation, you can set `as_range = TRUE`. Instead of a `dest_zip` column, you'll get a marker of the beginning of and end of the range range in `dest_zip_start` and `dest_zip_end`.
 
-<br>
-
-
-You can optionally display other details about the zips, zones, and type of postage it applies to.
 
 ```{r}
 fetch_zones("42", "42",
-            as_range = TRUE, 
-            show_details = TRUE)
+            as_range = TRUE)
 ```
 
+
 <br>
+
+
+### Details
+
+You can optionally display other details about the zips, zones, and type of postage it applies to.
 
 Definitions of these details can be found in `detail_definitions`.
 
@@ -129,7 +114,27 @@ detail_definitions %>%
 
 <br>
 
-### 5 digits
+### On Digits
+
+#### The Nitpicky
+
+* Number of digits: 
+    * This API endpoint accepts exactly 3 digit origin zips; it mostly returns 3 digit destination zips, but notes 5 digit exceptions. For that reason,
+    * If fewer than three digits are supplied, leading zeroes are added with a message
+    * If more than five digits are supplied, the zip is truncated to the first five with a warning
+      * The first three digits of the origin zip are sent to the API
+      * If destination is supplied, we filter the results to the first 3 digits if `exact_destination` is `FALSE`; otherwise we return only the exact destination
+
+
+```{r}
+fetch_zones(origin_zip = "12358132134558", 
+            destination_zip = "91442",
+            show_details = TRUE)     
+```
+
+<br>
+
+#### 5 digits
 
 `fetch_zones` should cover most 5 digit cases and supply the most information when `show_details` is `TRUE`, but if you just want to use the equivalent of the ["Get Zone for ZIP Code Pair"](https://postcalc.usps.com/DomesticZoneChart/) tab, you can use `fetch_five_digit`.
 

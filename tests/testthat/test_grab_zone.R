@@ -26,12 +26,10 @@ testthat::test_that("fetch_zones()", {
 })
 
 
-
 testthat::test_that("Priority Mail exceptions are noted", {
   has_priority_exceptions <- fetch_five_digit("40360", "09756", show_details = TRUE)
   testthat::expect_equal("3", has_priority_exceptions$priority_mail_zone)
 })
-
 
 
 testthat::test_that("Assignment of validity", {
@@ -39,3 +37,20 @@ testthat::test_that("Assignment of validity", {
   testthat::expect_message(fetch_zones("1"), "Origin zip 001 is not in use.")
 
 })
+
+
+testthat::test_that("3 and 5 digit endpoints agree", {
+
+  origins <- c("11238", "60647", "80205")
+  destinations <- c("98109", "02210", "94707")
+
+  three_d <- purrr::map2_dfr(origins, destinations,
+                             fetch_zones)
+
+  five_d <- purrr::map2_dfr(origins, destinations,
+                            fetch_five_digit)
+
+  testthat::expect_equal(three_d$zone, five_d$zone)
+
+})
+
