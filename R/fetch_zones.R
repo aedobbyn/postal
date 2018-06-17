@@ -16,38 +16,36 @@
 #'
 #' @examples \dontrun{
 #'
-#' a_zip <- fetch_zones(123)
+#' a_zip <- fetch_zones("123")
 #' nrow(a_zip)
 #'
-#' fetch_zones(123, 456, show_details = TRUE)
+#' fetch_zones("123", "456", show_details = TRUE)
 #'
 #' (double_oh_seven <- fetch_zones("007", as_range = TRUE))
-#' attr(double_oh_seven, "validity")}
 #'
 #' @return A tibble with origin zip and destination zips (in ranges or unspooled) and the USPS zones the origin-destination pair corresponds to.
-#' Validity attribute lets you know whether the origin zip code is in use (see also \url{https://en.wikipedia.org/wiki/List_of_ZIP_code_prefixes}).
 #' @export
 
 fetch_zones <- function(origin_zip = NULL,
                         destination_zip = NULL,
-                        exact_destination = TRUE,
+                        exact_destination = FALSE,
                         as_range = FALSE,
                         show_details = FALSE,
                         verbose = FALSE, ...) {
 
   if (is.null(origin_zip) | is.na((origin_zip))) stop("origin_zip cannot be missing.")
 
-  # destination_zip_original <- destination_zip
+  destination_zip_trim <-
+    destination_zip %>%
+    substr(1, 3)
 
   origin_zip <-
     origin_zip %>% prep_zip(verbose = verbose)
 
   if (!is.null(destination_zip)) {
-    if (exact_destination == FALSE) {
-      destination_zip <-
-        destination_zip %>%
-        prep_zip(verbose = verbose)
-    }
+    destination_zip <-
+      destination_zip %>%
+      prep_zip(verbose = verbose)
   }
 
   out <-
@@ -58,19 +56,26 @@ fetch_zones <- function(origin_zip = NULL,
     out <-
       out %>%
       interpolate_zips() %>%
-      dplyr::select(origin_zip, dest_zip, zone, validity, specific_to_priority_mail, same_ndc, has_five_digit_exceptions)
+      dplyr::select(origin_zip, dest_zip, zone, specific_to_priority_mail, same_ndc, has_five_digit_exceptions)
 
     if (!is.null(destination_zip)) {
       out <-
         out %>%
-        dplyr::filter(dest_zip == destination_zip)
+        dplyr::filter(dest_zip == destination_zip |
+                        dest_zip == destination_zip_trim)
+
+      if (exact_destination == TRUE) {
+        out <-
+          out %>%
+          dplyr::filter(dest_zip == destination_zip)
+      }
     }
 
   } else {
     if (!is.null(destination_zip)) {
       out <-
         out %>%
-        dplyr::filter(as.numeric(dest_zip_start) <= as.numeric(destination_zip) &  # TODO: see if leading 0s breaks this
+        dplyr::filter(as.numeric(dest_zip_start) <= as.numeric(destination_zip) &
                  as.numeric(dest_zip_end) >= as.numeric(destination_zip) |
                    is.na(dest_zip_start) & is.na(dest_zip_end)) %>%   # Or we have a missing origin
         dplyr::select(origin_zip, dest_zip_start, dest_zip_end, zone, specific_to_priority_mail, same_ndc, has_five_digit_exceptions)
@@ -80,8 +85,7 @@ fetch_zones <- function(origin_zip = NULL,
   if (show_details == FALSE) {
     out <-
       out %>%
-      dplyr::select(-validity,
-                    -specific_to_priority_mail,
+      dplyr::select(-specific_to_priority_mail,
                     -same_ndc,
                     -has_five_digit_exceptions)
   } else {
