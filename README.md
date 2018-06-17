@@ -59,14 +59,14 @@ fetch_zones(origin_zip = "123",
 <!-- end list -->
 
 ``` r
-fetch_zones(origin_zip = "1235813213455", 
-            destination_zip = "89144233377")
+fetch_zones(origin_zip = "12358132134558", 
+            destination_zip = "9144")      # 2
 #> Warning in prep_zip(., verbose = verbose): Zip can be at most 5 characters.
-#> Trimming 1235813213455 to 12358.
-#> Warning in prep_zip(., verbose = verbose): Zip can be at most 5 characters.
-#> Trimming 89144233377 to 89144.
-#> # A tibble: 0 x 3
-#> # ... with 3 variables: origin_zip <chr>, dest_zip <chr>, zone <chr>
+#> Trimming 12358132134558 to 12358.
+#> # A tibble: 1 x 3
+#>   origin_zip dest_zip zone 
+#>   <chr>      <chr>    <chr>
+#> 1 123        9144     5
 ```
 
 <br>
@@ -88,7 +88,7 @@ origin_zips %>%
 #> Trimming 235813213455 to 23581.
 #> Warning in prep_zip(., verbose = verbose): Zip can be at most 5 characters.
 #> Trimming 89144233377 to 89144.
-#> # A tibble: 1,861 x 3
+#> # A tibble: 4,845 x 3
 #>    origin_zip dest_zip zone 
 #>    <chr>      <chr>    <chr>
 #>  1 001        <NA>     <NA> 
@@ -101,7 +101,7 @@ origin_zips %>%
 #>  8 235        011      4    
 #>  9 235        012      4    
 #> 10 235        013      4    
-#> # ... with 1,851 more rows
+#> # ... with 4,835 more rows
 ```
 
 Similarly, map over both origin and destination zips and end up at a
@@ -158,6 +158,21 @@ fetch_zones("42", "42",
 #> 1 042        039            043          1     FALSE              TRUE    
 #> # ... with 1 more variable: has_five_digit_exceptions <chr>
 ```
+
+<br>
+
+Definitions of these details below:
+
+``` r
+detail_definitions %>% 
+  knitr::kable()
+```
+
+| name                         | definition                                                                                                                            |
+| :--------------------------- | :------------------------------------------------------------------------------------------------------------------------------------ |
+| specific\_to\_priority\_mail | This zone designation applies to Priority Mail only                                                                                   |
+| same\_ndc                    | The origin and destination zips are in the same Network Distribution Center                                                           |
+| has\_five\_digit\_exceptions | This 3 digit destination zip prefix appears at the beginning of certain 5 digit destination zips that correspond to a different zone. |
 
 <br>
 

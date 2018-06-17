@@ -2,12 +2,31 @@
 
 base_url <- "https://postcalc.usps.com/DomesticZoneChart/GetZoneChart?zipCode3Digit="
 
-to_ignore <- c("ZIPCodeError", "PageError", "Zip5Digit")
+to_ignore <- c("ZIPCodeError", "PageError")
+
+#' Pipe operator
+#'
+#' @name detail_definitions
+#' @rdname detail_definitions
+#' @export
+#' @usage detail_definitions
+detail_definitions <-
+  tibble::tribble(
+    ~name, ~definition,
+    "specific_to_priority_mail",
+      "This zone designation applies to Priority Mail only",
+    "same_ndc",
+      "The origin and destination zips are in the same Network Distribution Center",
+    "has_five_digit_exceptions",
+      "This 3 digit destination zip prefix appears at the beginning of certain 5 digit destination zips that correspond to a different zone."
+  )
 
 prepend_zeros <- function(x) {
-  if (nchar(x) == 1) {
+  if (nchar(x) == 1) {   # 3 digit case
     x <- stringr::str_c("00", x, collapse = "")
-  } else if (nchar(x) == 2) {
+  } else if (nchar(x) == 2) {   # 3 digit case
+    x <- stringr::str_c("0", x, collapse = "")
+  } else if (nchar(x) == 4) {   # 5 digit case
     x <- stringr::str_c("0", x, collapse = "")
   }
   x
@@ -69,6 +88,7 @@ clean_data <- function(dat, o_zip) {
   if ("Zip5Digit" %in% names(dat)) {
     five_digit_zips <-
       dat$Zip5Digit %>%
+      # as.character() %>%
       dplyr::mutate(
         n_digits = 5
       )
@@ -205,7 +225,6 @@ interpolate_zips <- function(df) {
 
   return(df)
 }
-
 
 
 #' Pipe operator

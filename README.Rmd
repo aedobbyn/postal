@@ -46,7 +46,7 @@ fetch_zones(origin_zip = "123",
 #### Details
 
 * If no destination is supplied, all desination zips and their zones are returned for the origin
-* If an origin zip is supplied that is not in use ([see a list of these](https://en.wikipedia.org/wiki/List_of_ZIP_code_prefixes)), it is messaged and included in the output with `NA`s in the other columns
+* If an origin zip is supplied that is [not in use](https://en.wikipedia.org/wiki/List_of_ZIP_code_prefixes), it is messaged and included in the output with `NA`s in the other columns
 * Number of digits: 
     * This API endpoint accepts exactly 3 digit origin zips; it mostly returns 3 digit destination zips, but notes 5 digit exceptions. For that reason,
     * If fewer than three digits are supplied, leading zeroes are added with a message
@@ -56,8 +56,8 @@ fetch_zones(origin_zip = "123",
 
 
 ```{r}
-fetch_zones(origin_zip = "1235813213455", 
-            destination_zip = "89144233377")
+fetch_zones(origin_zip = "12358132134558", 
+            destination_zip = "9144")      # 2
 ```
 
 
@@ -67,11 +67,11 @@ fetch_zones(origin_zip = "1235813213455",
 
 You can provide a vector of zips and map them nicely into a dataframe. 
 
-Here we ask for all destination zips for these three origin zips. The origin "001" is not a valid origin.
+Here we ask for all destination zips for these three origin zips. The origin "001" is not a valid 3-digit zip.
 
 
 ```{r}
-origin_zips <- c("1", "235813213455", "89144233377")
+origin_zips <- c("1", "235813213455", "8914")
 
 origin_zips %>% 
   purrr::map_dfr(fetch_zones)
@@ -114,6 +114,15 @@ You can optionally display other details about the zips, zones, and type of post
 fetch_zones("42", "42",
             as_range = TRUE, 
             show_details = TRUE)
+```
+
+<br>
+
+Definitions of these details below:
+
+```{r}
+detail_definitions %>% 
+  knitr::kable()
 ```
 
 
