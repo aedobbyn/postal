@@ -22,3 +22,9 @@ For a given 5-digit origin and destination zip code pair, display the zone numbe
 \details{
 Displays the result of a query to the ["Get Zone for ZIP Code Pair"](https://postcalc.usps.com/DomesticZoneChart/) tab.
 }
+\examples{
+\dontrun{
+fetch_five_digit("90210", "20500")
+}
+
+}

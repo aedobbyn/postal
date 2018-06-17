@@ -51,13 +51,13 @@ fetch_zones(origin_zip = "123",
     * This API endpoint accepts exactly 3 digit origin zips; it mostly returns 3 digit destination zips, but notes 5 digit exceptions. For that reason,
     * If fewer than three digits are supplied, leading zeroes are added with a message
     * If more than five digits are supplied, the zip is truncated to the first five with a warning
-        * The first three digits of the origin zip are sent to the API
-        * If destination is supplied, we filter the results to the first 5 digits
+      * The first three digits of the origin zip are sent to the API
+      * If destination is supplied, we filter the results to the first 3 digits if `exact_destination` is `FALSE`; otherwise we return only the exact destination
 
 
 ```{r}
 fetch_zones(origin_zip = "12358132134558", 
-            destination_zip = "9144")      # 2
+            destination_zip = "91442")     
 ```
 
 
@@ -65,13 +65,13 @@ fetch_zones(origin_zip = "12358132134558",
 
 #### Multiple zips
 
-You can provide a vector of zips and map them nicely into a dataframe. 
+You can provide a vector of zips and map them nicely into a dataframe. Here we ask for all destination zips for these three origin zips. 
 
-Here we ask for all destination zips for these three origin zips. The origin "001" is not a valid 3-digit zip.
+<!-- The origin "001" is not a valid 3-digit zip. -->
 
 
 ```{r}
-origin_zips <- c("1", "235813213455", "8914")
+origin_zips <- c("271", "8281828459", "045235")
 
 origin_zips %>% 
   purrr::map_dfr(fetch_zones)
@@ -84,7 +84,8 @@ Similarly, map over both origin and destination zips and end up at a dataframe:
 dest_zips <- c("867", "53", "09")
 
 purrr::map2_dfr(origin_zips, dest_zips, 
-                fetch_zones)
+                fetch_zones,
+                verbose = TRUE)
 ```
 
 
@@ -118,12 +119,25 @@ fetch_zones("42", "42",
 
 <br>
 
-Definitions of these details below:
+Definitions of these details can be found in `detail_definitions`.
 
 ```{r}
 detail_definitions %>% 
   knitr::kable()
 ```
+
+
+<br>
+
+### 5 digits
+
+`fetch_zones` should cover most 5 digit cases and supply the most information when `show_details` is `TRUE`, but if you just want to use the equivalent of the ["Get Zone for ZIP Code Pair"](https://postcalc.usps.com/DomesticZoneChart/) tab, you can use `fetch_five_digit`.
+
+```{r}
+fetch_five_digit("31415", "92653",
+                 show_details = TRUE)
+```
+
 
 
 <br>

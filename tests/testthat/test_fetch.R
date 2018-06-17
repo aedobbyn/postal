@@ -1,10 +1,7 @@
-testthat::context("Test fetching")
+testthat::context("Test fetch_zones()")
 
-testthat::test_that("Zips are prepped correctly", {
+testthat::test_that("Input is correct", {
   testthat::expect_equal(prep_zip("123456"), "12345")
-})
-
-testthat::test_that("fetch_zones()", {
 
   testthat::expect_error(fetch_zones("foo"))
 

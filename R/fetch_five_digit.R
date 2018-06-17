@@ -4,6 +4,7 @@
 #'
 #' @param origin_zip A single origin zip as 5-digit character.
 #' @param destination_zip Optional destination zip as 5-digit character.
+#' @param show_details Extract extra stuff from the response?
 #' @param ... Other arguments
 #'
 #' @details Displays the result of a query to the ["Get Zone for ZIP Code Pair"](https://postcalc.usps.com/DomesticZoneChart/) tab.
@@ -11,13 +12,14 @@
 #' @importFrom magrittr %>%
 #'
 #' @examples \dontrun{
-#'
 #' fetch_five_digit("90210", "20500")
+#' }
 #'
 #' @return A tibble with origin zip and destination zips (in ranges or unspooled) and the USPS zones the origin-destination pair corresponds to.
 #' @export
 
-fetch_five_digit <- function(origin_zip, destination_zip, ...) {
+fetch_five_digit <- function(origin_zip, destination_zip,
+                             show_details = FALSE, ...) {
 
   origin_zip <-
     origin_zip %>% prep_zip()
@@ -31,14 +33,14 @@ fetch_five_digit <- function(origin_zip, destination_zip, ...) {
   resp <-
     jsonlite::fromJSON(url)
 
-  if (resp$OriginError != "") stop("Error relating to origin zip.")
-  if (resp$DestinationError != "") stop("Error relating to destination zip.")
+  if (resp$OriginError != "") stop("Invalid origin zip.")
+  if (resp$DestinationError != "") stop("Invalid destination zip.")
   if (resp$DestinationError != "") stop("No Zones found for the entered ZIP codes.")
 
   zone <-
     resp$ZoneInformation %>%
-    str_extract("The Zone is [0-9]+") %>%
-    str_extract("[0-9]+")
+    stringr::str_extract("The Zone is [0-9]+") %>%
+    stringr::str_extract("[0-9]+")
 
   full_response <-
     resp$ZoneInformation
@@ -50,6 +52,18 @@ fetch_five_digit <- function(origin_zip, destination_zip, ...) {
       zone = zone,
       full_response = full_response
     )
+
+  if (show_details == TRUE) {
+    out <- out %>%
+      mutate(
+        local = ifelse(stringr::str_detect(
+          full_response, "This is not a Local Zone"),
+          FALSE, TRUE),
+        same_ndc = ifelse(stringr::str_detect(
+          full_response, "The destination ZIP Code is not within the same NDC as the origin ZIP Code"),
+          FALSE, TRUE),
+      )
+  }
 
   return(out)
 }

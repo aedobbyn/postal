@@ -13,6 +13,8 @@ fetch_zones(origin_zip = NULL, destination_zip = NULL,
 
 \item{destination_zip}{Optional destination zip. If not included, returns all possible desinations for the origin provided. If > 3 digits and contains leading zeros, make sure to supply as character.}
 
+\item{exact_destination}{If \code{destination_zip} is supplied, should the result be filtered to the full destination zip, or its first 3 digits?}
+
 \item{as_range}{Do you want zones corresponding to a range of destination zips or a full listing of them?}
 
 \item{show_details}{Should columns with more details be retained?}
@@ -29,4 +31,16 @@ For a given 3-digit origin zip code, grab all destination zips and their corresp
 }
 \details{
 Displays the result of a query to the ["Get Zone Chart"](https://postcalc.usps.com/DomesticZoneChart/) tab.
+}
+\examples{
+\dontrun{
+
+a_zip <- fetch_zones("123")
+nrow(a_zip)
+
+fetch_zones("123", "456", show_details = TRUE)
+
+(double_oh_seven <- fetch_zones("007", as_range = TRUE))
+}
+
 }

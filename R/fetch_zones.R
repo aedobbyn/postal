@@ -4,6 +4,7 @@
 #'
 #' @param origin_zip A single origin zip as character. If > 3 digits and contains leading zeros, make sure to supply as character.
 #' @param destination_zip Optional destination zip. If not included, returns all possible desinations for the origin provided. If > 3 digits and contains leading zeros, make sure to supply as character.
+#' @param exact_destination If \code{destination_zip} is supplied, should the result be filtered to the full destination zip, or its first 3 digits?
 #' @param as_range Do you want zones corresponding to a range of destination zips or a full listing of them?
 #' @param show_details Should columns with more details be retained?
 #' @param verbose Message what's going on?
@@ -21,6 +22,7 @@
 #' fetch_zones("123", "456", show_details = TRUE)
 #'
 #' (double_oh_seven <- fetch_zones("007", as_range = TRUE))
+#' }
 #'
 #' @return A tibble with origin zip and destination zips (in ranges or unspooled) and the USPS zones the origin-destination pair corresponds to.
 #' @export
@@ -76,6 +78,9 @@ fetch_zones <- function(origin_zip = NULL,
           out %>%
           dplyr::filter(dest_zip == destination_zip |
                           is.na(dest_zip))
+      }
+      if (nrow(out) == 0 & verbose) {
+        message(glue::glue("No zones found for the {origin_zip} to {destination_zip} pair."))
       }
     }
 

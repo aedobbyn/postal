@@ -26,11 +26,9 @@ detail_definitions <-
   )
 
 prepend_zeros <- function(x) {
-  if (nchar(x) == 1) {   # 3 digit case
+  if (nchar(x) == 1) {
     x <- stringr::str_c("00", x, collapse = "")
-  } else if (nchar(x) == 2) {   # 3 digit case
-    x <- stringr::str_c("0", x, collapse = "")
-  } else if (nchar(x) == 4) {   # 5 digit case
+  } else if (nchar(x) == 2) {
     x <- stringr::str_c("0", x, collapse = "")
   }
   x
@@ -61,6 +59,10 @@ prep_zip <- function(zip, ...) {
     stop(glue::glue("Invalid zip {zip}; only numeric characters are allowed."))
   }
 
+  if (nchar(zip) == 4) {
+    stop(glue::glue("Invalid zip {zip}; don't know whether 4 digit zip supplied should be interpreted as 3 or 5 digits."))
+  }
+
   zip <- zip %>%
     prepend_zeros()
 
@@ -89,7 +91,6 @@ clean_data <- function(dat, o_zip) {
   if ("Zip5Digit" %in% names(dat)) {
     five_digit_zips <-
       dat$Zip5Digit %>%
-      # as.character() %>%
       dplyr::mutate(
         n_digits = 5
       )
