@@ -7,7 +7,6 @@ testthat::test_that("Zips are prepped correctly", {
 
 
 testthat::test_that("fetch_zones()", {
-
   testthat::expect_error(fetch_zones("foo123"))
 
   testthat::expect_error(fetch_zones(20))
@@ -15,14 +14,20 @@ testthat::test_that("fetch_zones()", {
   testthat::expect_warning(fetch_zones("9999999"))
 
   # # Not in use
-  testthat::expect_is(fetch_zones("0"),
-                       "data.frame")
+  testthat::expect_is(
+    fetch_zones("0"),
+    "data.frame"
+  )
 
-  testthat::expect_is(fetch_zones("006"),
-            "data.frame")
+  testthat::expect_is(
+    fetch_zones("006"),
+    "data.frame"
+  )
 
-  testthat::expect_is(fetch_zones("123"),
-            "data.frame")
+  testthat::expect_is(
+    fetch_zones("123"),
+    "data.frame"
+  )
 })
 
 
@@ -33,31 +38,31 @@ testthat::test_that("Priority Mail exceptions are noted", {
 
 
 testthat::test_that("Assignment of validity", {
-
   testthat::expect_message(fetch_zones("1"), "Origin zip 001 is not in use.")
-
 })
 
 
 testthat::test_that("3 and 5 digit endpoints agree", {
-
   origins <- c("11238", "60647", "80205")
   destinations <- c("98109", "02210", "94707")
 
-  three_d <- purrr::map2_dfr(origins, destinations,
-                             fetch_zones)
+  three_d <- purrr::map2_dfr(
+    origins, destinations,
+    fetch_zones
+  )
 
-  five_d <- purrr::map2_dfr(origins, destinations,
-                            fetch_five_digit)
+  five_d <- purrr::map2_dfr(
+    origins, destinations,
+    fetch_five_digit
+  )
 
   testthat::expect_equal(three_d$zone, five_d$zone)
-
 })
 
 
 testthat::test_that("We can grab all origins", {
-  testthat::expect_is(fetch_all(sample(all_possible_origins, 2)),
-                      "data.frame")
+  testthat::expect_is(
+    fetch_all(sample(all_possible_origins, 2)),
+    "data.frame"
+  )
 })
-
-

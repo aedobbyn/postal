@@ -20,10 +20,8 @@
 
 fetch_all <- function(origins = all_possible_origins,
                       sleep_time = 1, verbose = TRUE, ...) {
-
   fetch_and_sleep <- function(origin, sleep_time = 1,
-                              verbose = TRUE, ...) {
-
+                                verbose = TRUE, ...) {
     this_sleep <- sleep_time + runif(1)
 
     if (verbose) message(glue::glue("Sleeping {round(this_sleep, 3)} seconds."))
@@ -39,5 +37,3 @@ fetch_all <- function(origins = all_possible_origins,
 
   return(out)
 }
-
-

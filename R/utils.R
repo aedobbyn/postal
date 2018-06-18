@@ -54,7 +54,6 @@ replace_x <- function(x, replacement = NA_character_) {
 
 
 prep_zip <- function(zip, ...) {
-
   if (!is.character(zip)) {
     stop(glue::glue("Invalid zip {zip}; must be of type character."))
   }
@@ -112,8 +111,9 @@ clean_data <- function(dat, o_zip) {
 
   out <- out %>%
     tidyr::separate(ZipCodes,
-             into = c("dest_zip_start", "dest_zip_end"),
-             sep = "---") %>%
+      into = c("dest_zip_start", "dest_zip_end"),
+      sep = "---"
+    ) %>%
     dplyr::rowwise() %>%
     dplyr::mutate(
       dest_zip_end = ifelse(is.na(dest_zip_end), dest_zip_start, dest_zip_end)
@@ -136,8 +136,10 @@ clean_data <- function(dat, o_zip) {
         MailService == "" ~ FALSE
       )
     ) %>%
-    dplyr::select(-Zone, -MailService,
-                  -modifier_star, -modifier_plus) %>%
+    dplyr::select(
+      -Zone, -MailService,
+      -modifier_star, -modifier_plus
+    ) %>%
     dplyr::mutate(
       origin_zip = o_zip
     ) %>%
@@ -153,7 +155,6 @@ clean_data <- function(dat, o_zip) {
 
 
 get_zones <- function(inp, verbose = FALSE, ...) {
-
   if (verbose) {
     message(glue::glue("Grabbing origin ZIP {inp}"))
   }
@@ -181,7 +182,6 @@ get_zones <- function(inp, verbose = FALSE, ...) {
       dplyr::mutate(validity = "invalid")
 
     message(glue::glue("Origin zip {inp} is not in use."))
-
   } else {
     suppressWarnings({
       out <- get_data(this_url) %>%
@@ -202,7 +202,6 @@ get_zones <- function(inp, verbose = FALSE, ...) {
 
 
 interpolate_zips <- function(df) {
-
   if (df$validity[1] == "invalid") {
     df <-
       df %>%

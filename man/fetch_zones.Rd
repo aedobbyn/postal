@@ -11,7 +11,7 @@ fetch_zones(origin_zip = NULL, destination_zip = NULL,
 \arguments{
 \item{origin_zip}{A single origin zip as character. If > 3 digits and contains leading zeros, make sure to supply as character.}
 
-\item{destination_zip}{Optional destination zip. If not included, returns all possible desinations for the origin provided. If > 3 digits and contains leading zeros, make sure to supply as character.}
+\item{destination_zip}{Optional destination zip. If not included, returns all possible destinations for the origin provided. If > 3 digits and contains leading zeros, make sure to supply as character.}
 
 \item{exact_destination}{If \code{destination_zip} is supplied, should the result be filtered to the full destination zip, or its first 3 digits?}
 

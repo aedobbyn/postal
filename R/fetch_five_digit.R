@@ -27,12 +27,13 @@
 
 fetch_five_digit <- function(origin_zip, destination_zip,
                              show_details = FALSE, ...) {
-
   origin_zip <-
-    origin_zip %>% prep_zip()
+    origin_zip %>%
+    prep_zip()
 
   destination_zip <-
-    destination_zip %>% prep_zip()
+    destination_zip %>%
+    prep_zip()
 
   url <-
     glue::glue("{five_digit_base_url}?origin={origin_zip}&destination={destination_zip}")
@@ -63,7 +64,8 @@ fetch_five_digit <- function(origin_zip, destination_zip,
     dplyr::mutate(
       priority_mail_zone = full_response %>%
         stringr::str_extract(
-          "except for Priority Mail services where the Zone is [0-9]") %>%
+          "except for Priority Mail services where the Zone is [0-9]"
+        ) %>%
         stringr::str_extract("[0-9]")
     )
 
@@ -72,13 +74,17 @@ fetch_five_digit <- function(origin_zip, destination_zip,
       dplyr::mutate(
         local = ifelse(
           stringr::str_detect(
-            full_response, "This is not a Local Zone"),
-          FALSE, TRUE),
+            full_response, "This is not a Local Zone"
+          ),
+          FALSE, TRUE
+        ),
 
         same_ndc = ifelse(
           stringr::str_detect(
-            full_response, "The destination ZIP Code is not within the same NDC as the origin ZIP Code"),
-          FALSE, TRUE),
+            full_response, "The destination ZIP Code is not within the same NDC as the origin ZIP Code"
+          ),
+          FALSE, TRUE
+        ),
       ) %>%
       dplyr::select(origin_zip, dest_zip, zone, priority_mail_zone, local, same_ndc, full_response)
   } else {
