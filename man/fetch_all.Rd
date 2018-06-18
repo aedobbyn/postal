@@ -20,10 +20,10 @@ fetch_all(origins = all_possible_origins, sleep_time = 1, verbose = TRUE,
 A tibble with origin zip and destination zips (in ranges or unspooled) and the USPS zones the origin-destination pair corresponds to.
 }
 \description{
-For a given 3-digit origin zip code, grab all destination zips and their corresponding zones.
+Grab all the origin-destination pairs.
 }
 \details{
-
+For all the 3-digit origin zip codes, grab all destination zips and their corresponding zones.
 }
 \examples{
 \dontrun{
