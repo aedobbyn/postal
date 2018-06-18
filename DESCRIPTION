@@ -20,6 +20,7 @@ Imports:
     stringr,
     tidyr
 Suggests: 
-    testthat
+    testthat,
+    covr
 VignetteBuilder: knitr
 RoxygenNote: 6.0.1.9000

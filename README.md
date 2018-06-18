@@ -1,6 +1,11 @@
 
 # usps 📫
 
+[![Travis build
+status](https://travis-ci.org/aedobbyn/usps.svg?branch=master)](https://travis-ci.org/aedobbyn/usps)
+[![Coverage
+status](https://codecov.io/gh/aedobbyn/usps/branch/master/graph/badge.svg)](https://codecov.io/github/aedobbyn/usps?branch=master)
+
 Need to get the USPS shipping zone for two zip codes? `usps` provides a
 tidy interface to the [USPS domestic zone calc
 API](https://postcalc.usps.com/DomesticZoneChart/).
@@ -51,12 +56,12 @@ messaged and included in the output with `NA`s in the other columns.
 The origin “004” is not a valid 3-digit zip.
 
 ``` r
-origin_zips <- c("2718281828459", "04", "52353")
+origin_zips <- c("27182818284590", "4", "52353")
 
 origin_zips %>% 
   purrr::map_dfr(fetch_zones)
 #> Warning in prep_zip(.): Zip can be at most 5 characters; trimming
-#> 2718281828459 to 27182.
+#> 27182818284590 to 27182.
 #> Origin zip 004 is not in use.
 #> # A tibble: 4,845 x 3
 #>    origin_zip dest_zip zone 
@@ -84,7 +89,7 @@ purrr::map2_dfr(origin_zips, dest_zips,
                 fetch_zones,
                 verbose = TRUE)
 #> Warning in prep_zip(.): Zip can be at most 5 characters; trimming
-#> 2718281828459 to 27182.
+#> 27182818284590 to 27182.
 #> Only 3-character origin zips can be sent to the API. Zip 27182 will be requested as 271.
 #> Grabbing origin ZIP 271
 #> Recieved 994 destination ZIPs for 8 zones.

@@ -6,3 +6,4 @@
 ^\.travis\.yml$
 ^R/get_all.R$
 ^R/list_valid_origins.R$
+^codecov\.yml$

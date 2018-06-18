@@ -14,6 +14,9 @@ library(magrittr)
 
 # usps `r emo::ji("mailbox")`
 
+[![Travis build status](https://travis-ci.org/aedobbyn/usps.svg?branch=master)](https://travis-ci.org/aedobbyn/usps)
+[![Coverage status](https://codecov.io/gh/aedobbyn/usps/branch/master/graph/badge.svg)](https://codecov.io/github/aedobbyn/usps?branch=master)
+
 Need to get the USPS shipping zone for two zip codes? `usps` provides a tidy interface to the [USPS domestic zone calc API](https://postcalc.usps.com/DomesticZoneChart/).
 
 ### Installation Instructions
