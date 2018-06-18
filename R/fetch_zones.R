@@ -3,7 +3,7 @@
 #' For a given 3-digit origin zip code, grab all destination zips and their corresponding zones.
 #'
 #' @param origin_zip A single origin zip as character. If > 3 digits and contains leading zeros, make sure to supply as character.
-#' @param destination_zip Optional destination zip. If not included, returns all possible desinations for the origin provided. If > 3 digits and contains leading zeros, make sure to supply as character.
+#' @param destination_zip Optional destination zip. If not included, returns all possible destinations for the origin provided. If > 3 digits and contains leading zeros, make sure to supply as character.
 #' @param exact_destination If \code{destination_zip} is supplied, should the result be filtered to the full destination zip, or its first 3 digits?
 #' @param as_range Do you want zones corresponding to a range of destination zips or a full listing of them?
 #' @param show_details Should columns with more details be retained?
