@@ -24,13 +24,17 @@ detail_definitions <-
       "This 3 digit destination zip prefix appears at the beginning of certain 5 digit destination zips that correspond to a different zone."
   )
 
-prepend_zeros <- function(x) {
+prepend_zeros <- function(x, verbose = FALSE, ...) {
   if (nchar(x) == 1) {
-    x <- stringr::str_c("00", x, collapse = "")
+    y <- stringr::str_c("00", x, collapse = "")
+    if (verbose) message(glue::glue("Making {x} into {y}"))
   } else if (nchar(x) == 2) {
-    x <- stringr::str_c("0", x, collapse = "")
+    y <- stringr::str_c("0", x, collapse = "")
+    if (verbose) message(glue::glue("Making {x} into {y}"))
+  } else {
+    y <- x
   }
-  x
+  return(y)
 }
 
 

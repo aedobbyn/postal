@@ -52,20 +52,18 @@ fetch_zones(origin_zip = "123",
 
 You can provide a vector of zips and map them nicely into a dataframe. Here we ask for all destination zips for these three origin zips. 
 
-If an origin zip is supplied that is [not in use](https://en.wikipedia.org/wiki/List_of_ZIP_code_prefixes), it is messaged and included in the output with `NA`s in the other columns.
-
-The origin "004" is not a valid 3-digit zip.
+If an origin zip is supplied that is [not in use](https://en.wikipedia.org/wiki/List_of_ZIP_code_prefixes), it is messaged and included in the output with `NA`s in the other columns. For example, the origin "001" is not a valid 3-digit zip.
 
 
 ```{r}
-origin_zips <- c("27182818284590", "4", "52353")
+origin_zips <- c("1", "271828182845904", "52353")
 
 origin_zips %>% 
   purrr::map_dfr(fetch_zones)
 ```
 
 
-Similarly, map over both origin and destination zips and end up at a dataframe:
+Similarly, map over both origin and destination zips and end up at a dataframe. `verbose` gives you a play-by-play if you want it.
 
 ```{r}
 dest_zips <- c("867", "53", "09")
@@ -122,11 +120,11 @@ detail_definitions %>%
 #### The Nitpicky
 
 * Number of digits: 
-    * This API endpoint accepts exactly 3 digit origin zips; it mostly returns 3 digit destination zips, but notes 5 digit exceptions. For that reason,
+    * This API endpoint used in `fetch_zones` accepts exactly 3 digits for the origin zip; it mostly returns 3 digit destination zips, but notes 5 digit exceptions. For that reason,
     * If fewer than three digits are supplied, leading zeroes are added with a message
     * If more than five digits are supplied, the zip is truncated to the first five with a warning
       * The first three digits of the origin zip are sent to the API
-      * If destination is supplied, we filter the results to the first 3 digits if `exact_destination` is `FALSE`; otherwise we return only the exact destination
+      * If destination and is 5 digits, `exact_destination` determines whether we filter to the 5-digit destination only or include results for the 3-digit destination prefix
 
 
 ```{r}
@@ -137,7 +135,7 @@ fetch_zones(origin_zip = "12358132134558",
 
 <br>
 
-#### 5 digits
+#### I just want to supply 5 digits
 
 `fetch_zones` should cover most 5 digit cases and supply the most information when `show_details` is `TRUE`, but if you just want to use the equivalent of the ["Get Zone for ZIP Code Pair"](https://postcalc.usps.com/DomesticZoneChart/) tab, you can use `fetch_five_digit`.
 

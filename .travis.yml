@@ -1,6 +1,19 @@
 
 language: R
+
 sudo: false
+
 cache: packages
+
 after_success:
   - Rscript -e 'covr::codecov()'
+
+warnings_are_errors: false
+
+r_github_packages:
+  - jimhester/covr
+
+notifications:
+  email:
+    on_success: change
+    on_failure: change

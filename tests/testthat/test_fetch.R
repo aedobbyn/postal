@@ -54,3 +54,10 @@ testthat::test_that("3 and 5 digit endpoints agree", {
 
 })
 
+
+testthat::test_that("We can grab all origins", {
+  testthat::expect_is(fetch_all(sample(all_possible_origins, 2)),
+                      "data.frame")
+})
+
+
