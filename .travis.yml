@@ -5,13 +5,13 @@ sudo: false
 
 cache: packages
 
+r_github_packages:
+  - r-lib/covr
+
 after_success:
   - Rscript -e 'covr::codecov()'
 
 warnings_are_errors: false
-
-r_github_packages:
-  - jimhester/covr
 
 notifications:
   email:

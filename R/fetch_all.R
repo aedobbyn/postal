@@ -1,13 +1,12 @@
 #' Grab all the origin-destination pairs.
 #'
-#' For a given 3-digit origin zip code, grab all destination zips and their corresponding zones.
 #'
 #' @param origins A vector of origin zips.
 #' @param sleep_time How long to sleep in between requests, plus or minus \code{runif(1)} second.
 #' @param verbose Message what's going on?
 #' @param ... Other arguments
 #'
-#' @details
+#' @details For all the 3-digit origin zip codes, grab all destination zips and their corresponding zones.
 #'
 #' @importFrom magrittr %>%
 #'

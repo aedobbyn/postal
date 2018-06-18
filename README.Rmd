@@ -83,7 +83,7 @@ purrr::map2_dfr(origin_zips, dest_zips,
 The USPS zone calc web interface displays zones only as they pertain to destination zip code *ranges*:
 
 <p align="center">
-  <img src="./img/post_calc.jpg" alt="post_calc" width="70%">
+  <img src="./man/figures/post_calc.jpg" alt="post_calc" width="70%">
 </p>
 
 

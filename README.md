@@ -51,36 +51,35 @@ Here we ask for all destination zips for these three origin zips.
 
 If an origin zip is supplied that is [not in
 use](https://en.wikipedia.org/wiki/List_of_ZIP_code_prefixes), it is
-messaged and included in the output with `NA`s in the other columns.
-
-The origin “004” is not a valid 3-digit zip.
+messaged and included in the output with `NA`s in the other columns. For
+example, the origin “001” is not a valid 3-digit zip.
 
 ``` r
-origin_zips <- c("27182818284590", "4", "52353")
+origin_zips <- c("1", "271828182845904", "52353")
 
 origin_zips %>% 
   purrr::map_dfr(fetch_zones)
+#> Origin zip 001 is not in use.
 #> Warning in prep_zip(.): Zip can be at most 5 characters; trimming
-#> 27182818284590 to 27182.
-#> Origin zip 004 is not in use.
+#> 271828182845904 to 27182.
 #> # A tibble: 4,845 x 3
 #>    origin_zip dest_zip zone 
 #>    <chr>      <chr>    <chr>
-#>  1 271        005      4    
-#>  2 271        006      7    
-#>  3 271        007      7    
-#>  4 271        008      7    
-#>  5 271        009      7    
-#>  6 271        010      4    
-#>  7 271        011      4    
-#>  8 271        012      4    
-#>  9 271        013      4    
-#> 10 271        014      4    
+#>  1 001        <NA>     <NA> 
+#>  2 271        005      4    
+#>  3 271        006      7    
+#>  4 271        007      7    
+#>  5 271        008      7    
+#>  6 271        009      7    
+#>  7 271        010      4    
+#>  8 271        011      4    
+#>  9 271        012      4    
+#> 10 271        013      4    
 #> # ... with 4,835 more rows
 ```
 
 Similarly, map over both origin and destination zips and end up at a
-dataframe:
+dataframe. `verbose` gives you a play-by-play if you want it.
 
 ``` r
 dest_zips <- c("867", "53", "09")
@@ -88,22 +87,22 @@ dest_zips <- c("867", "53", "09")
 purrr::map2_dfr(origin_zips, dest_zips, 
                 fetch_zones,
                 verbose = TRUE)
+#> Grabbing origin ZIP 001
+#> Origin zip 001 is not in use.
 #> Warning in prep_zip(.): Zip can be at most 5 characters; trimming
-#> 27182818284590 to 27182.
+#> 271828182845904 to 27182.
 #> Only 3-character origin zips can be sent to the API. Zip 27182 will be requested as 271.
 #> Grabbing origin ZIP 271
 #> Recieved 994 destination ZIPs for 8 zones.
-#> No zones found for the 271 to 867 pair.
-#> Grabbing origin ZIP 004
-#> Origin zip 004 is not in use.
 #> Only 3-character origin zips can be sent to the API. Zip 52353 will be requested as 523.
 #> Grabbing origin ZIP 523
 #> Recieved 994 destination ZIPs for 8 zones.
-#> # A tibble: 2 x 3
+#> # A tibble: 3 x 3
 #>   origin_zip dest_zip zone 
 #>   <chr>      <chr>    <chr>
-#> 1 004        <NA>     <NA> 
-#> 2 523        009      8
+#> 1 001        <NA>     <NA> 
+#> 2 271        053      5    
+#> 3 523        009      8
 ```
 
 <br> <br>
@@ -115,7 +114,7 @@ destination zip code *ranges*:
 
 <p align="center">
 
-<img src="./img/post_calc.jpg" alt="post_calc" width="70%">
+<img src="./man/figures/post_calc.jpg" alt="post_calc" width="70%">
 
 </p>
 
@@ -161,17 +160,17 @@ detail_definitions %>%
 #### The Nitpicky
 
   - Number of digits:
-      - This API endpoint accepts exactly 3 digit origin zips; it mostly
-        returns 3 digit destination zips, but notes 5 digit exceptions.
-        For that reason,
+      - This API endpoint used in `fetch_zones` accepts exactly 3 digits
+        for the origin zip; it mostly returns 3 digit destination zips,
+        but notes 5 digit exceptions. For that reason,
       - If fewer than three digits are supplied, leading zeroes are
         added with a message
       - If more than five digits are supplied, the zip is truncated to
         the first five with a warning
           - The first three digits of the origin zip are sent to the API
-          - If destination is supplied, we filter the results to the
-            first 3 digits if `exact_destination` is `FALSE`; otherwise
-            we return only the exact destination
+          - If destination and is 5 digits, `exact_destination`
+            determines whether we filter to the 5-digit destination only
+            or include results for the 3-digit destination prefix
 
 <!-- end list -->
 
@@ -189,7 +188,7 @@ fetch_zones(origin_zip = "12358132134558",
 
 <br>
 
-#### 5 digits
+#### I just want to supply 5 digits
 
 `fetch_zones` should cover most 5 digit cases and supply the most
 information when `show_details` is `TRUE`, but if you just want to use
