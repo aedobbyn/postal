@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 
 ```{r, message=FALSE}
 library(usps)
-library(tidyverse)
+library(dplyr)
 library(ggmap)
 library(zipcode)
 ```

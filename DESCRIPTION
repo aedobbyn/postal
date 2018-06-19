@@ -24,7 +24,8 @@ Imports:
     tidyr
 Suggests: 
     covr,
-    testthat,
-    rmarkdown
+    ggmap,
+    rmarkdown,
+    testthat
 VignetteBuilder: knitr
 RoxygenNote: 6.0.1.9000

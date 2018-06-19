@@ -32,9 +32,9 @@ devtools::install_github('aedobbyn/usps')
 
 ### Usage
 
-There are 99999^2 or 9.999810^{9} possible origin-destination zip
-combinations. USPS narrows down that search space a bit by trimming it
-it to the first 3 digits of the zip.
+There are 99999^2 or 9,999,800,001 possible origin-destination zip
+combinations. USPS narrows down that search space a bit by trimming zips
+to their first 3 digits.
 
 Supply a 3-digit origin and, optionally, destination zip prefix to find
 their corresponding zone. If no destination is supplied, all desination
