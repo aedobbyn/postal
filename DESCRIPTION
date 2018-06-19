@@ -12,6 +12,7 @@ LazyData: TRUE
 URL: http://github.com/aedobbyn/usps/
 BugReports: https://github.com/aedobbyn/usps/issues/
 Imports: 
+    curl,
     dplyr,
     glue,
     jsonlite,
@@ -23,6 +24,7 @@ Imports:
     tidyr
 Suggests: 
     covr,
-    testthat
+    testthat,
+    rmarkdown
 VignetteBuilder: knitr
 RoxygenNote: 6.0.1.9000

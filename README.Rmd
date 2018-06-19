@@ -58,7 +58,7 @@ If an origin zip is supplied that is [not in use](https://en.wikipedia.org/wiki/
 
 
 ```{r}
-origin_zips <- c("1", "271", "82818")
+origin_zips <- c("001", "271", "828")
 
 origin_zips %>% 
   purrr::map_dfr(fetch_zones)

@@ -19,15 +19,23 @@
 #' @export
 
 fetch_all <- function(origins = all_possible_origins,
-                      sleep_time = 1, verbose = TRUE, ...) {
+                      sleep_time = 1,
+                      as_range = FALSE,
+                      show_details = FALSE,
+                      verbose = TRUE, ...) {
+
   fetch_and_sleep <- function(origin, sleep_time = 1,
                                 verbose = TRUE, ...) {
+
     this_sleep <- sleep_time + runif(1)
 
     if (verbose) message(glue::glue("Sleeping {round(this_sleep, 3)} seconds."))
     Sys.sleep(this_sleep)
 
-    this <- fetch_zones(origin, verbose = verbose, ...)
+    this <- fetch_zones(origin,
+                        as_range = as_range,
+                        show_details = show_details,
+                        verbose = verbose, ...)
     return(this)
   }
 

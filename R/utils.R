@@ -79,9 +79,18 @@ prep_zip <- function(zip, ...) {
 
 
 get_data <- function(url) {
+
+  if (!curl::has_internet()) {
+    message("No internet connection detected.")
+  }
+
   url %>%
     jsonlite::fromJSON()
 }
+
+
+try_get_data <-
+  purrr::safely(get_data)
 
 
 clean_data <- function(dat, o_zip) {
@@ -154,13 +163,30 @@ clean_data <- function(dat, o_zip) {
 }
 
 
-get_zones <- function(inp, verbose = FALSE, ...) {
+get_zones <- function(inp, verbose = FALSE, n_tries = 3, ...) {
   if (verbose) {
     message(glue::glue("Grabbing origin ZIP {inp}"))
   }
 
   this_url <- stringr::str_c(three_digit_base_url, inp, collapse = "")
-  out <- get_data(this_url)
+  this_try <- 1
+  resp <- try_get_data(this_url)
+
+  if (!is.null(resp$error)) {
+    while (this_try <= n_tries) {
+      this_try <- this_try + 1
+      message(glue::glue("Error on request. Beginning try {this_try} of {n_tries}."))
+      Sys.sleep(this_try ^ 2)
+      resp <- try_get_data(this_url)
+
+      if (this_try == n_tries) {
+        message(glue::glue("Unsuccessful grabbing data for {inp}."))
+        return(tibble::tibble())
+      }
+    }
+  }
+
+  out <- resp$result
 
   if (out$PageError != "") {
     if (out$PageError == "No Zones found for the entered ZIP Code.") {

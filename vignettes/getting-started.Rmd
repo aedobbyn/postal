@@ -1,0 +1,86 @@
+---
+title: "Getting Started"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r}
+library(usps)
+library(tidyverse)
+library(ggmap)
+library(zipcode)
+```
+
+```{r}
+data(zip_zones)
+data(zipcode)
+
+zips <- 
+  zipcode %>% 
+  as_tibble() %>% 
+  mutate(
+    zip_trim = substr(zip, 1, 3)
+  )
+```
+
+```{r}
+usps_zips <-
+  tibble(
+    zip =
+      unique(zip_zones$origin_zip) %>% 
+      c(unique(zip_zones$dest_zip_start)) # TODO: change to dest_zip
+  ) %>% 
+  distinct()
+```
+
+
+```{r}
+zips_lat_long <- 
+  zips %>% 
+  distinct(zip_trim, .keep_all = TRUE) %>% 
+  left_join(usps_zips, by = "zip") %>% 
+  select(zip_trim, latitude, longitude)
+```
+
+
+```{r}
+zip_zones_lat_long <- 
+  zip_zones %>% 
+  left_join(zips_lat_long, by = c("origin_zip" = "zip_trim")) %>% 
+  rename(
+      lat_origin = latitude,
+      long_origin = longitude) %>% 
+  left_join(zips_lat_long, by = c("dest_zip_start" = "zip_trim")) %>% 
+  rename(
+      lat_dest = latitude,
+      long_dest = longitude) %>% 
+  drop_na(zone)
+```
+
+
+```{r}
+us <- 
+  get_googlemap("us", zoom = 4) %>% 
+  ggmap()
+```
+
+
+```{r, eval=FALSE}
+us %>% 
+  geom_point(zip_zones_lat_long, aes(lat_origin, long_origin, fill = factor(zone)))
+```
+
+
+
+
