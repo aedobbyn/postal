@@ -25,7 +25,9 @@ Imports:
 Suggests: 
     covr,
     ggmap,
+    ggplot2,
     rmarkdown,
-    testthat
+    testthat,
+    zipcode
 VignetteBuilder: knitr
 RoxygenNote: 6.0.1.9000

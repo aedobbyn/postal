@@ -2,16 +2,16 @@
 % Please edit documentation in R/fetch_all.R
 \name{fetch_all}
 \alias{fetch_all}
-\title{Grab all the origin-destination pairs.}
+\title{Grab all the 3-digit origin-destination pairs.}
 \usage{
 fetch_all(origins = all_possible_origins, write_to = NULL, sleep_time = 1,
   n_tries = 3, as_range = FALSE, show_details = FALSE, verbose = TRUE,
   ...)
 }
 \arguments{
-\item{origins}{A vector of origin zips.}
+\item{origins}{A vector of origin zips. Defaults to all possible origin zips from 000 to 999.}
 
-\item{write_to}{CSV file to append each zip to}
+\item{write_to}{The path to a CSV file to create and append each result to.}
 
 \item{sleep_time}{How long to sleep in between requests, plus or minus \code{runif(1)} second.}
 
@@ -29,10 +29,10 @@ fetch_all(origins = all_possible_origins, write_to = NULL, sleep_time = 1,
 A tibble with origin zip and destination zips (in ranges or unspooled) and the USPS zones the origin-destination pair corresponds to.
 }
 \description{
-Grab all the origin-destination pairs.
+Grab all the 3-digit origin-destination pairs.
 }
 \details{
-For all the 3-digit origin zip codes, grab all destination zips and their corresponding zones.
+For all the 3-digit origin zip codes, grab all destination zips and their corresponding zones. If this fails partway through, origins that could not be retrieved get a "no_success" value in their other columns but we continue trying to grab results for all supplied \code{origins}.
 }
 \examples{
 \dontrun{
