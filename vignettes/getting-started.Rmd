@@ -15,15 +15,26 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r}
+```{r, message=FALSE}
 library(usps)
 library(tidyverse)
 library(ggmap)
 library(zipcode)
 ```
 
+```{r, message=FALSE}
+# data(zip_zones)
+
+zip_zones <- 
+  read_csv(here::here("data", "2018-06-19_zip_zones.csv"))
+
+names(zip_zones) <- 
+  c("origin_zip", "dest_zip", "zone", "specific_to_priority_mail",
+    "same_ndc", "has_five_digit_exceptions")
+```
+
+
 ```{r}
-data(zip_zones)
 data(zipcode)
 
 zips <- 
@@ -39,7 +50,7 @@ usps_zips <-
   tibble(
     zip =
       unique(zip_zones$origin_zip) %>% 
-      c(unique(zip_zones$dest_zip_start)) # TODO: change to dest_zip
+      c(unique(zip_zones$dest_zip)) 
   ) %>% 
   distinct()
 ```
@@ -61,15 +72,17 @@ zip_zones_lat_long <-
   rename(
       lat_origin = latitude,
       long_origin = longitude) %>% 
-  left_join(zips_lat_long, by = c("dest_zip_start" = "zip_trim")) %>% 
+  left_join(zips_lat_long, by = c("dest_zip" = "zip_trim")) %>% 
   rename(
       lat_dest = latitude,
       long_dest = longitude) %>% 
   drop_na(zone)
+
+zip_zones_lat_long
 ```
 
 
-```{r}
+```{r, eval=FALSE}
 us <- 
   get_googlemap("us", zoom = 4) %>% 
   ggmap()
