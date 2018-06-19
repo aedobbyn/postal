@@ -162,6 +162,39 @@ Details in `fetch_five_digit` are slightly different than in `fetch_zones`.
 
 <br>
 
+
+### All of the data
+
+If you want the most up-to-date zip-zone mappings, `fetch_all` allows you to use the 3 digit endpoint to fetch all possible origins and write them to a CSV as you go.
+
+By default we use every possible origin from "000" to "999"; as of now "000" through "004" are all not in use.
+
+```{r, eval=FALSE}
+fetch_all(all_possible_origins,
+          sleep_time = 0.5, 
+          write_to = glue::glue(here::here("data", "{Sys.Date()}_all_my_zones.csv")))
+```
+
+
+If there's a network error, we back off and try a few times and finally write "no_success" (rather than `NA`s which indicate that the origin zip is not in use). What that looks like in the event we get internet between asking for origin "123" and origin "456": 
+
+```{r, echo=FALSE}
+tibble::tribble(
+  ~"origin", ~"dest", ~"zip",
+  "123", "no_success", "no_success",
+  "456", "005", "4",
+  "456", "006", "7",
+  "456", "007", "7",
+  "456", "008", "7",
+  "456", "009", "7",
+  "456", "010", "4",
+  "...", "...", "..."
+)
+```
+
+
+<br>
+
 Bug reports and PRs welcome!
 
 <p align="center">

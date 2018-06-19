@@ -4,17 +4,25 @@
 \alias{fetch_all}
 \title{Grab all the origin-destination pairs.}
 \usage{
-fetch_all(origins = all_possible_origins, sleep_time = 1, verbose = TRUE,
-  ...)
+fetch_all(origins = all_possible_origins, write_to = NULL, sleep_time = 1,
+  as_range = FALSE, show_details = FALSE, verbose = TRUE, ...)
 }
 \arguments{
 \item{origins}{A vector of origin zips.}
 
+\item{write_to}{CSV file to append each zip to}
+
 \item{sleep_time}{How long to sleep in between requests, plus or minus \code{runif(1)} second.}
+
+\item{as_range}{Do you want zones corresponding to a range of destination zips or a full listing of them?}
+
+\item{show_details}{Should columns with more details be retained?}
 
 \item{verbose}{Message what's going on?}
 
 \item{...}{Other arguments}
+
+\item{n_tries}{How many times to try getting an origin if we're unsuccessful the first time?}
 }
 \value{
 A tibble with origin zip and destination zips (in ranges or unspooled) and the USPS zones the origin-destination pair corresponds to.
@@ -29,6 +37,9 @@ For all the 3-digit origin zip codes, grab all destination zips and their corres
 \dontrun{
 
 fetch_all(sample(all_possible_origins, 4))
+
+fetch_all(show_details = TRUE, verbose = TRUE,
+    write_to = glue::glue(here::here("data", "{Sys.Date()}_zip_zones.csv")))
 }
 
 }

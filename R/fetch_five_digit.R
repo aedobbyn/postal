@@ -58,7 +58,7 @@ fetch_five_digit <- function(origin_zip, destination_zip,
       origin_zip = origin_zip,
       dest_zip = destination_zip,
       zone = zone,
-      priority_mail_zone = NA_character_,
+      priority_mail_zone = NA,
       full_response = full_response
     ) %>%
     dplyr::mutate(

@@ -4,6 +4,9 @@
 #' @param origins A vector of origin zips.
 #' @param write_to CSV file to append each zip to
 #' @param sleep_time How long to sleep in between requests, plus or minus \code{runif(1)} second.
+#' @param n_tries How many times to try getting an origin if we're unsuccessful the first time?
+#' @param as_range Do you want zones corresponding to a range of destination zips or a full listing of them?
+#' @param show_details Should columns with more details be retained?
 #' @param verbose Message what's going on?
 #' @param ... Other arguments
 #'

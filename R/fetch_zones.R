@@ -7,6 +7,7 @@
 #' @param exact_destination If \code{destination_zip} is supplied, should the result be filtered to the full destination zip, or its first 3 digits?
 #' @param as_range Do you want zones corresponding to a range of destination zips or a full listing of them?
 #' @param show_details Should columns with more details be retained?
+#' @param n_tries How many times to try getting an origin if we're unsuccessful the first time?
 #' @param verbose Message what's going on?
 #' @param ... Other arguments
 #'
@@ -32,6 +33,7 @@ fetch_zones <- function(origin_zip = NULL,
                         exact_destination = FALSE,
                         as_range = FALSE,
                         show_details = FALSE,
+                        n_tries = 3,
                         verbose = FALSE, ...) {
   if (is.null(origin_zip) | is.na((origin_zip))) stop("origin_zip cannot be missing.")
 
@@ -59,7 +61,7 @@ fetch_zones <- function(origin_zip = NULL,
 
   out <-
     origin_zip %>%
-    get_zones(verbose = verbose)
+    get_zones(verbose = verbose, n_tries = n_tries)
 
   if (as_range == FALSE) {
     out <-

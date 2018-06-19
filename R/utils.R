@@ -1,4 +1,5 @@
 #' @import magrittr
+#' @importFrom curl has_internet
 
 three_digit_base_url <-
   "https://postcalc.usps.com/DomesticZoneChart/GetZoneChart?zipCode3Digit="

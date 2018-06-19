@@ -6,7 +6,7 @@
 \usage{
 fetch_zones(origin_zip = NULL, destination_zip = NULL,
   exact_destination = FALSE, as_range = FALSE, show_details = FALSE,
-  verbose = FALSE, ...)
+  n_tries = 3, verbose = FALSE, ...)
 }
 \arguments{
 \item{origin_zip}{A single origin zip as character. If > 3 digits and contains leading zeros, make sure to supply as character.}
@@ -18,6 +18,8 @@ fetch_zones(origin_zip = NULL, destination_zip = NULL,
 \item{as_range}{Do you want zones corresponding to a range of destination zips or a full listing of them?}
 
 \item{show_details}{Should columns with more details be retained?}
+
+\item{n_tries}{How many times to try getting an origin if we're unsuccessful the first time?}
 
 \item{verbose}{Message what's going on?}
 
