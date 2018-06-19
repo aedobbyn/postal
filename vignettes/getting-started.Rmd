@@ -24,19 +24,24 @@ library(ggmap)
 library(zipcode)
 ```
 
-```{r, message=FALSE}
-# data(zip_zones)
-
+```{r, include=FALSE}
 zip_zones <- 
-  readr::read_csv(here::here("data", "2018-06-19_zip_zones.csv"))
+  readr::read_csv("/Users/amanda/Desktop/Projects/usps/data/2018-06-19_zip_zones.csv") 
 
 names(zip_zones) <- 
   c("origin_zip", "dest_zip", "zone", "specific_to_priority_mail",
     "same_ndc", "has_five_digit_exceptions")
+
+zip_zones <- 
+  zip_zones %>%   
+  select(origin_zip, dest_zip, zone)
 ```
 
 
+Data from the `zipcode` package relates zip codes to its latitude and longitude. 
+
 ```{r}
+# data(zip_zones)
 data(zipcode)
 
 zips <- 
@@ -45,7 +50,11 @@ zips <-
   mutate(
     zip_trim = substr(zip, 1, 3)
   )
+
+zips
 ```
+
+Let's get a tibble of all possible USPS zips, both origin prefixes and destinations, including our 5 digit destinations.
 
 ```{r}
 usps_zips <-
@@ -57,6 +66,8 @@ usps_zips <-
   distinct()
 ```
 
+
+Now we can join the `zipcode` latitudes and longitudes on our `usps_zips` to get a corresponding lat and long for each origin and destination zip.
 
 ```{r}
 zips_lat_long <- 
@@ -84,32 +95,27 @@ zip_zones_lat_long
 ```
 
 
+Using a single origin zip, we can plot all of the destination zips' zones relative to that origin. 
+
 ```{r, eval=TRUE}
 us <- 
-  # get_googlemap("us", zoom = 4)
-  get_map("us", zoom = 4, maptype = "toner-lite")
+  get_googlemap("us", zoom = 4)
+  # get_map("us", zoom = 4, maptype = "toner-lite")
 ```
 
 
 ```{r, eval=TRUE}
-# pal <- wes_palette("Royal2")
-
-ggmap(us) +
+ggmap(us, extent = "device") +
   geom_polygon(data = zip_zones_lat_long %>% 
                  mutate(zone = factor(zone)) %>% 
                  filter(origin_zip == "112"), 
              aes(long_dest, lat_dest, fill = zone),
              alpha = 0.5) +
-  labs(x = "", y = "", fill = "Zone", subtitle = "Origin zone prefix: 112") +
-  ggtitle("Shipping Zones from NYC") +
+  labs(x = "", y = "", fill = "Zone") +
+  ggtitle("Shipping Zones from Brooklyn",
+          subtitle = "Origin zone prefix: 112") +
   scale_fill_brewer(type = "seq") +
   theme_classic(base_family = "Arial Narrow")
-  # scale_fill_discrete(c("#9A8822", "#F5CDB4", "#F8AFA8", "#FDDDA0", "#74A089",
-  #                     "#FF0000", "#00A08A", "#F2AD00", "#F98400"))
-  
-  # stat_density2d(data = party_ready, 
-  #                aes(x = longitude, y = latitude,  fill = ..level.., alpha = ..level..), 
-  #                geom = "polygon")
 ```
 
 

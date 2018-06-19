@@ -26,7 +26,6 @@ Suggests:
     covr,
     ggmap,
     ggplot2,
-    readr,
     rmarkdown,
     testthat,
     zipcode
