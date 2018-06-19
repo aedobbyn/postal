@@ -2,6 +2,7 @@
 #'
 #'
 #' @param origins A vector of origin zips.
+#' @param write_to CSV file to append each zip to
 #' @param sleep_time How long to sleep in between requests, plus or minus \code{runif(1)} second.
 #' @param verbose Message what's going on?
 #' @param ... Other arguments
@@ -9,16 +10,21 @@
 #' @details For all the 3-digit origin zip codes, grab all destination zips and their corresponding zones.
 #'
 #' @importFrom magrittr %>%
+#' @importFrom readr write_csv
 #'
 #' @examples \dontrun{
 #'
 #' fetch_all(sample(all_possible_origins, 4))
+#'
+#' fetch_all(show_details = TRUE, verbose = TRUE,
+#'     write_to = glue::glue(here::here("data", "{Sys.Date()}_zip_zones.csv")))
 #' }
 #'
 #' @return A tibble with origin zip and destination zips (in ranges or unspooled) and the USPS zones the origin-destination pair corresponds to.
 #' @export
 
 fetch_all <- function(origins = all_possible_origins,
+                      write_to = NULL,
                       sleep_time = 1,
                       as_range = FALSE,
                       show_details = FALSE,
@@ -27,15 +33,22 @@ fetch_all <- function(origins = all_possible_origins,
   fetch_and_sleep <- function(origin, sleep_time = 1,
                                 verbose = TRUE, ...) {
 
-    this_sleep <- sleep_time + runif(1)
-
-    if (verbose) message(glue::glue("Sleeping {round(this_sleep, 3)} seconds."))
-    Sys.sleep(this_sleep)
-
     this <- fetch_zones(origin,
                         as_range = as_range,
                         show_details = show_details,
                         verbose = verbose, ...)
+
+    this_sleep <- sleep_time + runif(1)
+    if (verbose) message(glue::glue("Sleeping {round(this_sleep, 3)} seconds."))
+    Sys.sleep(this_sleep)
+
+    if (!is.null(write_to)) {
+      if (substr(write_to, nchar(write_to) - 3, nchar(write_to)) != "csv") {
+        warning("write_to file extension is not csv but will still be written as CSV.")
+      }
+      readr::write_csv(this, write_to, append = TRUE)
+    }
+
     return(this)
   }
 

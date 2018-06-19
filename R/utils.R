@@ -156,8 +156,8 @@ clean_data <- function(dat, o_zip) {
     dplyr::select(origin_zip, dplyr::everything()) %>%
     dplyr::arrange(dest_zip_start, dest_zip_end)
 
-  out$same_ndc %<>% purrr::map_chr(replace_x)
-  out$has_five_digit_exceptions %<>% purrr::map_chr(replace_x)
+  out$same_ndc %<>% purrr::map_lgl(replace_x)
+  out$has_five_digit_exceptions %<>% purrr::map_lgl(replace_x)
 
   return(out)
 }
@@ -181,7 +181,18 @@ get_zones <- function(inp, verbose = FALSE, n_tries = 3, ...) {
 
       if (this_try == n_tries) {
         message(glue::glue("Unsuccessful grabbing data for {inp}."))
-        return(tibble::tibble())
+        no_success <- tibble::tibble(
+          origin_zip = inp,
+          dest_zip_start = "no_success",
+          dest_zip_end = "no_success",
+          specific_to_priority_mail = "no_success",
+          zone = "no_success",
+          same_ndc = "no_success",
+          has_five_digit_exceptions = "no_success",
+          validity = "no_success"
+        )
+
+        return(no_success)
       }
     }
   }
@@ -192,12 +203,12 @@ get_zones <- function(inp, verbose = FALSE, n_tries = 3, ...) {
     if (out$PageError == "No Zones found for the entered ZIP Code.") {
       out <- tibble::tibble(
         origin_zip = inp,
-        dest_zip_start = NA_character_,
-        dest_zip_end = NA_character_,
-        specific_to_priority_mail = NA_character_,
-        zone = NA_character_,
-        same_ndc = NA_character_,
-        has_five_digit_exceptions = NA_character_
+        dest_zip_start = NA,
+        dest_zip_end = NA,
+        specific_to_priority_mail = NA,
+        zone = NA,
+        same_ndc = NA,
+        has_five_digit_exceptions = NA
       )
     } else if (out$PageError != "") {
       stop(glue::glue("PageError returned from API for {inp}: {out$PageError}"))
@@ -232,6 +243,12 @@ interpolate_zips <- function(df) {
     df <-
       df %>%
       dplyr::mutate(dest_zip = NA_character_)
+
+    return(df)
+  } else if (df$validity[1] == "no_success") {
+    df <-
+      df %>%
+      dplyr::mutate(dest_zip = "no_success")
 
     return(df)
   }

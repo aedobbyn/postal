@@ -19,6 +19,7 @@ Imports:
     knitr,
     magrittr,
     purrr,
+    readr,
     stringr,
     tibble (>= 1.2),
     tidyr
