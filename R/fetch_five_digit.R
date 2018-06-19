@@ -38,8 +38,12 @@ fetch_five_digit <- function(origin_zip, destination_zip,
   url <-
     glue::glue("{five_digit_base_url}?origin={origin_zip}&destination={destination_zip}")
 
-  resp <-
-    jsonlite::fromJSON(url)
+  resp_full <-
+    try_get_data(url)
+
+  if (!is.null(resp_full$error)) stop("Invalid origin or destination supplied.")
+
+  resp <- resp_full$result
 
   if (resp$OriginError != "") stop("Invalid origin zip.")
   if (resp$DestinationError != "") stop("Invalid destination zip.")
@@ -58,7 +62,7 @@ fetch_five_digit <- function(origin_zip, destination_zip,
       origin_zip = origin_zip,
       dest_zip = destination_zip,
       zone = zone,
-      priority_mail_zone = NA,
+      priority_mail_zone = NA,   # Default to NA
       full_response = full_response
     ) %>%
     dplyr::mutate(

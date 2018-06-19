@@ -1,8 +1,7 @@
-#' Grab all the origin-destination pairs.
+#' Grab all the 3-digit origin-destination pairs.
 #'
-#'
-#' @param origins A vector of origin zips.
-#' @param write_to CSV file to append each zip to
+#' @param origins A vector of origin zips. Defaults to all possible origin zips from 000 to 999.
+#' @param write_to The path to a CSV file to create and append each result to.
 #' @param sleep_time How long to sleep in between requests, plus or minus \code{runif(1)} second.
 #' @param n_tries How many times to try getting an origin if we're unsuccessful the first time?
 #' @param as_range Do you want zones corresponding to a range of destination zips or a full listing of them?
@@ -10,7 +9,7 @@
 #' @param verbose Message what's going on?
 #' @param ... Other arguments
 #'
-#' @details For all the 3-digit origin zip codes, grab all destination zips and their corresponding zones.
+#' @details For all the 3-digit origin zip codes, grab all destination zips and their corresponding zones. If this fails partway through, origins that could not be retrieved get a "no_success" value in their other columns but we continue trying to grab results for all supplied \code{origins}.
 #'
 #' @importFrom magrittr %>%
 #' @importFrom readr write_csv
@@ -47,11 +46,11 @@ fetch_all <- function(origins = all_possible_origins,
     Sys.sleep(this_sleep)
 
     if (!is.null(write_to)) {
-      if (substr(write_to, nchar(write_to) - 3, nchar(write_to)) != "csv") {
-        warning("write_to file extension is not csv but will still be written as CSV.")
-      }
       if (origin == origins[1]) {  # Only add headers to the first origin
         readr::write_csv(this, write_to, append = TRUE, col_names = TRUE)
+        if (substr(write_to, nchar(write_to) - 3, nchar(write_to)) != ".csv") {
+          warning("write_to file extension is not csv but will still be written as CSV.")
+        }
       } else {
         readr::write_csv(this, write_to, append = TRUE, col_names = FALSE)
       }
