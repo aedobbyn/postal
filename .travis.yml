@@ -5,6 +5,8 @@ sudo: false
 
 cache: packages
 
+r_check_args: "--no-vignettes"
+
 r_github_packages:
   - r-lib/covr
 
