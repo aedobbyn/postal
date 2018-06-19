@@ -24,7 +24,6 @@ Imports:
     tidyr
 Suggests: 
     covr,
-    curl,
     testthat,
     rmarkdown
 VignetteBuilder: knitr

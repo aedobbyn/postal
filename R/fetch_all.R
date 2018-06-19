@@ -29,6 +29,7 @@
 fetch_all <- function(origins = all_possible_origins,
                       write_to = NULL,
                       sleep_time = 1,
+                      n_tries = 3,
                       as_range = FALSE,
                       show_details = FALSE,
                       verbose = TRUE, ...) {
@@ -49,7 +50,7 @@ fetch_all <- function(origins = all_possible_origins,
       if (substr(write_to, nchar(write_to) - 3, nchar(write_to)) != "csv") {
         warning("write_to file extension is not csv but will still be written as CSV.")
       }
-      readr::write_csv(this, write_to, append = TRUE)
+      readr::write_csv(this, write_to, append = TRUE, col_names = TRUE)
     }
 
     return(this)

@@ -1,5 +1,4 @@
 #' @import magrittr
-#' @importFrom curl has_internet
 
 three_digit_base_url <-
   "https://postcalc.usps.com/DomesticZoneChart/GetZoneChart?zipCode3Digit="
@@ -81,9 +80,9 @@ prep_zip <- function(zip, ...) {
 
 get_data <- function(url) {
 
-  if (!curl::has_internet()) {
-    message("No internet connection detected.")
-  }
+  # if (!curl::has_internet()) {    # TODO: figure out namespace error
+  #   message("No internet connection detected.")
+  # }
 
   url %>%
     jsonlite::fromJSON()
