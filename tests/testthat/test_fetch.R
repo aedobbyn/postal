@@ -55,6 +55,8 @@ testthat::test_that("Five digit fetch", {
   testthat::expect_equal(1, fetch_five_digit("60647", "11238") %>% nrow())
   testthat::expect_error(fetch_five_digit("86753", "11238"))
   testthat::expect_error(fetch_five_digit("123", "456"))
+  testthat::expect_error(fetch_five_digit("00001", "60647"))
+  testthat::expect_error(fetch_five_digit("11238", "00003"))
 })
 
 

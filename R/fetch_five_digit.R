@@ -49,7 +49,6 @@ fetch_five_digit <- function(origin_zip, destination_zip,
 
   if (resp$OriginError != "") stop("Invalid origin zip.")
   if (resp$DestinationError != "") stop("Invalid destination zip.")
-  if (resp$DestinationError != "") stop("No Zones found for the entered ZIP codes.")
 
   zone <-
     resp$ZoneInformation %>%
