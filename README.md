@@ -1,6 +1,9 @@
 
 # usps 📫
 
+[![Project Status: Active - The project has reached a stable, usable
+state and is being actively
+developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
 [![Travis build
 status](https://travis-ci.org/aedobbyn/usps.svg?branch=master)](https://travis-ci.org/aedobbyn/usps)
 [![Coverage
@@ -107,7 +110,8 @@ origin_zips %>%
 ```
 
 Similarly, map over both origin and destination zips and end up at a
-dataframe. `verbose` gives you a play-by-play if you want it.
+dataframe. `verbose` gives you a play-by-play if you want it. More on
+auto-prepending leading 0s to input zips in the Digits section below.
 
 ``` r
 dest_zips <- c("867", "53", "09")
@@ -164,6 +168,16 @@ fetch_zones("42", "42",
 You can optionally display other details about the zips, zones, and type
 of postage it applies to.
 
+``` r
+fetch_zones(origin_zip = "429",
+            show_details = TRUE)  
+#> Origin zip 429 is not in use.
+#> # A tibble: 1 x 6
+#>   origin_zip dest_zip zone  specific_to_prior… same_ndc has_five_digit_ex…
+#>   <chr>      <chr>    <lgl> <lgl>              <lgl>    <lgl>             
+#> 1 429        <NA>     NA    NA                 NA       NA
+```
+
 Definitions of these details can be found in `detail_definitions`.
 
 ``` r
@@ -192,37 +206,37 @@ detail_definitions %>%
       - If more than five digits are supplied, the zip is truncated to
         the first five with a warning
           - The first three digits of the origin zip are sent to the API
-          - If destination and is 5 digits, `exact_destination`
+          - If the destination supplied is 5 digits, `exact_destination`
             determines whether we filter to the 5-digit destination only
             or include results for the 3-digit destination prefix
 
-<!-- end list -->
+For example, when `exact_destination` is `FALSE`, we include results for
+the destination `914` as well as for the exact one supplied, `91442`.
 
 ``` r
 fetch_zones(origin_zip = "12358132134558", 
-            destination_zip = "91442",
-            show_details = TRUE)     
+            destination_zip = "96240",
+            exact_destination = TRUE)     
 #> Warning in prep_zip(.): Zip can be at most 5 characters; trimming
 #> 12358132134558 to 12358.
-#> # A tibble: 1 x 6
-#>   origin_zip dest_zip zone  specific_to_prior… same_ndc has_five_digit_ex…
-#>   <chr>      <chr>    <chr> <lgl>              <lgl>    <lgl>             
-#> 1 123        914      8     FALSE              FALSE    FALSE
+#> # A tibble: 1 x 3
+#>   origin_zip dest_zip zone 
+#>   <chr>      <chr>    <chr>
+#> 1 123        96240    5
 ```
 
-Consider as opposed to:
+When it’s `TRUE`, we filter only to `91442`.
 
 ``` r
 fetch_zones(origin_zip = "12358132134558", 
-            destination_zip = "91442",
-            show_details = TRUE,
+            destination_zip = "96240",
             exact_destination = TRUE)  
 #> Warning in prep_zip(.): Zip can be at most 5 characters; trimming
 #> 12358132134558 to 12358.
-#> # A tibble: 0 x 6
-#> # ... with 6 variables: origin_zip <chr>, dest_zip <chr>, zone <chr>,
-#> #   specific_to_priority_mail <lgl>, same_ndc <lgl>,
-#> #   has_five_digit_exceptions <lgl>
+#> # A tibble: 1 x 3
+#>   origin_zip dest_zip zone 
+#>   <chr>      <chr>    <chr>
+#> 1 123        96240    5
 ```
 
 <br>
