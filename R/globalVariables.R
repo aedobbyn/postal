@@ -1,0 +1,17 @@
+globalVariables(c(
+  "MailService",
+  "ZipCodes",
+  "Zone",
+  "dest_zip",
+  "dest_zip_end",
+  "dest_zip_start",
+  "has_five_digit_exceptions",
+  "houser",
+  "modifier_plus",
+  "modifier_star",
+  "origin_zip",
+  "priority_mail_zone",
+  "same_ndc",
+  "specific_to_priority_mail",
+  "zone"
+))

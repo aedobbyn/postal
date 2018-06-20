@@ -4,6 +4,8 @@ testthat::context("Test fetching")
 testthat::test_that("fetch_zones()", {
   testthat::expect_error(fetch_zones())
 
+  testthat::expect_error(fetch_zones(NA))
+
   testthat::expect_error(fetch_zones("foo123"))
 
   testthat::expect_error(fetch_zones(20))
@@ -11,6 +13,9 @@ testthat::test_that("fetch_zones()", {
   testthat::expect_warning(fetch_zones("9999999"))
 
   testthat::expect_message(fetch_zones("0123456", verbose = TRUE))
+
+  testthat::expect_equal(1,
+                         fetch_zones("123", "456", as_range = TRUE) %>% nrow())
 
   testthat::expect_equal(1,
                          fetch_zones("123", "456", as_range = FALSE) %>% nrow())

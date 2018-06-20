@@ -3,13 +3,25 @@
 testthat::test_that("Safely getting data works", {
   testthat::expect_null(try_get_data("foo") %>%
                           purrr::pluck("result"))
+
   testthat::expect_null(try_get_data(glue::glue("{three_digit_base_url}{'007'}")) %>%
                           purrr::pluck("error"))
+
   testthat::expect_null(try_get_data(
     glue::glue("{five_digit_base_url}?origin={'06840'}&destination={'68007'}")) %>%
       purrr::pluck("error"))
+
+  testthat::expect_error(get_zones("foo"))
 })
 
+
+three_digit_base_url <- "foo"
+testthat::expect_error(
+  get_zones("bar")
+)
+
+three_digit_base_url <-
+  "https://postcalc.usps.com/DomesticZoneChart/GetZoneChart?zipCode3Digit="
 
 testthat::test_that("Zips are prepped correctly", {
 
@@ -21,6 +33,7 @@ testthat::test_that("Zips are prepped correctly", {
 
   testthat::expect_equal(testthat::expect_message(prepend_zeros("4",
                                                                 verbose = TRUE)), "004")
+  testthat::expect_equal(prepend_zeros("40"), "040")
   testthat::expect_equal(prepend_zeros("404"), "404")
   testthat::expect_equal(prepend_zeros("4040"), "04040")
 })
@@ -43,9 +56,15 @@ testthat::test_that("Replacement of nulls", {
   testthat::expect_equal(replaced[[2]], "bar")
 })
 
+
 testthat::test_that("Interpolation of zips in between ranges", {
   testthat::expect_equal(2422,
                          get_zones("123") %>%
                            interpolate_zips() %>%
                            nrow())
+
+  testthat::expect_equal("invalid",
+                         get_zones("001") %>%
+                           interpolate_zips() %>%
+                           dplyr::pull("validity"))
 })
