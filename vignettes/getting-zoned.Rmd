@@ -1,0 +1,107 @@
+---
+title: "Getting in the Zone"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  cache = TRUE
+)
+```
+
+```{r load_pkgs, message=FALSE}
+library(usps)
+library(dplyr)
+library(tidyr)
+library(ggmap)
+library(zipcode)
+```
+
+Data from the `zipcode` package relates zip codes to its latitude and longitude. 
+
+```{r load_zips}
+data("zips_zones")
+data("zipcode")
+
+zips <- 
+  zipcode %>% 
+  as_tibble() %>% 
+  mutate(
+    zip_trim = substr(zip, 1, 3)
+  )
+
+zips
+```
+
+Let's get a tibble of all possible USPS zips, both origin prefixes and destinations, including our 5 digit destinations.
+
+```{r usps_zips, dependson="load_zips"}
+usps_zips <-
+  tibble(
+    zip =
+      unique(zips_zones$origin_zip) %>% 
+      c(unique(zips_zones$dest_zip)) 
+  ) %>% 
+  distinct()
+```
+
+
+Now we can join the `zipcode` latitudes and longitudes on our `usps_zips` to get a corresponding lat and long for each origin and destination zip.
+
+```{r zips_lat_long}
+zips_lat_long <- 
+  zips %>% 
+  distinct(zip_trim, .keep_all = TRUE) %>% 
+  left_join(usps_zips, by = "zip") %>% 
+  select(zip_trim, latitude, longitude)
+```
+
+
+```{r zips_zones_lat_long}
+zips_zones_lat_long <- 
+  zips_zones %>% 
+  left_join(zips_lat_long, by = c("origin_zip" = "zip_trim")) %>% 
+  rename(
+      lat_origin = latitude,
+      long_origin = longitude) %>% 
+  left_join(zips_lat_long, by = c("dest_zip" = "zip_trim")) %>% 
+  rename(
+      lat_dest = latitude,
+      long_dest = longitude) %>% 
+  drop_na(zone)
+
+zips_zones_lat_long
+```
+
+
+Using a single origin zip, we can plot all of the destination zips' zones relative to that origin. 
+
+```{r us_map, eval=TRUE}
+us <- 
+  get_googlemap("us", zoom = 4)
+  # get_map("us", zoom = 4, maptype = "toner-lite")
+```
+
+
+```{r zone_map, eval=TRUE}
+ggmap(us, extent = "device") +
+  geom_polygon(data = zips_zones_lat_long %>% 
+                 mutate(zone = factor(zone)) %>% 
+                 filter(origin_zip == "112"), 
+             aes(long_dest, lat_dest, fill = zone),
+             alpha = 0.5) +
+  labs(x = "", y = "", fill = "Zone") +
+  ggtitle("Shipping Zones from Brooklyn",
+          subtitle = "Origin zone prefix: 112") +
+  scale_fill_brewer(type = "seq") +
+  theme_classic(base_family = "Arial Narrow")
+```
+
+
+<br>
