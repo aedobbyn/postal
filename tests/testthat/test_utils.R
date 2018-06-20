@@ -20,7 +20,7 @@ testthat::test_that("Zips are prepped correctly", {
 
   testthat::expect_equal(prepend_zeros("4"), "004")
   testthat::expect_equal(prepend_zeros("404"), "404")
-  testthat::expect_equal(prepend_zeros("4040"), "4040")
+  testthat::expect_equal(prepend_zeros("4040"), "04040")
 })
 
 
