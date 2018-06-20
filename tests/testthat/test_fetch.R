@@ -39,7 +39,7 @@ testthat::test_that("Priority Mail exceptions are noted", {
 })
 
 
-testthat::test_that("3 and 5 digit endpoints agree", {
+testthat::test_that("3 and 5 digit endpoints agree on zone", {
   origins <- c("11238", "60647", "80205")
   destinations <- c("98109", "02210", "94707")
 

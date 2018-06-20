@@ -43,7 +43,7 @@ fetch_five_digit <- function(origin_zip, destination_zip,
   resp_full <-
     try_get_data(url)
 
-  if (!is.null(resp_full$error)) stop("Invalid origin or destination supplied.")
+  if (!is.null(resp_full$error)) stop("An error occurred on the USPS side.")
 
   resp <- resp_full$result
 
