@@ -26,7 +26,7 @@ library(zipcode)
 
 ```{r, include=FALSE}
 zip_zones <- 
-  readr::read_csv("/Users/amanda/Desktop/Projects/usps/data/2018-06-19_zip_zones.csv") 
+  readr::read_csv("/Users/amanda/Desktop/Projects/usps/data-raw/2018-06-19_zip_zones.csv") 
 
 names(zip_zones) <- 
   c("origin_zip", "dest_zip", "zone", "specific_to_priority_mail",
