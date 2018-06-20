@@ -37,8 +37,7 @@ combinations. USPS narrows down that search space a bit by trimming zips
 to their first 3 digits.
 
 Supply a 3-digit origin and, optionally, destination zip prefix to find
-their corresponding zone. If no destination is supplied, all desination
-zips and zones are returned for the origin.
+their corresponding zone.
 
 ``` r
 library(usps)
@@ -49,6 +48,27 @@ fetch_zones(origin_zip = "123",
 #>   origin_zip dest_zip zone 
 #>   <chr>      <chr>    <chr>
 #> 1 123        581      6
+```
+
+If no destination is supplied, all desination zips and zones are
+returned for the origin.
+
+``` r
+fetch_zones(origin_zip = "321")
+#> # A tibble: 2,422 x 3
+#>    origin_zip dest_zip zone 
+#>    <chr>      <chr>    <chr>
+#>  1 321        005      5    
+#>  2 321        006      6    
+#>  3 321        007      6    
+#>  4 321        008      6    
+#>  5 321        009      6    
+#>  6 321        010      5    
+#>  7 321        011      5    
+#>  8 321        012      5    
+#>  9 321        013      6    
+#> 10 321        014      6    
+#> # ... with 2,412 more rows
 ```
 
 <br>

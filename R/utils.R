@@ -31,6 +31,10 @@ prepend_zeros <- function(x, verbose = FALSE, ...) {
   } else if (nchar(x) == 2) {
     y <- stringr::str_c("0", x, collapse = "")
     if (verbose) message(glue::glue("Making {x} into {y}"))
+    # 5 digit zip that lost its leading 0 during interpolate_zips() and needs it back;
+    # user-supplied 4 digit zips are not allowed by prep_zip()
+  } else if (nchar(x) == 4) {
+    y <- stringr::str_c("0", x, collapse = "")
   } else {
     y <- x
   }

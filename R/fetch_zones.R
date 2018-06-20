@@ -70,7 +70,8 @@ fetch_zones <- function(origin_zip = NULL,
       dplyr::select(
         origin_zip, dest_zip, zone,
         specific_to_priority_mail, same_ndc, has_five_digit_exceptions
-      )
+      ) %>%
+      dplyr::arrange(dest_zip)
 
     if (!is.null(destination_zip)) {
       out <-
