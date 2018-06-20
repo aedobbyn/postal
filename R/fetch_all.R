@@ -9,7 +9,9 @@
 #' @param verbose Message what's going on?
 #' @param ... Other arguments
 #'
-#' @details For all the 3-digit origin zip codes, grab all destination zips and their corresponding zones. If this fails partway through, origins that could not be retrieved get a "no_success" value in their other columns but we continue trying to grab results for all supplied \code{origins}.
+#' @details For all the 3-digit origin zip codes, grab all destination zips and their corresponding zones. This is equivalent to running \code{\link{fetch_zones}} for all possible 3 digit origin zips.
+#'
+#' If this fails partway through, origins that could not be retrieved get a "no_success" value in their \code{dest_zip} and \code{zone} columns but we continue trying to grab results for all supplied \code{origins}.
 #'
 #' @importFrom magrittr %>%
 #' @importFrom readr write_csv

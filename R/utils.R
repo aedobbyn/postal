@@ -185,10 +185,10 @@ get_zones <- function(inp, verbose = FALSE, n_tries = 3, ...) {
           origin_zip = inp,
           dest_zip_start = "no_success",
           dest_zip_end = "no_success",
-          specific_to_priority_mail = "no_success",
           zone = "no_success",
-          same_ndc = "no_success",
-          has_five_digit_exceptions = "no_success",
+          specific_to_priority_mail = NA,
+          same_ndc = NA,
+          has_five_digit_exceptions = NA,
           validity = "no_success"
         )
 

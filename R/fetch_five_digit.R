@@ -3,11 +3,13 @@
 #' For a given 5-digit origin and destination zip code pair, display the zone number and full response.
 #'
 #' @param origin_zip A single origin zip as 5-digit character.
-#' @param destination_zip Optional destination zip as 5-digit character.
+#' @param destination_zip Required destination zip as 5-digit character.
 #' @param show_details Extract extra stuff from the response?
 #' @param ... Other arguments
 #'
 #' @details Displays the result of a query to the ["Get Zone for ZIP Code Pair"](https://postcalc.usps.com/DomesticZoneChart/) tab.
+#'
+#' If you want all destinations for a given origin, use \code{\link{fetch_zones}} with the first 3 digits of the origin; there you don't need to supply a destination.
 #'
 #' @importFrom magrittr %>%
 #' @importFrom stats runif
