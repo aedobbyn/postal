@@ -12,6 +12,10 @@ testthat::test_that("Safely getting data works", {
 
 
 testthat::test_that("Zips are prepped correctly", {
+
+  # Can't let user supply 4 digits as we don't know whether they mean a 5 digit zip or a 3 digit one
+  testthat::expect_error(fetch_zones("1234"))
+
   testthat::expect_warning(testthat::expect_equal(prep_zip("123456"), "12345"))
 
   testthat::expect_equal(prepend_zeros("4"), "004")
