@@ -1,19 +1,4 @@
-#' Forwards pipe
-#'
-#' @name %>%
-#' @rdname forwards_pipe
-#' @keywords internal
-#' @export
-#' @importFrom magrittr %>%
-#' @usage lhs \%>\% rhs
-
-#' Assignment pipe
-#'
-#' @name %<>%
-#' @rdname assignment_pipe
-#' @keywords internal
-#' @export
-#' @importFrom magrittr %<>%
+#' @import magrittr
 
 three_digit_base_url <-
   "https://postcalc.usps.com/DomesticZoneChart/GetZoneChart?zipCode3Digit="
@@ -290,3 +275,11 @@ interpolate_zips <- function(df) {
 }
 
 
+#' Pipe operator
+#'
+#' @name %>%
+#' @rdname pipe
+#' @keywords internal
+#' @export
+#' @importFrom magrittr %>%
+#' @usage lhs \%>\% rhs
