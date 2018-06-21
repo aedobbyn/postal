@@ -13,6 +13,10 @@ Need to get the USPS shipping zone between two zip codes? `usps`
 provides a tidy interface to the [USPS domestic zone calc
 API](https://postcalc.usps.com/DomesticZoneChart/).
 
+There are `99999^2` or 9,999,800,001 possible 5-digit origin-destination
+zip combinations in the US. The USPS Zone Calc tool narrows down that
+search space a bit by trimming zips to their first 3 digits.
+
 A zone is a [measure of
 distance](https://ribbs.usps.gov/zone_charts/documents/tech_guides/ZoneChartExceptionsWebinar.pdf)
 between the origin and the destination zip codes and are used in
@@ -35,12 +39,8 @@ devtools::install_github('aedobbyn/usps')
 
 ### Usage
 
-There are 99999^2 or 9,999,800,001 possible origin-destination zip
-combinations. USPS narrows down that search space a bit by trimming zips
-to their first 3 digits.
-
-Supply a 3-digit origin and, optionally, destination zip prefix to find
-their corresponding zone.
+`fetch_zones` lets you find the zone corresponding to a 3-digit origin
+zip prefix and one or many 3-digit destination zip prefixes.
 
 ``` r
 library(usps)
@@ -53,7 +53,7 @@ fetch_zones(origin_zip = "123",
 #> 1 123        581      6
 ```
 
-If no destination is supplied, all desination zips and zones are
+If no destination is supplied, all valid desination zips and zones are
 returned for the origin.
 
 ``` r
@@ -85,7 +85,7 @@ zips.
 If an origin zip is supplied that is [not in
 use](https://en.wikipedia.org/wiki/List_of_ZIP_code_prefixes), it is
 messaged and included in the output with `NA`s in the other columns. For
-example, the origin “001” is not a valid 3-digit zip.
+example, the origin `"001"` is not a valid 3-digit zip prefix.
 
 ``` r
 origin_zips <- c("001", "271", "828")
@@ -110,8 +110,8 @@ origin_zips %>%
 ```
 
 Similarly, map over both origin and destination zips and end up at a
-dataframe. `verbose` gives you a play-by-play if you want it. More on
-auto-prepending leading 0s to input zips in the Digits section below.
+dataframe. `verbose` gives you a play-by-play if you want it. (More on
+auto-prepending leading 0s to input zips in the Digits section below.)
 
 ``` r
 dest_zips <- c("867", "53", "09")
@@ -166,7 +166,7 @@ fetch_zones("42", "42",
 ### Details
 
 You can optionally display other details about the zips, zones, and type
-of postage it applies to.
+of postage the zone designation applies to.
 
 ``` r
 fetch_zones(origin_zip = "404",
@@ -204,37 +204,40 @@ detail_definitions %>%
 
 ### On Digits
 
-#### The Nitpicky
+The API endpoint used in `fetch_zones` accepts exactly 3 digits for the
+origin zip; it mostly returns 3 digit destination zips, but also some 5
+digit exceptions. For that reason,
 
-  - Number of digits:
-      - This API endpoint used in `fetch_zones` accepts exactly 3 digits
-        for the origin zip; it mostly returns 3 digit destination zips,
-        but notes 5 digit exceptions. For that reason,
-      - If fewer than three digits are supplied, leading zeroes are
-        added with a message
-      - If more than five digits are supplied, the zip is truncated to
-        the first five with a warning
-          - The first three digits of the origin zip are sent to the API
-          - If the destination supplied is 5 digits, `exact_destination`
-            determines whether we filter to the 5-digit destination only
-            or include results for the 3-digit destination prefix
+  - If *fewer than 3 digits* are supplied, leading zeroes are added with
+    a message
+      - e.g. `"08"` becomes `"008"`
+  - If *more than 5 digits* are supplied, the zip is truncated to the
+    first 5 with a warning
+      - If the zip is an origin, only the first 3 of those 5 digits are
+        sent to the API
+      - If the zip is a destination, the `exact_destination` flag
+        determines whether we results for the that destination’s 3-digit
+        prefix filter or filter to only the exact 5-digit destination
 
-For example, when `exact_destination` is `FALSE`, we include results for
-the destination `914` as well as for the exact one supplied, `91442`.
+For example, when a 5-digit destination is supplied and
+`exact_destination` is `FALSE`, we include results for the destination
+`962` as well as for the exact one supplied, `96240`.
 
 ``` r
 fetch_zones(origin_zip = "12358132134558", 
             destination_zip = "96240",
-            exact_destination = TRUE)     
+            exact_destination = FALSE)     
 #> Warning in prep_zip(.): Zip can be at most 5 characters; trimming
 #> 12358132134558 to 12358.
-#> # A tibble: 1 x 3
+#> # A tibble: 2 x 3
 #>   origin_zip dest_zip zone 
 #>   <chr>      <chr>    <chr>
-#> 1 123        96240    5
+#> 1 123        962      8    
+#> 2 123        96240    5
 ```
 
-When it’s `TRUE`, we filter only to `91442`.
+When `exact_destination` is `TRUE`, we filter only to `96240`, which is
+a 5 digit exception as its zone is different from its 3-digit prefix’s.
 
 ``` r
 fetch_zones(origin_zip = "12358132134558", 
@@ -253,74 +256,103 @@ fetch_zones(origin_zip = "12358132134558",
 #### I just want to supply 5 digits
 
 `fetch_zones` should cover most 5 digit cases and supply the most
-information when `show_details` is `TRUE`, but if you just want to use
+information when `show_details` is `TRUE`. But if you just want to use
 the equivalent of the [“Get Zone for ZIP Code
 Pair”](https://postcalc.usps.com/DomesticZoneChart/) tab, you can use
 `fetch_five_digit`.
 
 ``` r
-fetch_five_digit("31415", "92653",
-                 show_details = TRUE)
-#> # A tibble: 1 x 7
-#>   origin_zip dest_zip zone  priority_mail_zo… local same_ndc full_response
-#>   <chr>      <chr>    <chr> <chr>             <lgl> <lgl>    <chr>        
-#> 1 31415      92653    8     <NA>              FALSE FALSE    The Zone is …
+fetch_five_digit("31415", "92653")
+#> # A tibble: 1 x 3
+#>   origin_zip dest_zip zone 
+#>   <chr>      <chr>    <chr>
+#> 1 31415      92653    8
 ```
 
-Details in `fetch_five_digit` are slightly different than in
-`fetch_zones`.
+Details given when `show_details = TRUE` in `fetch_five_digit` are
+slightly different than they are for `fetch_zones`.
 
 <br>
 
 ### All of the data
 
 If you want the most up-to-date zip-zone mappings, `fetch_all` allows
-you to use the 3 digit endpoint to fetch all possible origins and write
-them to a CSV as you go.
+you to use the 3 digit endpoint to fetch all possible origins and,
+optionally, write them to a CSV as you go.
 
-By default we use every possible origin from “000” to “999”; as of now
-“000” through “004” are all not in use along with a smattering of
-others like “404” and “867”.
+By default we use every possible origin from `"000"` to `"999"`; as of
+now `"000"` through `"004"` are all not in use along with a smattering
+of others like `"404"` and `"867"` – but who knows, they might be used
+in the future.
 
 ``` r
 fetch_all(all_possible_origins,
-          sleep_time = 0.5, 
-          write_to = glue::glue(here::here("data", "{Sys.Date()}_all_my_zones.csv")))
+          sleep_time = 0.5,   # How long to sleep in between requests, on average
+          write_to = "path/to/my/file.csv")
 ```
 
-If there’s a network error, we back off and try a few times and finally
-write “no\_success” (rather than `NA`s which indicate that the origin
-zip is not in use). What that looks like in the event we get internet
-between asking for origin “123” and origin “456”:
+If there’s a network error when grabbing a zip, we back off and try a
+few times and finally write `"no_success"` (rather than `NA`s which
+indicate that the origin zip is not in use) in the destination zip
+columns.
+
+What that looks like in the event we switch on the internet between
+asking for origin `"123"` and origin `"456"`:
 
     #> # A tibble: 8 x 3
-    #>   origin dest       zip       
-    #>   <chr>  <chr>      <chr>     
-    #> 1 123    no_success no_success
-    #> 2 456    005        4         
-    #> 3 456    006        7         
-    #> 4 456    007        7         
-    #> 5 456    008        7         
-    #> 6 456    009        7         
-    #> 7 456    010        4         
-    #> 8 ...    ...        ...
+    #>   origin_zip dest_zip   zone      
+    #>   <chr>      <chr>      <chr>     
+    #> 1 123        no_success no_success
+    #> 2 456        005        4         
+    #> 3 456        006        7         
+    #> 4 456        007        7         
+    #> 5 456        008        7         
+    #> 6 456        009        7         
+    #> 7 456        010        4         
+    #> 8 ...        ...        ...
 
 <br>
 
 #### Well, not all of it
 
-The `zips_zones` dataset included in this package which you can access
-with `data(zips_zones)` contains a sample of 1,000,000 of all 3 digit
-origin-destination pairs. What you’d get by running `fetch_all()` and
-waiting a while and then taking a sample.
+The `zips_zones` dataset included in this package contains a 1,000,000
+row sample of all the 3 digit origin-destination pairs. You can access
+it with:
 
-The sample is about a quarter of the total number of rows (3,804,494).
-See it put to use in the
+``` r
+data(zips_zones)
+```
+
+It’s what you’d get by running `fetch_all(show_details = TRUE)`, waiting
+a while, and then taking a sample.
+
+``` r
+zips_zones
+#> # A tibble: 3,804,494 x 6
+#>    origin_zip dest_zip  zone specific_to_prior… same_ndc has_five_digit_e…
+#>    <chr>      <chr>    <int> <lgl>              <lgl>    <lgl>            
+#>  1 000        <NA>        NA NA                 NA       NA               
+#>  2 001        <NA>        NA NA                 NA       NA               
+#>  3 002        <NA>        NA NA                 NA       NA               
+#>  4 003        <NA>        NA NA                 NA       NA               
+#>  5 004        <NA>        NA NA                 NA       NA               
+#>  6 005        005          1 FALSE              TRUE     FALSE            
+#>  7 005        006          7 FALSE              FALSE    FALSE            
+#>  8 005        007          7 FALSE              FALSE    FALSE            
+#>  9 005        008          7 FALSE              FALSE    FALSE            
+#> 10 005        009          7 FALSE              FALSE    FALSE            
+#> # ... with 3,804,484 more rows
+```
+
+The sample is about a quarter of the total number of rows between all
+origin prefixes and all destination prefixes, plus the 5 digit
+exceptions (3,804,494 rows). See it put to use in the
 [vignette](https://github.com/aedobbyn/usps/blob/dev/vignettes/getting-zoned.Rmd).
 
 <br>
 
-Bug reports and PRs
+That’s it\! [Bug reports](https://github.com/aedobbyn/usps/issues) and
+PRs
 welcome\!
 
 <p align="center">
