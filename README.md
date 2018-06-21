@@ -9,15 +9,15 @@ status](https://travis-ci.org/aedobbyn/usps.svg?branch=master)](https://travis-c
 [![Coverage
 status](https://codecov.io/gh/aedobbyn/usps/branch/master/graph/badge.svg)](https://codecov.io/github/aedobbyn/usps?branch=master)
 
-Need to get the USPS shipping zone between two zip codes? `usps`
-provides a tidy interface to the [USPS domestic zone calc
-API](https://postcalc.usps.com/DomesticZoneChart/).
+Need to get the USPS shipping zone between two zip codes? Well, this is
+a 📦 for your 📦s. `usps` provides a tidy interface to the [USPS domestic
+zone calc API](https://postcalc.usps.com/DomesticZoneChart/).
 
 There are `99999^2` or 9,999,800,001 possible 5-digit origin-destination
 zip combinations in the US. The USPS Zone Calc tool narrows down that
 search space a bit by trimming zips to their first 3 digits.
 
-A zone is a [measure of
+A **zone** is a [measure of
 distance](https://ribbs.usps.gov/zone_charts/documents/tech_guides/ZoneChartExceptionsWebinar.pdf)
 between the origin and the destination zip codes and are used in
 determining postage rates.
@@ -111,7 +111,8 @@ origin_zips %>%
 
 Similarly, map over both origin and destination zips and end up at a
 dataframe. `verbose` gives you a play-by-play if you want it. (More on
-auto-prepending leading 0s to input zips in the Digits section below.)
+auto-prepending leading 0s to input zips in the [On
+Digits](https://github.com/aedobbyn/usps#on-digits) section below.)
 
 ``` r
 dest_zips <- c("867", "53", "09")
