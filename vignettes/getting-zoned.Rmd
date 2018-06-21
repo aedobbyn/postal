@@ -2,7 +2,7 @@
 title: "Getting in the Zone"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{getting-zoned}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -24,15 +24,33 @@ library(ggmap)
 library(zipcode)
 ```
 
+The `usps::zips_zones` dataset provides a quarter of the ~4 million 3-digit origin-destination pairs. (If you want allll of them, you can run `fetch_all` and put on a pot of coffee.) 
 
-Data from the `zipcode` package relates zip codes to its latitude and longitude. We can that along with  the *partial* data in `usps::zips_zones` to match up zips to latitudes and longitudes.
+What if we wanted to use that to plot how zones increase as the destination gets farther from the origin?
+
+We'll need a measure of latitude and longitude for that. Luckily, data from the [`zipcode`](https://github.com/cran/zipcode) package relates every zip codes to its latitude and longitude. We can that along with  the *partial* data in `usps::zips_zones` to match up zips to latitudes and longitudes.
+
+Let's load in the randomly sampled `usps` package data. 
+
+```{r}
+data(zips_zones)
+zips_zones
+```
+
+Later we'll `select` away all the other details and focus just on `origin_zip`, `dest_zip`, and `zone`. As we know, the `usps::zip_zones` data displays all origin zips as 3 digit prefixes and most destination zips as 3 digits as well.
+
+However, the `zipcode::zipcode` data displays zips in the usual way, as 5 digit. 
+
+```{r}
+data(zipcode)
+zipcode %>% 
+  as_tibble()
+```
 
 
+So we'll want to trim them in order to be able to join on our data, the majority of which are 3 digits.
 
 ```{r load_zips}
-data("zips_zones")
-data("zipcode")
-
 zips <- 
   zipcode %>% 
   as_tibble() %>% 
@@ -46,30 +64,34 @@ zips
 Let's get a tibble of all possible USPS zips, both origin prefixes and destinations, including our 5 digit destinations.
 
 ```{r usps_zips}
-usps_zips <-
+(usps_zips <-
   tibble(
     zip =
       unique(zips_zones$origin_zip) %>% 
       c(unique(zips_zones$dest_zip)) 
   ) %>% 
-  distinct()
+  distinct())
 ```
 
 
-Now we can join the `zipcode` latitudes and longitudes on our `usps_zips` to get a corresponding lat and long for each origin and destination zip.
+Now we can join the `zipcode` trimmed zips on our `usps_zips` to get a corresponding lat and long for each 3-digit origin and destination zip.
 
 ```{r zips_lat_long}
-zips_lat_long <- 
+(zips_lat_long <- 
   zips %>% 
   distinct(zip_trim, .keep_all = TRUE) %>% 
-  left_join(usps_zips, by = "zip") %>% 
-  select(zip_trim, latitude, longitude)
+  left_join(usps_zips, by = c("zip_trim" = "zip")) %>% 
+  select(zip_trim, latitude, longitude))
 ```
 
+Now we have a mapping between each possible 3 digit zip and its latitude and longitude. But for every row in our `zips_zones` dataset, we have two lats and two longs: one for the origin and one for the destination. 
+
+So we'll want to take our `zips_lat_long` mapping and use that to attach latitude and longitude to each origin and each destination in `zips_zones`.
 
 ```{r zips_zones_lat_long}
-zips_zones_lat_long <- 
+(zips_zones_lat_long <- 
   zips_zones %>% 
+  select(origin_zip, dest_zip, zone) %>% 
   left_join(zips_lat_long, by = c("origin_zip" = "zip_trim")) %>% 
   rename(
       lat_origin = latitude,
@@ -78,35 +100,63 @@ zips_zones_lat_long <-
   rename(
       lat_dest = latitude,
       long_dest = longitude) %>% 
-  drop_na(zone)
-
-zips_zones_lat_long
+  drop_na(zone))
 ```
 
 
-Using a single origin zip, we can plot all of the destination zips' zones relative to that origin. 
+Now, using a single origin zip (112) and the `ggmap` package, we can plot all of the destination zips' zones relative to that origin. 
 
-```{r us_map, eval=TRUE}
-us <- 
-  get_googlemap("us", zoom = 4)
+We could use the `ggmap` package to get a map of the US like
+
+```{r, eval=FALSE}
+get_googlemap("us", zoom = 4)
+# or
+get_map("us", zoom = 4, maptype = "toner-lite")
+```
+
+but to go simpler, we'll use `ggplot2`'s built-in `map_data` function.
+
+```{r us_map}
+# us <- 
+  # get_googlemap("us", zoom = 4)
   # get_map("us", zoom = 4, maptype = "toner-lite")
+
+us <- map_data("usa") %>% 
+  as_tibble() 
+
+foo <- 
+  zips_zones_lat_long %>% 
+  filter(origin_zip == "112") %>% 
+  left_join(us, by = c("lat_dest" = "lat", "long_dest" = "long")) %>% 
+  filter(long_dest < 0)
+
+bar <- 
+  us %>% 
+  left_join(zips_zones_lat_long, by = c("lat" = "lat_dest", "long" = "long_dest")) %>% 
+  filter(origin_zip == "112") 
 ```
 
 
-Remember -- longitude is on the x and latitude is on the y (!)
+Remember -- always confusingly, to me, longitude is on the x and latitude is on the y (!)
 
-```{r zone_map, eval=TRUE}
-ggmap(us, extent = "device") +
-  geom_polygon(data = zips_zones_lat_long %>% 
-                 mutate(zone = factor(zone)) %>% 
-                 filter(origin_zip == "112"), 
-             aes(long_dest, lat_dest, fill = zone),
-             alpha = 0.5) +
-  labs(x = "", y = "", fill = "Zone") +
+The map should look fragmented as our `zip_zones` data only covers a quarter of the possible origin-destination pairs. Still, the pattern is clear: zones increase as your destination gets farther away `r emo::ji("tada")`
+
+```{r zone_map, warning=FALSE}
+# ggmap(us, extent = "panel") +
+ggplot() +
+  geom_polygon(data = us, aes(long, lat), fill = "white") +
+  geom_polygon(data = foo,
+                 # zips_zones_lat_long %>% 
+                 # mutate(zone = factor(zone)) %>% 
+                 # filter(origin_zip == "112"), 
+             aes(long_dest, lat_dest, fill = factor(zone)),
+             alpha = 0.7) +
+  labs(x = "Longitude", y = "Latitude", fill = "Zone") +
   ggtitle("Shipping Zones from Brooklyn",
           subtitle = "Origin zone prefix: 112") +
-  scale_fill_brewer(type = "seq") +
-  theme_classic(base_family = "Arial Narrow")
+  # scale_fill_brewer(type = "seq") +
+  # theme_classic(base_family = "Arial Narrow") +
+  coord_quickmap()
 ```
 
 
