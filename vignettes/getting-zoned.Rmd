@@ -12,16 +12,16 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   cache = FALSE,
-  out.width = "100%"
+  out.width = "70%",
+  out.height = "30%"
 )
 ```
 
 ```{r load_pkgs, message=FALSE}
 library(usps)
+library(zipcode)
 library(dplyr)
 library(tidyr)
-library(ggmap)
-library(zipcode)
 ```
 
 The `usps::zips_zones` dataset provides a quarter of the ~4 million 3-digit origin-destination pairs. (If you want allll of them, you can run `fetch_all` and put on a pot of coffee.) 
@@ -117,23 +117,17 @@ get_map("us", zoom = 4, maptype = "toner-lite")
 but to go simpler, we'll use `ggplot2`'s built-in `map_data` function.
 
 ```{r us_map}
-# us <- 
-  # get_googlemap("us", zoom = 4)
-  # get_map("us", zoom = 4, maptype = "toner-lite")
-
-us <- map_data("usa") %>% 
+us <- 
+  # map_data("usa") %>% 
+  map_data("state") %>%
   as_tibble() 
 
-foo <- 
+zz_filtered <- 
   zips_zones_lat_long %>% 
   filter(origin_zip == "112") %>% 
   left_join(us, by = c("lat_dest" = "lat", "long_dest" = "long")) %>% 
-  filter(long_dest < 0)
-
-bar <- 
-  us %>% 
-  left_join(zips_zones_lat_long, by = c("lat" = "lat_dest", "long" = "long_dest")) %>% 
-  filter(origin_zip == "112") 
+  filter(as.numeric(dest_zip) > 10 &
+           long_dest < -50)
 ```
 
 
@@ -142,20 +136,16 @@ Remember -- always confusingly, to me, longitude is on the x and latitude is on 
 The map should look fragmented as our `zip_zones` data only covers a quarter of the possible origin-destination pairs. Still, the pattern is clear: zones increase as your destination gets farther away `r emo::ji("tada")`
 
 ```{r zone_map, warning=FALSE}
-# ggmap(us, extent = "panel") +
 ggplot() +
-  geom_polygon(data = us, aes(long, lat), fill = "white") +
-  geom_polygon(data = foo,
-                 # zips_zones_lat_long %>% 
-                 # mutate(zone = factor(zone)) %>% 
-                 # filter(origin_zip == "112"), 
-             aes(long_dest, lat_dest, fill = factor(zone)),
-             alpha = 0.7) +
-  labs(x = "Longitude", y = "Latitude", fill = "Zone") +
+  geom_polygon(data = us, aes(x = long, y = lat, group = group), fill = "white", color = "black") +
+  geom_density_2d(data = zz_filtered,
+             aes(long_dest, lat_dest, colour = factor(zone)),
+             alpha = 1) +
+  labs(x = "Longitude", y = "Latitude", colour = "Zone") +
   ggtitle("Shipping Zones from Brooklyn",
           subtitle = "Origin zone prefix: 112") +
-  # scale_fill_brewer(type = "seq") +
-  # theme_classic(base_family = "Arial Narrow") +
+  scale_colour_brewer(type = "seq", palette = "BrBG") +
+  theme_classic(base_family = "Arial Narrow") +
   coord_quickmap()
 ```
 
