@@ -33,7 +33,7 @@ devtools::install_github("aedobbyn/usps")
 
 <p align="center">
 
-<img src="https://media.giphy.com/media/iVoiJfBtSsi0o/giphy.gif" alt="owl">
+<img src="https://media.giphy.com/media/iVoiJfBtSsi0o/giphy.gif" alt="im_not_an_owl">
 
 </p>
 
@@ -352,11 +352,11 @@ exceptions (3,804,494 rows). See it put to use in the
 <br>
 
 That’s it\! [Bug reports](https://github.com/aedobbyn/usps/issues) and
-PRs
-welcome\!
+PRs welcome\!
+📬
 
 <p align="center">
 
-<img src="https://media.giphy.com/media/2fTYDdciZFEKZJgY7g/giphy.gif" alt="dog">
+<img src="https://media.giphy.com/media/2fTYDdciZFEKZJgY7g/giphy.gif" alt="catch_mailman">
 
 </p>
