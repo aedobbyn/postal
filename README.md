@@ -169,13 +169,22 @@ You can optionally display other details about the zips, zones, and type
 of postage it applies to.
 
 ``` r
-fetch_zones(origin_zip = "429",
+fetch_zones(origin_zip = "404",
             show_details = TRUE)  
-#> Origin zip 429 is not in use.
-#> # A tibble: 1 x 6
-#>   origin_zip dest_zip zone  specific_to_prior… same_ndc has_five_digit_ex…
-#>   <chr>      <chr>    <lgl> <lgl>              <lgl>    <lgl>             
-#> 1 429        <NA>     NA    NA                 NA       NA
+#> # A tibble: 2,422 x 6
+#>    origin_zip dest_zip zone  specific_to_prior… same_ndc has_five_digit_e…
+#>    <chr>      <chr>    <chr> <lgl>              <lgl>    <lgl>            
+#>  1 404        005      4     FALSE              FALSE    FALSE            
+#>  2 404        006      7     FALSE              FALSE    FALSE            
+#>  3 404        007      7     FALSE              FALSE    FALSE            
+#>  4 404        008      7     FALSE              FALSE    FALSE            
+#>  5 404        009      7     FALSE              FALSE    FALSE            
+#>  6 404        010      5     FALSE              FALSE    FALSE            
+#>  7 404        011      5     FALSE              FALSE    FALSE            
+#>  8 404        012      5     FALSE              FALSE    FALSE            
+#>  9 404        013      5     FALSE              FALSE    FALSE            
+#> 10 404        014      5     FALSE              FALSE    FALSE            
+#> # ... with 2,412 more rows
 ```
 
 Definitions of these details can be found in `detail_definitions`.
@@ -270,7 +279,8 @@ you to use the 3 digit endpoint to fetch all possible origins and write
 them to a CSV as you go.
 
 By default we use every possible origin from “000” to “999”; as of now
-“000” through “004” are all not in use.
+“000” through “004” are all not in use along with a smattering of
+others like “404” and “867”.
 
 ``` r
 fetch_all(all_possible_origins,
@@ -294,6 +304,19 @@ between asking for origin “123” and origin “456”:
     #> 6 456    009        7         
     #> 7 456    010        4         
     #> 8 ...    ...        ...
+
+<br>
+
+#### Well, not all of it
+
+The `zips_zones` dataset included in this package which you can access
+with `data(zips_zones)` contains a sample of 1,000,000 of all 3 digit
+origin-destination pairs. What you’d get by running `fetch_all()` and
+waiting a while and then taking a sample.
+
+The sample is about a quarter of the total number of rows (3,804,494).
+See it put to use in the
+[vignette](https://github.com/aedobbyn/usps/blob/dev/vignettes/getting-zoned.Rmd).
 
 <br>
 

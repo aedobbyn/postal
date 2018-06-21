@@ -11,7 +11,8 @@ vignette: >
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  cache = TRUE
+  cache = FALSE,
+  out.width = "100%"
 )
 ```
 
@@ -41,7 +42,7 @@ zips
 
 Let's get a tibble of all possible USPS zips, both origin prefixes and destinations, including our 5 digit destinations.
 
-```{r usps_zips, dependson="load_zips"}
+```{r usps_zips}
 usps_zips <-
   tibble(
     zip =

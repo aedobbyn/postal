@@ -118,7 +118,7 @@ fetch_zones("42", "42",
 You can optionally display other details about the zips, zones, and type of postage it applies to.
 
 ```{r}
-fetch_zones(origin_zip = "429",
+fetch_zones(origin_zip = "404",
             show_details = TRUE)  
 ```
 
@@ -181,7 +181,7 @@ Details in `fetch_five_digit` are slightly different than in `fetch_zones`.
 
 If you want the most up-to-date zip-zone mappings, `fetch_all` allows you to use the 3 digit endpoint to fetch all possible origins and write them to a CSV as you go.
 
-By default we use every possible origin from "000" to "999"; as of now "000" through "004" are all not in use.
+By default we use every possible origin from "000" to "999"; as of now "000" through "004" are all not in use along with a smattering of others like "404" and "867".
 
 ```{r, eval=FALSE}
 fetch_all(all_possible_origins,
@@ -206,6 +206,14 @@ tibble::tribble(
 )
 ```
 
+
+<br>
+
+#### Well, not all of it
+
+The `zips_zones` dataset included in this package which you can access with `data(zips_zones)` contains a sample of 1,000,000 of all 3 digit origin-destination pairs. What you'd get by running `fetch_all()` and waiting a while and then taking a sample.
+
+The sample is about a quarter of the total number of rows (3,804,494). See it put to use in the [vignette](https://github.com/aedobbyn/usps/blob/dev/vignettes/getting-zoned.Rmd).
 
 <br>
 
