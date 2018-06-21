@@ -124,7 +124,7 @@ us <-
 Now, using a single origin zip (112), we can plot all of the destination zips' zones relative to that origin. We'll also filter out any outliers.
 
 ```{r}
-bk_filtered <- 
+zz_filtered <- 
   zips_zones_lat_long %>% 
   filter(origin_zip == "112") %>% 
   left_join(us, by = c("lat_dest" = "lat", "long_dest" = "long")) %>% 
@@ -139,7 +139,7 @@ The map should look fragmented as our `zip_zones` data only covers a quarter of 
 ```{r zone_map, eval=FALSE, warning=FALSE}
 ggplot() +
   geom_polygon(data = us, aes(x = long, y = lat, group = group), fill = "white", color = "black") +
-  geom_density_2d(data = bk_filtered,
+  geom_density_2d(data = zz_filtered,
              aes(long_dest, lat_dest, colour = factor(zone)),
              alpha = 1) +
   labs(x = "Longitude", y = "Latitude", colour = "Zone") +
@@ -151,35 +151,8 @@ ggplot() +
 ```
 
 ```{r, echo=FALSE}
-knitr::include_graphics("../inst/doc/zone_map.jpg")
+knitr::include_graphics("./zone_map.jpg")
 ```
 
 
 <br>
-
-
-```{r}
-chi_filtered <- 
-  zips_zones_lat_long %>% 
-  filter(origin_zip == "606") %>% 
-  left_join(us, by = c("lat_dest" = "lat", "long_dest" = "long")) %>% 
-  filter(as.numeric(dest_zip) > 10 &
-           long_dest > -120)
-```
-
-
-```{r}
-ggplot() +
-  geom_polygon(data = us, aes(x = long, y = lat, group = group), fill = "white", color = "black") +
-  geom_density_2d(data = chi_filtered,
-             aes(long_dest, lat_dest, colour = factor(zone)),
-             alpha = 1) +
-  labs(x = "Longitude", y = "Latitude", colour = "Zone") +
-  ggtitle("Shipping Zones from Chicago",
-          subtitle = "Origin zone prefix: 606") +
-  scale_colour_brewer(type = "seq", palette = "BrBG") +
-  theme_classic(base_family = "Arial Narrow") +
-  coord_quickmap()
-```
-
-
