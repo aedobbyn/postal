@@ -15,7 +15,6 @@ Imports:
     dplyr,
     glue,
     jsonlite,
-    knitr,
     magrittr,
     purrr,
     readr,
