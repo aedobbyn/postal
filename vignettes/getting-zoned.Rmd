@@ -104,8 +104,6 @@ So we'll want to take our `zips_lat_long` mapping and use that to attach latitud
 ```
 
 
-Now, using a single origin zip (112) and the `ggmap` package, we can plot all of the destination zips' zones relative to that origin. 
-
 We could use the `ggmap` package to get a map of the US like
 
 ```{r, eval=FALSE}
@@ -120,7 +118,12 @@ but to go simpler, we'll use `ggplot2`'s built-in `map_data` function.
 us <- 
   map_data("state") %>%
   as_tibble() 
+```
 
+
+Now, using a single origin zip (112), we can plot all of the destination zips' zones relative to that origin. We'll also filter out any outliers.
+
+```{r}
 zz_filtered <- 
   zips_zones_lat_long %>% 
   filter(origin_zip == "112") %>% 
@@ -128,7 +131,6 @@ zz_filtered <-
   filter(as.numeric(dest_zip) > 10 &
            long_dest < -50)
 ```
-
 
 Remember -- always confusingly, to me, longitude is on the x and latitude is on the y (!)
 
@@ -149,7 +151,7 @@ ggplot() +
 ```
 
 ```{r, echo=FALSE}
-knitr::include_graphics(here::here("inst", "doc", "zone_map.jpg"))
+knitr::include_graphics("../inst/doc/zone_map.jpg")
 ```
 
 
