@@ -12,14 +12,14 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   cache = FALSE,
-  out.width = "70%",
-  out.height = "30%"
+  out.width = "100%"
 )
 ```
 
 ```{r load_pkgs, message=FALSE}
 library(usps)
 library(zipcode)
+library(ggplot2)
 library(dplyr)
 library(tidyr)
 ```
@@ -118,7 +118,6 @@ but to go simpler, we'll use `ggplot2`'s built-in `map_data` function.
 
 ```{r us_map}
 us <- 
-  # map_data("usa") %>% 
   map_data("state") %>%
   as_tibble() 
 
@@ -135,7 +134,7 @@ Remember -- always confusingly, to me, longitude is on the x and latitude is on 
 
 The map should look fragmented as our `zip_zones` data only covers a quarter of the possible origin-destination pairs. Still, the pattern is clear: zones increase as your destination gets farther away `r emo::ji("tada")`
 
-```{r zone_map, warning=FALSE}
+```{r zone_map, eval=FALSE, warning=FALSE}
 ggplot() +
   geom_polygon(data = us, aes(x = long, y = lat, group = group), fill = "white", color = "black") +
   geom_density_2d(data = zz_filtered,
@@ -147,6 +146,10 @@ ggplot() +
   scale_colour_brewer(type = "seq", palette = "BrBG") +
   theme_classic(base_family = "Arial Narrow") +
   coord_quickmap()
+```
+
+```{r, echo=FALSE}
+knitr::include_graphics(here::here("inst", "doc", "zone_map.jpg"))
 ```
 
 
