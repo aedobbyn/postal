@@ -1,6 +1,3 @@
-#' @importFrom tibble tibble
-NULL
-
 #' Zips and Zones
 #'
 #' All 3-digit zips and zones. The result of running fetch_all() with \code{as_range = TRUE}.

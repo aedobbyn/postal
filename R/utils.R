@@ -1,4 +1,3 @@
-#' @import magrittr
 
 three_digit_base_url <-
   "https://postcalc.usps.com/DomesticZoneChart/GetZoneChart?zipCode3Digit="
@@ -23,6 +22,7 @@ detail_definitions <-
     "has_five_digit_exceptions",
       "This 3 digit destination zip prefix appears at the beginning of certain 5 digit destination zips that correspond to a different zone."
   )
+
 
 prepend_zeros <- function(x, verbose = FALSE, ...) {
   if (nchar(x) == 1) {
@@ -83,8 +83,8 @@ prep_zip <- function(zip, ...) {
 
 
 get_data <- function(url) {
-
-  # if (!curl::has_internet()) {    # TODO: figure out namespace error
+  # TODO: figure out namespace error
+  # if (!curl::has_internet()) {
   #   message("No internet connection detected.")
   # }
 
@@ -274,11 +274,20 @@ interpolate_zips <- function(df) {
 }
 
 
-#' Pipe operator
+#' Forwards pipe
 #'
 #' @name %>%
-#' @rdname pipe
+#' @rdname forwards_pipe
 #' @keywords internal
 #' @export
 #' @importFrom magrittr %>%
 #' @usage lhs \%>\% rhs
+
+#' Assignment pipe
+#'
+#' @name %<>%
+#' @rdname assignment_pipe
+#' @keywords internal
+#' @export
+#' @importFrom magrittr %<>%
+#' @usage lhs \%<>\% rhs

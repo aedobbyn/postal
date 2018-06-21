@@ -26,7 +26,7 @@ determining postage rates.
 
 ``` r
 # install.packages("devtools")
-devtools::install_github('aedobbyn/usps')
+devtools::install_github("aedobbyn/usps")
 ```
 
 <br>
@@ -328,20 +328,20 @@ a while, and then taking a sample.
 
 ``` r
 zips_zones
-#> # A tibble: 3,804,494 x 6
+#> # A tibble: 1,000,000 x 6
 #>    origin_zip dest_zip  zone specific_to_prior… same_ndc has_five_digit_e…
 #>    <chr>      <chr>    <int> <lgl>              <lgl>    <lgl>            
-#>  1 000        <NA>        NA NA                 NA       NA               
-#>  2 001        <NA>        NA NA                 NA       NA               
-#>  3 002        <NA>        NA NA                 NA       NA               
-#>  4 003        <NA>        NA NA                 NA       NA               
-#>  5 004        <NA>        NA NA                 NA       NA               
-#>  6 005        005          1 FALSE              TRUE     FALSE            
-#>  7 005        006          7 FALSE              FALSE    FALSE            
-#>  8 005        007          7 FALSE              FALSE    FALSE            
-#>  9 005        008          7 FALSE              FALSE    FALSE            
-#> 10 005        009          7 FALSE              FALSE    FALSE            
-#> # ... with 3,804,484 more rows
+#>  1 003        <NA>        NA NA                 NA       NA               
+#>  2 004        <NA>        NA NA                 NA       NA               
+#>  3 005        012          2 FALSE              FALSE    FALSE            
+#>  4 005        027          2 FALSE              FALSE    FALSE            
+#>  5 005        028          2 FALSE              FALSE    FALSE            
+#>  6 005        030          3 FALSE              FALSE    FALSE            
+#>  7 005        042          3 FALSE              FALSE    FALSE            
+#>  8 005        044          4 FALSE              FALSE    FALSE            
+#>  9 005        051          3 FALSE              FALSE    FALSE            
+#> 10 005        053          3 FALSE              FALSE    FALSE            
+#> # ... with 999,990 more rows
 ```
 
 The sample is about a quarter of the total number of rows between all
