@@ -24,7 +24,10 @@ library(ggmap)
 library(zipcode)
 ```
 
-Data from the `zipcode` package relates zip codes to its latitude and longitude. 
+
+Data from the `zipcode` package relates zip codes to its latitude and longitude. We can that along with  the *partial* data in `usps::zips_zones` to match up zips to latitudes and longitudes.
+
+
 
 ```{r load_zips}
 data("zips_zones")
@@ -89,6 +92,8 @@ us <-
   # get_map("us", zoom = 4, maptype = "toner-lite")
 ```
 
+
+Remember -- longitude is on the x and latitude is on the y (!)
 
 ```{r zone_map, eval=TRUE}
 ggmap(us, extent = "device") +

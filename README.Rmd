@@ -75,7 +75,7 @@ origin_zips %>%
 ```
 
 
-Similarly, map over both origin and destination zips and end up at a dataframe. `verbose` gives you a play-by-play if you want it. (More on auto-prepending leading 0s to input zips in the Digits section below.)
+Similarly, map over both origin and destination zips and end up at a dataframe. `verbose` gives you a play-by-play if you want it. (More on auto-prepending leading 0s to input zips in the [On Digits](https://github.com/aedobbyn/usps#on-digits) section below.)
 
 ```{r}
 dest_zips <- c("867", "53", "09")
