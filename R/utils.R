@@ -289,6 +289,7 @@ interpolate_zips <- function(df) {
 
 
 cap_word <- function(x) {
+  x <- as.character(x)
   substr(x, 1, 1) <-
     toupper(substr(x, 1, 1))
   x
@@ -308,7 +309,10 @@ get_mail <- function(origin_zip = NULL,
                      shipping_date = "today",
                      shipping_time = "now",
                      ground_transportation_needed = FALSE,
-                     type = NULL,
+                     live_animals = FALSE,
+                     day_old_poultry = FALSE,
+                     hazardous_materials = FALSE,
+                     type = "Package",
                      pounds = 0,
                      ounces = 0,
                      length = 0,
@@ -317,12 +321,6 @@ get_mail <- function(origin_zip = NULL,
                      girth = 0,
                      shape = NULL,
                      verbose = TRUE, ...) {
-
-  if (ground_transportation_needed == FALSE) {
-    ground_transportation_needed <- "False"
-  } else {
-    ground_transportation_needed <- "True"
-  }
 
   if (shipping_date == "today") {
     shipping_date <-
@@ -348,18 +346,30 @@ get_mail <- function(origin_zip = NULL,
     shipping_time %>%
     stringr::str_replace_all(":", "%3A")
 
-  c(ground_transportation_needed,
-    live_animals,
-    day_old_poultry,
-    hazardous_materials) %>%
-    as.character() %>%
-    purrr::map_chr(cap_word)
+  # c(ground_transportation_needed,
+  #   live_animals,
+  #   day_old_poultry,
+  #   hazardous_materials) %>%
+  #   as.character() %>%
+  #   purrr::map_chr(cap_word)
+
+  ground_transportation_needed <-
+    ground_transportation_needed %>% cap_word()
+
+  live_animals <-
+    live_animals %>% tolower() %>% cap_word()
+
+  day_old_poultry <-
+    day_old_poultry %>% tolower() %>%cap_word()
+
+  hazardous_materials <-
+    hazardous_materials %>% tolower() %>%cap_word()
 
   shape <-
-    shape %>% cap_word()
+    shape %>% tolower() %>% cap_word()
 
 
-  url <- glue::glue("https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&origin={origin_zip}&isOrigMil=False&destination={destination_zip}&isDestMil=False&shippingDate={shipping_date}&shippingTime={shipping_time}&itemValue=&dayOldPoultry=False&groundTransportation={ground_transportation_needed}&hazmat=False&liveAnimals=False&nonnegotiableDocument=False&mailShapeAndSize={type}&pounds={pounds}&ounces={ounces}&length={length}&height={height}&width={width}&girth={girth}&shape={shape}&nonmachinable=False&isEmbedded=False")
+  url <- glue::glue("https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&origin={origin_zip}&isOrigMil=False&destination={destination_zip}&isDestMil=False&shippingDate={shipping_date}&shippingTime={shipping_time}&itemValue=&dayOldPoultry={day_old_poultry}&groundTransportation={ground_transportation_needed}&hazmat={hazardous_materials}&liveAnimals={live_animals}&nonnegotiableDocument=False&mailShapeAndSize={type}&pounds={pounds}&ounces={ounces}&length={length}&height={height}&width={width}&girth={girth}&shape={shape}&nonmachinable=False&isEmbedded=False")
 
   resp <- jsonlite::fromJSON(url)
 
@@ -403,9 +413,6 @@ clean_mail <- function(resp, show_details = FALSE) {
 
   return(out)
 }
-
-
-
 
 
 

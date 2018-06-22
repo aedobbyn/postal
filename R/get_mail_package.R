@@ -31,7 +31,8 @@
 #' @return A tibble with information for different postage options.
 #' @export
 
-fetch_mail_package <- function(origin_zip = NULL,
+fetch_mail_package <- function(
+                     origin_zip = NULL,
                      destination_zip = NULL,
                      shipping_date = "today",
                      shipping_time = "now",
@@ -49,8 +50,8 @@ fetch_mail_package <- function(origin_zip = NULL,
                      show_details = FALSE,
                      verbose = TRUE, ...) {
 
-  stopifnot(shape %in% c("rectangular", "nonrectangular"),
-            "shape must be either rectangular or nonrectangular")
+
+  if(!shape %in% c("rectangular", "nonrectangular")) stop("shape must be either rectangular or nonrectangular")
 
   if (shape == "nonrectangular") {
     if (is.null(girth)) {stop("If shape is nonrectangular girth must be non-null.")}
@@ -67,6 +68,9 @@ fetch_mail_package <- function(origin_zip = NULL,
                    shipping_date = shipping_date,
                    shipping_time = shipping_time,
                    ground_transportation_needed = ground_transportation_needed,
+                   live_animals = live_animals,
+                   day_old_poultry = day_old_poultry,
+                   hazardous_materials = hazardous_materials,
                    pounds = pounds,
                    ounces = ounces,
                    length = length,
