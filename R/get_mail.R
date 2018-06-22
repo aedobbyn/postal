@@ -1,6 +1,6 @@
-#' Fetch zones for a 3-digit origin zip or an origin-destination pair
+#' Get postage options for a package
 #'
-#' For a given 3-digit origin zip code, grab all destination zips and their corresponding zones.
+#' Supply some information about the package.
 #'
 #' @param origin_zip A single origin zip as character. If > 3 digits and contains leading zeros, make sure to supply as character.
 #' @param destination_zip Optional destination zip. If not included, returns all possible destinations for the origin provided. If > 3 digits and contains leading zeros, make sure to supply as character.
@@ -27,9 +27,8 @@
 #'          pounds = 15)
 #' }
 #'
-#' @return A tibble with origin zip and destination zips (in ranges or unspooled) and the USPS zones the origin-destination pair corresponds to.
+#' @return A tibble with information for different postage options.
 #' @export
-
 
 get_mail <- function(origin_zip = NULL,
                      destination_zip = NULL,
