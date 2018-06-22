@@ -40,13 +40,14 @@ get_mail <- function(origin_zip = "60647",
                      shipping_time = "now",
                      ground_transportation_needed = FALSE,
                      type = "FlatRateBox",
-                     pounds = NULL,
-                     ounces = NULL,
+                     pounds = 0,
+                     ounces = 0,
                      length = 0,
                      height = 0,
                      width = 0,
-                     girth = NULL,
-                     shape = "Rectangular") {
+                     girth = 0,
+                     shape = "Rectangular",
+                     verbose = TRUE, ...) {
 
   if (ground_transportation_needed == FALSE) {
     ground_transportation_needed <- "False"
@@ -57,6 +58,8 @@ get_mail <- function(origin_zip = "60647",
   if (shipping_date == "today") {
     shipping_date <-
       Sys.Date() %>% as.character()
+
+    if (verbose) message(glue::glue("Using time {shipping_time}."))
   }
 
   if (shipping_time == "now") {
@@ -65,7 +68,7 @@ get_mail <- function(origin_zip = "60647",
             ":",
             lubridate::now() %>% lubridate::minute())
 
-    message(glue::glue("Using time {shipping_time}."))
+    if (verbose) message(glue::glue("Using time {shipping_time}."))
   }
 
   shipping_date <-
@@ -79,6 +82,8 @@ get_mail <- function(origin_zip = "60647",
 
   url <- glue::glue("https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&origin={origin_zip}&isOrigMil=False&destination={destination_zip}&isDestMil=False&shippingDate={shipping_date}&shippingTime={shipping_time}&itemValue=&dayOldPoultry=False&groundTransportation={ground_transportation_needed}&hazmat=False&liveAnimals=False&nonnegotiableDocument=False&mailShapeAndSize={type}&pounds={pounds}&ounces={ounces}&length={length}&height={height}&width={width}&girth={girth}&shape={shape}&nonmachinable=False&isEmbedded=False")
 
+  # url <- glue::glue("https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&origin={origin_zip}&isOrigMil=False&destination={destination_zip}&isDestMil=False&shippingDate={shipping_date}&shippingTime={shipping_time}&itemValue=&dayOldPoultry=False&groundTransportation={ground_transportation_needed}&hazmat=False&liveAnimals=False&nonnegotiableDocument=False&mailShapeAndSize=Package&pounds={pounds}&ounces={ounces}&length={length}&height={height}&width={width}&girth={girth}&shape={shape}&nonmachinable=False&isEmbedded=False")
+
   print(url)
   lst <- jsonlite::fromJSON(url)
 
@@ -90,11 +95,12 @@ get_mail_flat_rate <-
                      destination_zip = NULL,
                      shipping_date = "today",
                      shipping_time = "now",
+                     type = "box",
                      ground_transportation_needed = FALSE,
-                     live_animals = FALSE,
-                     day_old_poultry = FALSE,
-                     hazardous_materials = FALSE
-                     ) {
+                     # live_animals = FALSE,
+                     # day_old_poultry = FALSE,
+                     # hazardous_materials = FALSE,
+                     verbose = TRUE, ...) {
 
   if (type == "envelope") {
     type <- "FlatRateEnvelope"
@@ -108,7 +114,7 @@ get_mail_flat_rate <-
   height <- 0
   width <- 0
   girth <- 0
-  shape <- NULL
+  shape <- 0
 
   lst <- get_mail(origin_zip = origin_zip,
                   destination_zip = destination_zip,
@@ -137,7 +143,17 @@ get_mail_flat_rate <-
 
   out <-
     unnested %>%
-    janitor::clean_names()
+    janitor::clean_names() %>%
+    dplyr::select(
+      title, delivery_day, retail_price, cn_s_price,
+      name, dimensions, postage_service_id
+    )
+
+  if (show_details == FALSE) {
+    out <-
+      out %>%
+      dplyr::select(title, delivery_day, retail_price, cn_s_price)
+  }
 
   return(out)
 }
