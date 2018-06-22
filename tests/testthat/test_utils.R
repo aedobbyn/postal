@@ -40,6 +40,21 @@ testthat::test_that("Zips are prepped correctly", {
 })
 
 
+testthat::test_that("Trying n times", {
+  testthat::expect_equal(
+    "no_success",
+    try_n_times("foo") %>%
+      purrr::pluck("zone")
+  )
+
+  testthat::expect_equal(
+    NULL,
+    try_n_times(stringr::str_c(three_digit_base_url, "123", collapse = "")) %>%
+      purrr::pluck("error")
+  )
+})
+
+
 testthat::test_that("Assignment of validity", {
   testthat::expect_message(fetch_zones("1"), "Origin zip 001 is not in use.")
   testthat::expect_equal("valid",

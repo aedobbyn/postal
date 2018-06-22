@@ -168,6 +168,44 @@ clean_data <- function(dat, o_zip) {
 }
 
 
+try_n_times <- function(url, n_tries = 3, ...) {
+
+  o_zip <- substr(url, nchar(url) - 2, nchar(url))
+
+  no_success <-
+    tibble::tibble(
+      origin_zip = o_zip,
+      dest_zip_start = "no_success",
+      dest_zip_end = "no_success",
+      zone = "no_success",
+      specific_to_priority_mail = NA,
+      same_ndc = NA,
+      has_five_digit_exceptions = NA,
+      validity = "no_success"
+    )
+
+  this_try <- 1
+  resp <- try_get_data(url)
+
+  if (!is.null(resp$error)) {
+    while (this_try <= n_tries) {
+      this_try <- this_try + 1
+      message(glue::glue("Error on request. Beginning try {this_try} of {n_tries}."))
+      Sys.sleep(this_try ^ 2)
+      resp <- try_get_data(url)
+
+      if (this_try == n_tries) {
+        message(glue::glue("Unsuccessful grabbing data for {o_zip}."))
+
+        return(no_success)
+      }
+    }
+  } else {
+    return(resp)
+  }
+}
+
+
 get_zones <- function(inp, verbose = FALSE, n_tries = 3, ...) {
   if (verbose) {
     message(glue::glue("Grabbing origin ZIP {inp}"))
@@ -175,32 +213,7 @@ get_zones <- function(inp, verbose = FALSE, n_tries = 3, ...) {
 
   this_url <- stringr::str_c(three_digit_base_url, inp, collapse = "")
   this_try <- 1
-  resp <- try_get_data(this_url)
-
-  if (!is.null(resp$error)) {
-    while (this_try <= n_tries) {
-      this_try <- this_try + 1
-      message(glue::glue("Error on request. Beginning try {this_try} of {n_tries}."))
-      Sys.sleep(this_try ^ 2)
-      resp <- try_get_data(this_url)
-
-      if (this_try == n_tries) {
-        message(glue::glue("Unsuccessful grabbing data for {inp}."))
-        no_success <- tibble::tibble(
-          origin_zip = inp,
-          dest_zip_start = "no_success",
-          dest_zip_end = "no_success",
-          zone = "no_success",
-          specific_to_priority_mail = NA,
-          same_ndc = NA,
-          has_five_digit_exceptions = NA,
-          validity = "no_success"
-        )
-
-        return(no_success)
-      }
-    }
-  }
+  resp <- try_n_times(this_url)
 
   out <- resp$result
 
