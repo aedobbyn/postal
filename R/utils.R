@@ -288,6 +288,157 @@ interpolate_zips <- function(df) {
 }
 
 
+cap_word <- function(x) {
+  x <- as.character(x)
+  substr(x, 1, 1) <-
+    toupper(substr(x, 1, 1))
+  x
+}
+
+
+# check_mail <- function() {
+#   if (any(class(origin_zip, destination_zip,
+#           shipping_date, shipping_time, type, shape)! = "character")) {
+#     stop()
+#   }
+# }
+
+
+get_mail <- function(origin_zip = NULL,
+                     destination_zip = NULL,
+                     shipping_date = "today",
+                     shipping_time = "now",
+                     ground_transportation_needed = FALSE,
+                     live_animals = FALSE,
+                     day_old_poultry = FALSE,
+                     hazardous_materials = FALSE,
+                     type = "Package",
+                     pounds = NULL,
+                     ounces = NULL,
+                     length = NULL,
+                     height = NULL,
+                     width = NULL,
+                     girth = NULL,
+                     shape = NULL,
+                     verbose = TRUE, ...) {
+
+  if (shipping_date == "today") {
+    shipping_date <-
+      Sys.Date() %>% as.character()
+
+    if (verbose) message(glue::glue("Using ship on date {shipping_date}."))
+  }
+
+  if (shipping_time == "now") {
+    shipping_time <-
+      stringr::str_c(lubridate::now() %>% lubridate::hour(),
+                     ":",
+                     lubridate::now() %>% lubridate::minute())
+
+    if (verbose) message(glue::glue("Using ship on time {shipping_time}."))
+  }
+
+  shipping_date <-
+    shipping_date %>%
+    stringr::str_replace_all("-", "%2F")
+
+  shipping_time <-
+    shipping_time %>%
+    stringr::str_replace_all(":", "%3A")
+
+  # Take boolean inputs for these args and turn to character
+  # c("ground_transportation_needed",
+  #   "live_animals",
+  #   "day_old_poultry",
+  #   "hazardous_materials",
+  #   "shape") %>%
+  #   purrr::walk(~ assign(.x,
+  #                 value = .x %>% get() %>% tolower() %>% cap_word(),
+  #                 envir = parent.frame()))
+
+  assign_val <- function(x) {
+    val <- get(x) %>%
+      tolower() %>% cap_word()
+
+    assign(x, val, envir = parent.frame())
+  }
+
+  browser()
+
+  c("ground_transportation_needed",
+    "live_animals",
+    "day_old_poultry",
+    "hazardous_materials",
+    "shape") %>% assign_val()
+
+  url <- glue::glue("https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&\\
+                    origin={origin_zip}&\\
+                    isOrigMil=False&\\
+                    destination={destination_zip}&\\
+                    isDestMil=False&\\
+                    shippingDate={shipping_date}&\\
+                    shippingTime={shipping_time}&\\
+                    itemValue=&\\
+                    dayOldPoultry={day_old_poultry}&\\
+                    groundTransportation={ground_transportation_needed}&\\
+                    hazmat={hazardous_materials}&\\
+                    liveAnimals={live_animals}&\\
+                    nonnegotiableDocument=False&\\
+                    mailShapeAndSize={type}&\\
+                    pounds={pounds}&\\
+                    ounces={ounces}&\\
+                    length={length}&\\
+                    height={height}&\\
+                    width={width}&\\
+                    girth={girth}&\\
+                    shape={shape}\\
+                    &nonmachinable=False&isEmbedded=False")
+
+  resp <- jsonlite::fromJSON(url)
+
+  return(resp)
+}
+
+
+clean_mail <- function(resp, show_details = FALSE) {
+
+  nested <-
+    resp$Page$MailServices %>%
+    tibble::as_tibble()
+
+  unnested <-
+    nested %>%
+    purrr::map_df(replace_x) %>%
+    tidyr::unnest(DeliveryOptions)
+
+  out <-
+    unnested %>%
+    janitor::clean_names() %>%
+    dplyr::rename(
+      delivery_option = name,
+      click_n_ship_price = cn_s_price
+    ) %>%
+    dplyr::select(
+      title, delivery_day, retail_price, click_n_ship_price,
+      delivery_option, dimensions, postage_service_id
+    )
+
+  if (show_details == FALSE) {
+    out <-
+      out %>%
+      dplyr::select(title, delivery_day, retail_price, click_n_ship_price, dimensions)
+  } else if (show_details == TRUE) {
+    out <-
+      out %>%
+      dplyr::select(title, delivery_day, retail_price, click_n_ship_price, dimensions,
+                    delivery_option)
+  }
+
+  return(out)
+}
+
+
+
 #' Pipe operator
 #'
 #' @name %>%
