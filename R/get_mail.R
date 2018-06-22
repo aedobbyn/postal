@@ -34,13 +34,14 @@
 
 
 
-get_mail <- function(origin_zip = NULL,
-                     destination_zip = NULL,
+get_mail <- function(origin_zip = "60647",
+                     destination_zip = "11238",
                      shipping_date = "today",
                      shipping_time = "now",
                      ground_transportation_needed = FALSE,
-                     pounds = 0,
-                     ounces = 0,
+                     type = "FlatRateBox",
+                     pounds = NULL,
+                     ounces = NULL,
                      length = 0,
                      height = 0,
                      width = 0,
@@ -60,24 +61,25 @@ get_mail <- function(origin_zip = NULL,
 
   if (shipping_time == "now") {
     shipping_time <-
-      str_c(lubridate::now() %>% lubridate::hour(),
+      stringr::str_c(lubridate::now() %>% lubridate::hour(),
             ":",
             lubridate::now() %>% lubridate::minute())
 
-    message(glue::glue("Using time {shipping_time.}"))
+    message(glue::glue("Using time {shipping_time}."))
   }
 
   shipping_date <-
     shipping_date %>%
-    str_replace_all("-", "%2F")
+    stringr::str_replace_all("-", "%2F")
 
   shipping_time <-
     shipping_time %>%
-    str_replace_all(":", "%3A")
+    stringr::str_replace_all(":", "%3A")
 
 
-  url <- glue::glue("https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&origin={origin_zip}&isOrigMil=False&destination={destination_zip}&isDestMil=False&shippingDate={shipping_date}&shippingTime={shipping_time}&itemValue=&dayOldPoultry=False&groundTransportation={ground_transportation}&hazmat=False&liveAnimals=False&nonnegotiableDocument=False&mailShapeAndSize={type}&pounds={pounds}&ounces={ounces}&length={length}&height={height}&width={width}&girth={girth}&shape={shape}&nonmachinable=False&isEmbedded=False")
+  url <- glue::glue("https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&origin={origin_zip}&isOrigMil=False&destination={destination_zip}&isDestMil=False&shippingDate={shipping_date}&shippingTime={shipping_time}&itemValue=&dayOldPoultry=False&groundTransportation={ground_transportation_needed}&hazmat=False&liveAnimals=False&nonnegotiableDocument=False&mailShapeAndSize={type}&pounds={pounds}&ounces={ounces}&length={length}&height={height}&width={width}&girth={girth}&shape={shape}&nonmachinable=False&isEmbedded=False")
 
+  print(url)
   lst <- jsonlite::fromJSON(url)
 
   return(lst)
