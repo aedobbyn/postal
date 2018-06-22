@@ -7,7 +7,7 @@
 #' @param shipping_date Date you plan to ship the package on in "MM-DD-YYY" format as character, or "today".
 #' @param shipping_time Time of day you plan to ship in "HH:MM" form, or "now".
 #' @param ground_transportation_needed Does the package need to be transported by ground?
-#' @param type One of: "box", "envelope".
+#' @param type One of "flat_rate_box", "flat_rate_envelope", or "package"
 #' @param pounds Number of pounds the package weighs.
 #' @param ounces Number of ounces the package weighs.
 #' @param length Length of the package. This is the longest dimension.
@@ -30,11 +30,8 @@
 #'
 #' @return A tibble with information for different postage options.
 #' @export
-#'
 
-
-
-get_mail <- function(origin_zip = NULL,
+get_mail_package <- function(origin_zip = NULL,
                      destination_zip = NULL,
                      shipping_date = "today",
                      shipping_time = "now",
@@ -46,6 +43,12 @@ get_mail <- function(origin_zip = NULL,
                      width = 0,
                      girth = NULL,
                      shape = "Rectangular") {
+
+  if (shape == "Nonrectangular") {
+    if (is.null(girth)) {stop("If shape is Nonrectangular girth must be non-null.")}
+  }
+
+  type <- "Package"
 
   if (ground_transportation_needed == FALSE) {
     ground_transportation_needed <- "False"
@@ -75,51 +78,12 @@ get_mail <- function(origin_zip = NULL,
     shipping_time %>%
     str_replace_all(":", "%3A")
 
+  url <-
+    glue::glue("https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&origin=60647&isOrigMil=False&destination=11238&isDestMil=False&shippingDate=6%2F22%2F2018+12%3A00%3A00+AM&shippingTime=13%3A59&itemValue=&dayOldPoultry=False&groundTransportation=False&hazmat=False&liveAnimals=False&nonnegotiableDocument=False&mailShapeAndSize=FlatRateBox&pounds=&ounces=&length=0&height=0&width=0&girth=0&shape=Rectangular&nonmachinable=False&isEmbedded=False")
 
   url <- glue::glue("https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&origin={origin_zip}&isOrigMil=False&destination={destination_zip}&isDestMil=False&shippingDate={shipping_date}&shippingTime={shipping_time}&itemValue=&dayOldPoultry=False&groundTransportation={ground_transportation}&hazmat=False&liveAnimals=False&nonnegotiableDocument=False&mailShapeAndSize={type}&pounds={pounds}&ounces={ounces}&length={length}&height={height}&width={width}&girth={girth}&shape={shape}&nonmachinable=False&isEmbedded=False")
 
   lst <- jsonlite::fromJSON(url)
-
-  return(lst)
-}
-
-get_mail_flat_rate <-
-                function(origin_zip = NULL,
-                     destination_zip = NULL,
-                     shipping_date = "today",
-                     shipping_time = "now",
-                     ground_transportation_needed = FALSE,
-                     live_animals = FALSE,
-                     day_old_poultry = FALSE,
-                     hazardous_materials = FALSE
-                     ) {
-
-  if (type == "envelope") {
-    type <- "FlatRateEnvelope"
-  } else if (type == "box") {
-    type <- "FlatRateBox"
-  }
-
-  pounds <- 0
-  ounces <- 0
-  length <- 0
-  height <- 0
-  width <- 0
-  girth <- 0
-  shape <- NULL
-
-  lst <- get_mail(origin_zip = origin_zip,
-                  destination_zip = destination_zip,
-                  shipping_date = shipping_date,
-                  shipping_time = shipping_time,
-                  ground_transportation_needed = ground_transportation_needed,
-                  pounds = pounds,
-                  ounces = ounces,
-                  length = length,
-                  height = height,
-                  width = width,
-                  girth = girth,
-                  shape = shape)
 
   nested <-
     lst$Page$MailServices %>%
