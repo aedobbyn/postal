@@ -303,6 +303,24 @@ cap_word <- function(x) {
 #   }
 # }
 
+ground_transportation_needed = FALSE
+live_animals = FALSE
+day_old_poultry = TRUE
+hazardous_materials = FALSE
+
+c("ground_transportation_needed",
+  "live_animals",
+  "day_old_poultry",
+  "hazardous_materials") %>%
+  walk(~ assign(.x,
+                value = .x %>% get() %>% tolower() %>% cap_word(),
+                envir = .GlobalEnv))
+
+
+letters %>% walk(~ assign(x = paste0("func_", .x),
+                          value = partial(func_, key_name = .x),
+                          envir = .GlobalEnv))
+
 
 get_mail <- function(origin_zip = NULL,
                      destination_zip = NULL,
@@ -346,30 +364,38 @@ get_mail <- function(origin_zip = NULL,
     shipping_time %>%
     stringr::str_replace_all(":", "%3A")
 
-  # c(ground_transportation_needed,
-  #   live_animals,
-  #   day_old_poultry,
-  #   hazardous_materials) %>%
-  #   as.character() %>%
-  #   purrr::map_chr(cap_word)
+  # Take boolean inputs for these args and turn to character
+  c("ground_transportation_needed",
+    "live_animals",
+    "day_old_poultry",
+    "hazardous_materials",
+    "shape") %>%
+    walk(~ assign(.x,
+                  value = .x %>% get() %>% tolower() %>% cap_word(),
+                  envir = .GlobalEnv))
 
-  ground_transportation_needed <-
-    ground_transportation_needed %>% cap_word()
-
-  live_animals <-
-    live_animals %>% tolower() %>% cap_word()
-
-  day_old_poultry <-
-    day_old_poultry %>% tolower() %>%cap_word()
-
-  hazardous_materials <-
-    hazardous_materials %>% tolower() %>%cap_word()
-
-  shape <-
-    shape %>% tolower() %>% cap_word()
-
-
-  url <- glue::glue("https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&origin={origin_zip}&isOrigMil=False&destination={destination_zip}&isDestMil=False&shippingDate={shipping_date}&shippingTime={shipping_time}&itemValue=&dayOldPoultry={day_old_poultry}&groundTransportation={ground_transportation_needed}&hazmat={hazardous_materials}&liveAnimals={live_animals}&nonnegotiableDocument=False&mailShapeAndSize={type}&pounds={pounds}&ounces={ounces}&length={length}&height={height}&width={width}&girth={girth}&shape={shape}&nonmachinable=False&isEmbedded=False")
+  url <- glue::glue("https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&\\
+                    origin={origin_zip}&\\
+                    isOrigMil=False&\\
+                    destination={destination_zip}&\\
+                    isDestMil=False&\\
+                    shippingDate={shipping_date}&\\
+                    shippingTime={shipping_time}&\\
+                    itemValue=&\\
+                    dayOldPoultry={day_old_poultry}&\\
+                    groundTransportation={ground_transportation_needed}&\\
+                    hazmat={hazardous_materials}&\\
+                    liveAnimals={live_animals}&\\
+                    nonnegotiableDocument=False&\\
+                    mailShapeAndSize={type}&\\
+                    pounds={pounds}&\\
+                    ounces={ounces}&\\
+                    length={length}&\\
+                    height={height}&\\
+                    width={width}&\\
+                    girth={girth}&\\
+                    shape={shape}\\
+                    &nonmachinable=False&isEmbedded=False")
 
   resp <- jsonlite::fromJSON(url)
 
