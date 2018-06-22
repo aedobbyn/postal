@@ -288,6 +288,127 @@ interpolate_zips <- function(df) {
 }
 
 
+cap_word <- function(x) {
+  substr(x, 1, 1) <-
+    toupper(substr(x, 1, 1))
+  x
+}
+
+
+# check_mail <- function() {
+#   if (any(class(origin_zip, destination_zip,
+#           shipping_date, shipping_time, type, shape)! = "character")) {
+#     stop()
+#   }
+# }
+
+
+get_mail <- function(origin_zip = NULL,
+                     destination_zip = NULL,
+                     shipping_date = "today",
+                     shipping_time = "now",
+                     ground_transportation_needed = FALSE,
+                     type = NULL,
+                     pounds = 0,
+                     ounces = 0,
+                     length = 0,
+                     height = 0,
+                     width = 0,
+                     girth = 0,
+                     shape = NULL,
+                     verbose = TRUE, ...) {
+
+  if (ground_transportation_needed == FALSE) {
+    ground_transportation_needed <- "False"
+  } else {
+    ground_transportation_needed <- "True"
+  }
+
+  if (shipping_date == "today") {
+    shipping_date <-
+      Sys.Date() %>% as.character()
+
+    if (verbose) message(glue::glue("Using ship on date {shipping_date}."))
+  }
+
+  if (shipping_time == "now") {
+    shipping_time <-
+      stringr::str_c(lubridate::now() %>% lubridate::hour(),
+                     ":",
+                     lubridate::now() %>% lubridate::minute())
+
+    if (verbose) message(glue::glue("Using ship on time {shipping_time}."))
+  }
+
+  shipping_date <-
+    shipping_date %>%
+    stringr::str_replace_all("-", "%2F")
+
+  shipping_time <-
+    shipping_time %>%
+    stringr::str_replace_all(":", "%3A")
+
+  c(ground_transportation_needed,
+    live_animals,
+    day_old_poultry,
+    hazardous_materials) %>%
+    as.character() %>%
+    purrr::map_chr(cap_word)
+
+  shape <-
+    shape %>% cap_word()
+
+
+  url <- glue::glue("https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&origin={origin_zip}&isOrigMil=False&destination={destination_zip}&isDestMil=False&shippingDate={shipping_date}&shippingTime={shipping_time}&itemValue=&dayOldPoultry=False&groundTransportation={ground_transportation_needed}&hazmat=False&liveAnimals=False&nonnegotiableDocument=False&mailShapeAndSize={type}&pounds={pounds}&ounces={ounces}&length={length}&height={height}&width={width}&girth={girth}&shape={shape}&nonmachinable=False&isEmbedded=False")
+
+  resp <- jsonlite::fromJSON(url)
+
+  return(resp)
+}
+
+
+clean_mail <- function(resp, show_details = FALSE) {
+
+  nested <-
+    resp$Page$MailServices %>%
+    tibble::as_tibble()
+
+  unnested <-
+    nested %>%
+    purrr::map_df(replace_x) %>%
+    tidyr::unnest(DeliveryOptions)
+
+  out <-
+    unnested %>%
+    janitor::clean_names() %>%
+    dplyr::rename(
+      delivery_option = name,
+      click_n_ship_price = cn_s_price
+    ) %>%
+    dplyr::select(
+      title, delivery_day, retail_price, click_n_ship_price,
+      delivery_option, dimensions, postage_service_id
+    )
+
+  if (show_details == FALSE) {
+    out <-
+      out %>%
+      dplyr::select(title, delivery_day, retail_price, click_n_ship_price, dimensions)
+  } else if (show_details == TRUE) {
+    out <-
+      out %>%
+      dplyr::select(title, delivery_day, retail_price, click_n_ship_price, dimensions,
+                    delivery_option)
+  }
+
+  return(out)
+}
+
+
+
+
+
+
 #' Pipe operator
 #'
 #' @name %>%

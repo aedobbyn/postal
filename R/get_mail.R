@@ -33,73 +33,14 @@
 #'
 
 
-
-get_mail <- function(origin_zip = "60647",
-                     destination_zip = "11238",
-                     shipping_date = "today",
-                     shipping_time = "now",
-                     ground_transportation_needed = FALSE,
-                     type = "FlatRateBox",
-                     pounds = 0,
-                     ounces = 0,
-                     length = 0,
-                     height = 0,
-                     width = 0,
-                     girth = 0,
-                     shape = "Rectangular",
-                     verbose = TRUE, ...) {
-
-  if (ground_transportation_needed == FALSE) {
-    ground_transportation_needed <- "False"
-  } else {
-    ground_transportation_needed <- "True"
-  }
-
-  if (shipping_date == "today") {
-    shipping_date <-
-      Sys.Date() %>% as.character()
-
-    if (verbose) message(glue::glue("Using time {shipping_time}."))
-  }
-
-  if (shipping_time == "now") {
-    shipping_time <-
-      stringr::str_c(lubridate::now() %>% lubridate::hour(),
-            ":",
-            lubridate::now() %>% lubridate::minute())
-
-    if (verbose) message(glue::glue("Using time {shipping_time}."))
-  }
-
-  shipping_date <-
-    shipping_date %>%
-    stringr::str_replace_all("-", "%2F")
-
-  shipping_time <-
-    shipping_time %>%
-    stringr::str_replace_all(":", "%3A")
-
-
-  url <- glue::glue("https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&origin={origin_zip}&isOrigMil=False&destination={destination_zip}&isDestMil=False&shippingDate={shipping_date}&shippingTime={shipping_time}&itemValue=&dayOldPoultry=False&groundTransportation={ground_transportation_needed}&hazmat=False&liveAnimals=False&nonnegotiableDocument=False&mailShapeAndSize={type}&pounds={pounds}&ounces={ounces}&length={length}&height={height}&width={width}&girth={girth}&shape={shape}&nonmachinable=False&isEmbedded=False")
-
-  # url <- glue::glue("https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&origin={origin_zip}&isOrigMil=False&destination={destination_zip}&isDestMil=False&shippingDate={shipping_date}&shippingTime={shipping_time}&itemValue=&dayOldPoultry=False&groundTransportation={ground_transportation_needed}&hazmat=False&liveAnimals=False&nonnegotiableDocument=False&mailShapeAndSize=Package&pounds={pounds}&ounces={ounces}&length={length}&height={height}&width={width}&girth={girth}&shape={shape}&nonmachinable=False&isEmbedded=False")
-
-  print(url)
-  lst <- jsonlite::fromJSON(url)
-
-  return(lst)
-}
-
-get_mail_flat_rate <-
+fetch_mail_flat_rate <-
                 function(origin_zip = NULL,
                      destination_zip = NULL,
                      shipping_date = "today",
                      shipping_time = "now",
                      type = "box",
                      ground_transportation_needed = FALSE,
-                     # live_animals = FALSE,
-                     # day_old_poultry = FALSE,
-                     # hazardous_materials = FALSE,
+                     show_details = FALSE,
                      verbose = TRUE, ...) {
 
   if (type == "envelope") {
@@ -116,7 +57,7 @@ get_mail_flat_rate <-
   girth <- 0
   shape <- 0
 
-  lst <- get_mail(origin_zip = origin_zip,
+  resp <- get_mail(origin_zip = origin_zip,
                   destination_zip = destination_zip,
                   shipping_date = shipping_date,
                   shipping_time = shipping_time,
@@ -129,32 +70,10 @@ get_mail_flat_rate <-
                   girth = girth,
                   shape = shape)
 
-  nested <-
-    lst$Page$MailServices %>%
-    tibble::as_tibble() %>%
-    dplyr::select(-ImageURL) %>%
-    dplyr::select(-AdditionalDropOffLink)
-
-  unnested <-
-    nested %>%
-    purrr::map_df(replace_x) %>%
-    tidyr::unnest(DeliveryOptions) %>%
-    dplyr::select(-URL)
-
   out <-
-    unnested %>%
-    janitor::clean_names() %>%
-    dplyr::select(
-      title, delivery_day, retail_price, cn_s_price,
-      name, dimensions, postage_service_id
-    )
-
-  if (show_details == FALSE) {
-    out <-
-      out %>%
-      dplyr::select(title, delivery_day, retail_price, cn_s_price)
-  }
+    resp %>% clean_mail(show_details = show_details)
 
   return(out)
 }
 
+fetch_mail_flat_rate("11238", "60647", show_details = TRUE)

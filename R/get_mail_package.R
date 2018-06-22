@@ -14,7 +14,7 @@
 #' @param height Height of the package.
 #' @param width Width of the package.
 #' @param girth Girth of the package, required if \code{shape} is "Nonrectangular". This is the distance around the thickest part.
-#' @param shape Shape of the package: "Rectangular" or "Nonrectangular". "Nonrectangular" reqires a non-null \code{girth} value.
+#' @param shape Shape of the package: "rectangular" or "nonrectangular". "Nonrectangular" reqires a non-null \code{girth} value.
 #'
 #' @details Displays the result of a query to the ["Postage Price Calculator"](https://postcalc.usps.com/Calculator/).
 #'
@@ -31,75 +31,53 @@
 #' @return A tibble with information for different postage options.
 #' @export
 
-get_mail_package <- function(origin_zip = NULL,
+fetch_mail_package <- function(origin_zip = NULL,
                      destination_zip = NULL,
                      shipping_date = "today",
                      shipping_time = "now",
                      ground_transportation_needed = FALSE,
+                     live_animals = FALSE,
+                     day_old_poultry = FALSE,
+                     hazardous_materials = FALSE,
                      pounds = 0,
                      ounces = 0,
                      length = 0,
                      height = 0,
                      width = 0,
-                     girth = NULL,
-                     shape = "Rectangular") {
+                     girth = 0,
+                     shape = "rectangular",
+                     show_details = FALSE,
+                     verbose = TRUE, ...) {
 
-  if (shape == "Nonrectangular") {
-    if (is.null(girth)) {stop("If shape is Nonrectangular girth must be non-null.")}
+  stopifnot(shape %in% c("rectangular", "nonrectangular"),
+            "shape must be either rectangular or nonrectangular")
+
+  if (shape == "nonrectangular") {
+    if (is.null(girth)) {stop("If shape is nonrectangular girth must be non-null.")}
+  }
+
+  if (live_animals == TRUE) {
+    cowsay::say("Woah Nelly!", by = "buffalo")
   }
 
   type <- "Package"
 
-  if (ground_transportation_needed == FALSE) {
-    ground_transportation_needed <- "False"
-  } else {
-    ground_transportation_needed <- "True"
-  }
-
-  if (shipping_date == "today") {
-    shipping_date <-
-      Sys.Date() %>% as.character()
-  }
-
-  if (shipping_time == "now") {
-    shipping_time <-
-      str_c(lubridate::now() %>% lubridate::hour(),
-            ":",
-            lubridate::now() %>% lubridate::minute())
-
-    message(glue::glue("Using time {shipping_time.}"))
-  }
-
-  shipping_date <-
-    shipping_date %>%
-    str_replace_all("-", "%2F")
-
-  shipping_time <-
-    shipping_time %>%
-    str_replace_all(":", "%3A")
-
-  url <-
-    glue::glue("https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&origin=60647&isOrigMil=False&destination=11238&isDestMil=False&shippingDate=6%2F22%2F2018+12%3A00%3A00+AM&shippingTime=13%3A59&itemValue=&dayOldPoultry=False&groundTransportation=False&hazmat=False&liveAnimals=False&nonnegotiableDocument=False&mailShapeAndSize=FlatRateBox&pounds=&ounces=&length=0&height=0&width=0&girth=0&shape=Rectangular&nonmachinable=False&isEmbedded=False")
-
-  url <- glue::glue("https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&origin={origin_zip}&isOrigMil=False&destination={destination_zip}&isDestMil=False&shippingDate={shipping_date}&shippingTime={shipping_time}&itemValue=&dayOldPoultry=False&groundTransportation={ground_transportation}&hazmat=False&liveAnimals=False&nonnegotiableDocument=False&mailShapeAndSize={type}&pounds={pounds}&ounces={ounces}&length={length}&height={height}&width={width}&girth={girth}&shape={shape}&nonmachinable=False&isEmbedded=False")
-
-  lst <- jsonlite::fromJSON(url)
-
-  nested <-
-    lst$Page$MailServices %>%
-    tibble::as_tibble() %>%
-    dplyr::select(-ImageURL) %>%
-    dplyr::select(-AdditionalDropOffLink)
-
-  unnested <-
-    nested %>%
-    purrr::map_df(replace_x) %>%
-    tidyr::unnest(DeliveryOptions) %>%
-    dplyr::select(-URL)
+  resp <- get_mail(origin_zip = origin_zip,
+                   destination_zip = destination_zip,
+                   shipping_date = shipping_date,
+                   shipping_time = shipping_time,
+                   ground_transportation_needed = ground_transportation_needed,
+                   pounds = pounds,
+                   ounces = ounces,
+                   length = length,
+                   height = height,
+                   width = width,
+                   girth = girth,
+                   shape = shape)
 
   out <-
-    unnested %>%
-    janitor::clean_names()
+    resp %>%
+    clean_mail(show_details = show_details)
 
   return(out)
 }
