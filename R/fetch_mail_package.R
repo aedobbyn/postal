@@ -7,6 +7,9 @@
 #' @param shipping_date Date you plan to ship the package on in "MM-DD-YYY" format as character, or "today".
 #' @param shipping_time Time of day you plan to ship in "HH:MM" form, or "now".
 #' @param ground_transportation_needed Does the package need to be transported by ground?
+#' @param live_animals Boolean: does this contain live animals?
+#' @param day_old_poultry Boolean: does this contain day-old poultry?
+#' @param hazardous_materials Boolean: does this contain any hazardous materials? See: \url{https://pe.usps.com/text/pub52/pub52c3_001.htm}
 #' @param pounds Number of pounds the package weighs.
 #' @param ounces Number of ounces the package weighs.
 #' @param length Length of the package. This is the longest dimension.
@@ -14,6 +17,9 @@
 #' @param width Width of the package.
 #' @param girth Girth of the package, required if \code{shape} is "nonrectangular". This is the distance around the thickest part.
 #' @param shape Shape of the package: "rectangular" or "nonrectangular". "Nonrectangular" reqires a non-null \code{girth} value.
+#' @param show_details Extra details?
+#' @param verbose More messages
+#' @param ... Other args
 #'
 #' @details Displays the result of a query to the ["Postage Price Calculator"](https://postcalc.usps.com/Calculator/).
 #'
@@ -22,8 +28,8 @@
 #'
 #' @examples \dontrun{
 #'
-#' get_mail(origin_zip = 60647,
-#'          destination_zip = 11238,
+#' fetch_mail_package(origin_zip = "60647",
+#'          destination_zip = "11238",
 #'          pounds = 15)
 #' }
 #'

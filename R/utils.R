@@ -303,24 +303,6 @@ cap_word <- function(x) {
 #   }
 # }
 
-ground_transportation_needed = FALSE
-live_animals = FALSE
-day_old_poultry = TRUE
-hazardous_materials = FALSE
-
-c("ground_transportation_needed",
-  "live_animals",
-  "day_old_poultry",
-  "hazardous_materials") %>%
-  walk(~ assign(.x,
-                value = .x %>% get() %>% tolower() %>% cap_word(),
-                envir = .GlobalEnv))
-
-
-letters %>% walk(~ assign(x = paste0("func_", .x),
-                          value = partial(func_, key_name = .x),
-                          envir = .GlobalEnv))
-
 
 get_mail <- function(origin_zip = NULL,
                      destination_zip = NULL,
@@ -331,12 +313,12 @@ get_mail <- function(origin_zip = NULL,
                      day_old_poultry = FALSE,
                      hazardous_materials = FALSE,
                      type = "Package",
-                     pounds = 0,
-                     ounces = 0,
-                     length = 0,
-                     height = 0,
-                     width = 0,
-                     girth = 0,
+                     pounds = NULL,
+                     ounces = NULL,
+                     length = NULL,
+                     height = NULL,
+                     width = NULL,
+                     girth = NULL,
                      shape = NULL,
                      verbose = TRUE, ...) {
 
@@ -365,14 +347,29 @@ get_mail <- function(origin_zip = NULL,
     stringr::str_replace_all(":", "%3A")
 
   # Take boolean inputs for these args and turn to character
+  # c("ground_transportation_needed",
+  #   "live_animals",
+  #   "day_old_poultry",
+  #   "hazardous_materials",
+  #   "shape") %>%
+  #   purrr::walk(~ assign(.x,
+  #                 value = .x %>% get() %>% tolower() %>% cap_word(),
+  #                 envir = parent.frame()))
+
+  assign_val <- function(x) {
+    val <- get(x) %>%
+      tolower() %>% cap_word()
+
+    assign(x, val, envir = parent.frame())
+  }
+
+  browser()
+
   c("ground_transportation_needed",
     "live_animals",
     "day_old_poultry",
     "hazardous_materials",
-    "shape") %>%
-    walk(~ assign(.x,
-                  value = .x %>% get() %>% tolower() %>% cap_word(),
-                  envir = .GlobalEnv))
+    "shape") %>% assign_val()
 
   url <- glue::glue("https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&\\
                     origin={origin_zip}&\\

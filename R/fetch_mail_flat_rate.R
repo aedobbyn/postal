@@ -6,15 +6,11 @@
 #' @param destination_zip Optional destination zip. If not included, returns all possible destinations for the origin provided. If > 3 digits and contains leading zeros, make sure to supply as character.
 #' @param shipping_date Date you plan to ship the package on in "MM-DD-YYY" format as character, or "today".
 #' @param shipping_time Time of day you plan to ship in "HH:MM" form, or "now".
-#' @param ground_transportation_needed Does the package need to be transported by ground?
 #' @param type One of: "box", "envelope".
-#' @param pounds Number of pounds the package weighs.
-#' @param ounces Number of ounces the package weighs.
-#' @param length Length of the package. This is the longest dimension.
-#' @param height Height of the package.
-#' @param width Width of the package.
-#' @param girth Girth of the package, required if \code{shape} is "Nonrectangular". This is the distance around the thickest part.
-#' @param shape Shape of the package: "Rectangular" or "Nonrectangular". "Nonrectangular" reqires a non-null \code{girth} value.
+#' @param ground_transportation_needed Does the package need to be transported by ground?
+#' @param show_details Extra details?
+#' @param verbose More messages
+#' @param ... Other args
 #'
 #' @details Displays the result of a query to the ["Postage Price Calculator"](https://postcalc.usps.com/Calculator/).
 #'
@@ -23,9 +19,8 @@
 #'
 #' @examples \dontrun{
 #'
-#' get_mail(origin_zip = 60647,
-#'          destination_zip = 11238,
-#'          pounds = 15)
+#' fetch_mail_flat_rate(origin_zip = "60647",
+#'          destination_zip = "11238")
 #' }
 #'
 #' @return A tibble with information for different postage options.
@@ -33,8 +28,8 @@
 #'
 
 
-fetch_mail_flat_rate <-
-                function(origin_zip = NULL,
+fetch_mail_flat_rate <- function(
+                     origin_zip = NULL,
                      destination_zip = NULL,
                      shipping_date = "today",
                      shipping_time = "now",
