@@ -346,30 +346,20 @@ get_mail <- function(origin_zip = NULL,
     shipping_time %>%
     stringr::str_replace_all(":", "%3A")
 
-  # Take boolean inputs for these args and turn to character
-  # c("ground_transportation_needed",
-  #   "live_animals",
-  #   "day_old_poultry",
-  #   "hazardous_materials",
-  #   "shape") %>%
-  #   purrr::walk(~ assign(.x,
-  #                 value = .x %>% get() %>% tolower() %>% cap_word(),
-  #                 envir = parent.frame()))
+  ground_transportation_needed <-
+    ground_transportation_needed %>% cap_word()
 
-  assign_val <- function(x) {
-    val <- get(x) %>%
-      tolower() %>% cap_word()
+  live_animals <-
+    live_animals %>% tolower() %>% cap_word()
 
-    assign(x, val, envir = parent.frame())
-  }
+  day_old_poultry <-
+    day_old_poultry %>% tolower() %>%cap_word()
 
-  browser()
+  hazardous_materials <-
+    hazardous_materials %>% tolower() %>%cap_word()
 
-  c("ground_transportation_needed",
-    "live_animals",
-    "day_old_poultry",
-    "hazardous_materials",
-    "shape") %>% assign_val()
+  shape <-
+    shape %>% tolower() %>% cap_word()
 
   url <- glue::glue("https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&\\
                     origin={origin_zip}&\\
