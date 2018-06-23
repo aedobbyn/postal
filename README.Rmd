@@ -96,9 +96,9 @@ Finally, the important questions have been answered.
 
 ## Zones
 
-A **zone** is a [measure of distance](https://ribbs.usps.gov/zone_charts/documents/tech_guides/ZoneChartExceptionsWebinar.pdf) between the origin and the destination zip codes and are used in determining postage rates. 
+A **zone** is a [representation of distance](https://ribbs.usps.gov/zone_charts/documents/tech_guides/ZoneChartExceptionsWebinar.pdf) between the origin and the destination zip codes. Zones are used in determining postage rates and delivery times. 
 
-Sometimes you just need to know the shipping zone between your origin and destination. Or may between *all* origins and *all* destinations for some app you're building.
+Sometimes you just need to know the shipping zone between your origin and destination. Or maybe between *all* origins and *all* destinations for some app you're building.
 
 That doesn't sound so bad, but there are `99999^2` or 9,999,800,001 possible 5-digit origin-destination zip combinations in the US. Luckily, the USPS [Zone Calc](https://postcalc.usps.com/DomesticZoneChart/) tool narrows down that search space a bit by trimming zips to their first 3 digits.
 

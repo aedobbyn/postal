@@ -150,10 +150,6 @@ ggplot() +
   coord_quickmap()
 ```
 
-```{r, echo=FALSE}
-knitr::include_graphics("../inst/doc/zone_map.jpg")
-```
-
 
 <br>
 
