@@ -5,7 +5,7 @@
 \title{Get postage options for a package}
 \usage{
 fetch_mail_flat_rate(origin_zip = NULL, destination_zip = NULL,
-  shipping_date = "today", shipping_time = "now", type = "box",
+  shipping_date = "today", shipping_time = "now", type = NULL,
   ground_transportation_needed = FALSE, show_details = FALSE,
   verbose = TRUE, ...)
 }
@@ -40,9 +40,8 @@ Displays the result of a query to the ["Postage Price Calculator"](https://postc
 \examples{
 \dontrun{
 
-get_mail(origin_zip = 60647,
-         destination_zip = 11238,
-         pounds = 15)
+fetch_mail_flat_rate(origin_zip = "60647",
+         destination_zip = "11238")
 }
 
 }

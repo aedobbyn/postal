@@ -84,3 +84,8 @@ testthat::test_that("Interpolation of zips in between ranges", {
                            interpolate_zips() %>%
                            dplyr::pull("validity"))
 })
+
+
+testthat::test_that("Assorted other utils", {
+  testthat::expect_equal(cap_word("foo"), "Foo")
+})

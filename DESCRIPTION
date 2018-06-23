@@ -14,6 +14,7 @@ BugReports: https://github.com/aedobbyn/usps/issues/
 Imports: 
     dplyr,
     glue,
+    janitor,
     jsonlite,
     lubridate,
     magrittr,

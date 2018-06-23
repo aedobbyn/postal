@@ -29,12 +29,11 @@ testthat::test_that("postcalc returns something", {
 })
 
 
-testthat::test_that("get_mail()", {
+testthat::test_that("fetch_mail_package()", {
 
   testthat::expect_is(
-    get_mail(origin_zip = 60647,
-             destination_zip = 11238,
-             pounds = 15),
+    fetch_mail_package(origin_zip = "60647",
+                       destination_zip = "11238"),
     "data.frame"
   )
 

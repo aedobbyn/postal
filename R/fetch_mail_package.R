@@ -72,6 +72,7 @@ fetch_mail_package <- function(
                    destination_zip = destination_zip,
                    shipping_date = shipping_date,
                    shipping_time = shipping_time,
+                   type = type,
                    ground_transportation_needed = ground_transportation_needed,
                    live_animals = live_animals,
                    day_old_poultry = day_old_poultry,

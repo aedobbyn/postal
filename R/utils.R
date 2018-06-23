@@ -1,4 +1,5 @@
 #' @import magrittr
+#' @importFrom janitor clean_names
 
 three_digit_base_url <-
   "https://postcalc.usps.com/DomesticZoneChart/GetZoneChart?zipCode3Digit="
@@ -308,18 +309,18 @@ get_mail <- function(origin_zip = NULL,
                      destination_zip = NULL,
                      shipping_date = "today",
                      shipping_time = "now",
-                     ground_transportation_needed = FALSE,
+                     ground_transportation_needed = TRUE,
                      live_animals = FALSE,
                      day_old_poultry = FALSE,
                      hazardous_materials = FALSE,
                      type = "Package",
-                     pounds = NULL,
-                     ounces = NULL,
-                     length = NULL,
-                     height = NULL,
-                     width = NULL,
-                     girth = NULL,
-                     shape = NULL,
+                     pounds = 0,
+                     ounces = 0,
+                     length = 0,
+                     height = 0,
+                     width = 0,
+                     girth = 0,
+                     shape = "Rectangular",
                      verbose = TRUE, ...) {
 
   if (shipping_date == "today") {
@@ -347,16 +348,16 @@ get_mail <- function(origin_zip = NULL,
     stringr::str_replace_all(":", "%3A")
 
   ground_transportation_needed <-
-    ground_transportation_needed %>% cap_word()
+    ground_transportation_needed %>% tolower() %>% cap_word()
 
   live_animals <-
     live_animals %>% tolower() %>% cap_word()
 
   day_old_poultry <-
-    day_old_poultry %>% tolower() %>%cap_word()
+    day_old_poultry %>% tolower() %>% cap_word()
 
   hazardous_materials <-
-    hazardous_materials %>% tolower() %>%cap_word()
+    hazardous_materials %>% tolower() %>% cap_word()
 
   shape <-
     shape %>% tolower() %>% cap_word()
@@ -383,6 +384,7 @@ get_mail <- function(origin_zip = NULL,
                     girth={girth}&\\
                     shape={shape}\\
                     &nonmachinable=False&isEmbedded=False")
+  print(url)
 
   resp <- jsonlite::fromJSON(url)
 
@@ -391,6 +393,10 @@ get_mail <- function(origin_zip = NULL,
 
 
 clean_mail <- function(resp, show_details = FALSE) {
+
+  if (resp$PageError == "No Mail Services were found.") {
+    stop("No Mail Services were found for this request. Try modifying the argument inputs.")
+  }
 
   nested <-
     resp$Page$MailServices %>%

@@ -33,10 +33,12 @@ fetch_mail_flat_rate <- function(
                      destination_zip = NULL,
                      shipping_date = "today",
                      shipping_time = "now",
-                     type = "box",
+                     type = NULL,
                      ground_transportation_needed = FALSE,
                      show_details = FALSE,
                      verbose = TRUE, ...) {
+
+  if (is.null(type)) stop("type must be either box or envelope.")
 
   if (type == "envelope") {
     type <- "FlatRateEnvelope"
@@ -56,6 +58,7 @@ fetch_mail_flat_rate <- function(
                   destination_zip = destination_zip,
                   shipping_date = shipping_date,
                   shipping_time = shipping_time,
+                  type = type,
                   ground_transportation_needed = ground_transportation_needed,
                   pounds = pounds,
                   ounces = ounces,
