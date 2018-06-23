@@ -26,14 +26,35 @@ testthat::test_that("postcalc returns something", {
       dplyr::select(-URL) %>%
       ncol()
   )
+
+  testthat::expect_is(
+    lst %>% clean_mail(),
+    "data.frame"
+  )
+
 })
 
 
 testthat::test_that("fetch_mail_package()", {
 
+  testthat::expect_error(
+    fetch_mail_package()
+  )
+
+  testthat::expect_error(
+    fetch_mail_package("123", "456")
+  )
+
   testthat::expect_is(
     fetch_mail_package(origin_zip = "60647",
                        destination_zip = "11238"),
+    "data.frame"
+  )
+
+  testthat::expect_is(
+    fetch_mail_package(origin_zip = "60647",
+                       destination_zip = "11238",
+                       show_details = TRUE),
     "data.frame"
   )
 
