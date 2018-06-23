@@ -62,7 +62,7 @@ fetch_mail_package <- function(
     if (is.null(girth)) {stop("If shape is nonrectangular girth must be non-null.")}
   }
 
-  if (live_animals == TRUE) {
+  if (live_animals && verbose) {
     cowsay::say("Woah Nelly!", by = "buffalo")
   }
 

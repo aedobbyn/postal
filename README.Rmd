@@ -18,11 +18,9 @@ library(magrittr)
 [![Travis build status](https://travis-ci.org/aedobbyn/usps.svg?branch=master)](https://travis-ci.org/aedobbyn/usps)
 [![Coverage status](https://codecov.io/gh/aedobbyn/usps/branch/master/graph/badge.svg)](https://codecov.io/github/aedobbyn/usps?branch=master)
 
-Need to get the USPS shipping zone between two zip codes? Well, this is a `r emo::ji("package")` for your `r emo::ji("package")`s. `usps` provides a tidy interface to the [USPS domestic zone calc API](https://postcalc.usps.com/DomesticZoneChart/). 
+Want an estimate of the price of sending a package somewhere via the US Postal Service? Need to get the USPS shipping zone between two zip codes? 
 
-There are `99999^2` or 9,999,800,001 possible 5-digit origin-destination zip combinations in the US. The USPS Zone Calc tool narrows down that search space a bit by trimming zips to their first 3 digits.
-
-A **zone** is a [measure of distance](https://ribbs.usps.gov/zone_charts/documents/tech_guides/ZoneChartExceptionsWebinar.pdf) between the origin and the destination zip codes and are used in determining postage rates. 
+Well, this is a `r emo::ji("package")` for your `r emo::ji("package")`s. `usps` provides a tidy interface to the USPS domestic [zone calc](https://postcalc.usps.com/DomesticZoneChart/) and [post calc](https://postcalc.usps.com/Calculator/) APIs. 
 
 ### Installation 
 
@@ -39,13 +37,77 @@ devtools::install_github("aedobbyn/usps")
 </p>
 
 
+<br>
+
+## Postage Price Calculator
+
+There are two potage calculation functions: one for flat-rate envelopes and boxes (the kind you pick up at the post office and wrestle with until they fold into a box shape) or packages, which vary by their weight and dimensions.
+
+### Usage
+
+Specify a 5-digit origin zip and destination zip, along with the date and time you're going to be shipping (`"today"` and `"now` are allowed). 
+
+```{r}
+library(usps)
+```
+
+Since we specified `type = "box"`, we get back all the options for boxes along with their prices and dimensions. 
+
+```{r}
+fetch_mail_flat_rate(origin_zip = "11238", 
+                     destination_zip = "60647",
+                     shipping_date = "today",
+                     shipping_time = "now", 
+                     type = "box")
+```
+
+The website should display the same results.
+
+<p align="center">
+  <img src="./man/figures/bk_to_chi.jpg" alt="post_calc" width="70%">
+</p>
+
+USPS also offers some more colorful options to handle all your shipping needs. 
+
+So to answer the burning question...what if we wanted to ship live animals from Wyoming to Philly by ground at 2:30pm in a nonrectangular package?? How long will it take and how much will it cost?
+
+```{r}
+fetch_mail_package(origin_zip = "88201", 
+                   destination_zip = "19109", 
+                   shipping_date = "today", 
+                   shipping_time = "14:30", 
+                   live_animals = TRUE,
+                   ground_transportation_needed = TRUE,
+                   pounds = 15,
+                   ounces = 0,
+                   length = 15,
+                   width = 10,
+                   height = 5,
+                   girth = 7,
+                   shape = "nonrectangular")
+```
+
+
+Finally, the important questions have been answered.
+
+***
+
+<br>
+
+## Zones
+
+A **zone** is a [measure of distance](https://ribbs.usps.gov/zone_charts/documents/tech_guides/ZoneChartExceptionsWebinar.pdf) between the origin and the destination zip codes and are used in determining postage rates. 
+
+Sometimes you just need to know the shipping zone between your origin and destination. Or may between *all* origins and *all* destinations for some app you're building.
+
+That doesn't sound so bad, but there are `99999^2` or 9,999,800,001 possible 5-digit origin-destination zip combinations in the US. Luckily, the USPS [Zone Calc](https://postcalc.usps.com/DomesticZoneChart/) tool narrows down that search space a bit by trimming zips to their first 3 digits.
+
+
 ### Usage
 
 `fetch_zones` lets you find the zone corresponding to a 3-digit origin zip prefix and one or many 3-digit destination zip prefixes.
 
 ```{r}
-library(usps)
-
 fetch_zones(origin_zip = "123", 
             destination_zip = "581")
 ```
@@ -95,7 +157,7 @@ purrr::map2_dfr(origin_zips, dest_zips,
 The USPS zone calc web interface displays zones only as they pertain to destination zip code *ranges*:
 
 <p align="center">
-  <img src="./man/figures/post_calc.jpg" alt="post_calc" width="70%">
+  <img src="./man/figures/zone_calc.jpg" alt="zone_calc" width="70%">
 </p>
 
 
@@ -212,7 +274,7 @@ tibble::tribble(
 
 #### Well, not all of it
 
-The `zips_zones` dataset included in this package contains a 1,000,000 row sample of all the 3 digit origin-destination pairs. You can access it with:
+The `zips_zones` dataset included in this package contains a random sample of 1,000,000 rows of all the 3 digit origin-destination pairs. Load it with:
 
 ```{r}
 data(zips_zones)

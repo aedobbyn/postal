@@ -9,18 +9,13 @@ status](https://travis-ci.org/aedobbyn/usps.svg?branch=master)](https://travis-c
 [![Coverage
 status](https://codecov.io/gh/aedobbyn/usps/branch/master/graph/badge.svg)](https://codecov.io/github/aedobbyn/usps?branch=master)
 
-Need to get the USPS shipping zone between two zip codes? Well, this is
-a 📦 for your 📦s. `usps` provides a tidy interface to the [USPS domestic
-zone calc API](https://postcalc.usps.com/DomesticZoneChart/).
+Want an estimate of the price of sending a package somewhere via the US
+Postal Service? Need to get the USPS shipping zone between two zip
+codes?
 
-There are `99999^2` or 9,999,800,001 possible 5-digit origin-destination
-zip combinations in the US. The USPS Zone Calc tool narrows down that
-search space a bit by trimming zips to their first 3 digits.
-
-A **zone** is a [measure of
-distance](https://ribbs.usps.gov/zone_charts/documents/tech_guides/ZoneChartExceptionsWebinar.pdf)
-between the origin and the destination zip codes and are used in
-determining postage rates.
+Well, this is a 📦 for your 📦s. `usps` provides a tidy interface to the
+USPS domestic [zone calc](https://postcalc.usps.com/DomesticZoneChart/)
+and [post calc](https://postcalc.usps.com/Calculator/) APIs.
 
 ### Installation
 
@@ -37,14 +32,134 @@ devtools::install_github("aedobbyn/usps")
 
 </p>
 
+<br>
+
+## Postage Price Calculator
+
+There are two potage calculation functions: one for flat-rate envelopes
+and boxes (the kind you pick up at the post office and wrestle with
+until they fold into a box shape) or packages, which vary by their
+weight and dimensions.
+
+### Usage
+
+Specify a 5-digit origin zip and destination zip, along with the date
+and time you’re going to be shipping (`"today"` and `"now` are allowed).
+
+``` r
+library(usps)
+```
+
+Since we specified `type = "box"`, we get back all the options for boxes
+along with their prices and dimensions.
+
+``` r
+fetch_mail_flat_rate(origin_zip = "11238", 
+                     destination_zip = "60647",
+                     shipping_date = "today",
+                     shipping_time = "now", 
+                     type = "box")
+#> Using ship on date 2018-06-23.
+#> Using ship on time 12:52.
+#> https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&origin=11238&isOrigMil=False&destination=60647&isDestMil=False&shippingDate=2018%2F06%2F23&shippingTime=12%3A52&itemValue=&dayOldPoultry=False&groundTransportation=False&hazmat=False&liveAnimals=False&nonnegotiableDocument=False&mailShapeAndSize=FlatRateBox&pounds=0&ounces=0&length=0&height=0&width=0&girth=0&shape=0&nonmachinable=False&isEmbedded=False
+#> # A tibble: 6 x 5
+#>   title      delivery_day retail_price click_n_ship_pr… dimensions        
+#>   <chr>      <chr>        <chr>        <chr>            <chr>             
+#> 1 Priority … Mon, Jun 25  $18.90       $18.90           "USPS-Produced Bo…
+#> 2 Priority … Mon, Jun 25  Not availab… $18.90           "USPS-Produced Bo…
+#> 3 Priority … Mon, Jun 25  $13.65       $13.65           "USPS-Produced Bo…
+#> 4 Priority … Mon, Jun 25  Not availab… $13.65           "USPS-Produced Bo…
+#> 5 Priority … Mon, Jun 25  $7.20        $7.20            "USPS-Produced Bo…
+#> 6 Priority … Mon, Jun 25  Not availab… $7.20            "USPS-Produced Bo…
+```
+
+The website should display the same results.
+
+<p align="center">
+
+<img src="./man/figures/bk_to_chi.jpg" alt="post_calc" width="70%">
+
+</p>
+
+USPS also offers some more colorful options to handle all your shipping
+needs.
+
+So to answer the burning question…what if we wanted to ship live animals
+from Wyoming to Philly by ground at 2:30pm in a nonrectangular package??
+How long will it take and how much will it cost?
+
+````` r
+fetch_mail_package(origin_zip = "88201", 
+                   destination_zip = "19109", 
+                   shipping_date = "today", 
+                   shipping_time = "14:30", 
+                   live_animals = TRUE,
+                   ground_transportation_needed = TRUE,
+                   pounds = 15,
+                   ounces = 0,
+                   length = 15,
+                   width = 10,
+                   height = 5,
+                   girth = 7,
+                   shape = "nonrectangular")
+#> 
+#>     
+#>  -------------- 
+#> Woah Nelly! 
+#>  --------------
+#>     \
+#>       \
+#>         \
+#>                    _.-````'-,_
+#>          _,.,_ ,-'`           `'-.,_
+#>        /)     (                   '``-.
+#>       ((      ) )                      `\
+#>         \)    (_/                        )\
+#>         |       /)           '    ,'    / \
+#>         `\    ^'            '     (    /  ))
+#>           |      _/\ ,     /    ,,`\   (  "`
+#>           \Y,   |   \  \  | ````| / \_ \
+#>             `)_/      \  \  )    ( >  ( >
+#>                        \( \(     |/   |/
+#>           mic & dwb  /_(/_(    /_(  /_(
+#> 
+#> Using ship on date 2018-06-23.
+#> https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&origin=88201&isOrigMil=False&destination=19109&isDestMil=False&shippingDate=2018%2F06%2F23&shippingTime=14%3A30&itemValue=&dayOldPoultry=False&groundTransportation=True&hazmat=False&liveAnimals=True&nonnegotiableDocument=False&mailShapeAndSize=Package&pounds=15&ounces=0&length=15&height=5&width=10&girth=7&shape=Nonrectangular&nonmachinable=False&isEmbedded=False
+#> # A tibble: 1 x 5
+#>   title             delivery_day retail_price click_n_ship_pri… dimensions
+#>   <chr>             <chr>        <chr>        <chr>             <chr>     
+#> 1 USPS Retail Grou… Mon, Jul 2   $42.24       Not available     ""
+`````
+
+Finally, the important questions have been answered.
+
+-----
+
+<br>
+
+## Zones
+
+A **zone** is a [measure of
+distance](https://ribbs.usps.gov/zone_charts/documents/tech_guides/ZoneChartExceptionsWebinar.pdf)
+between the origin and the destination zip codes and are used in
+determining postage rates.
+
+Sometimes you just need to know the shipping zone between your origin
+and destination. Or may between *all* origins and *all* destinations for
+some app you’re building.
+
+That doesn’t sound so bad, but there are `99999^2` or 9,999,800,001
+possible 5-digit origin-destination zip combinations in the US. Luckily,
+the USPS [Zone Calc](https://postcalc.usps.com/DomesticZoneChart/) tool
+narrows down that search space a bit by trimming zips to their first 3
+digits.
+
 ### Usage
 
 `fetch_zones` lets you find the zone corresponding to a 3-digit origin
 zip prefix and one or many 3-digit destination zip prefixes.
 
 ``` r
-library(usps)
-
 fetch_zones(origin_zip = "123", 
             destination_zip = "581")
 #> # A tibble: 1 x 3
@@ -143,7 +258,7 @@ destination zip code *ranges*:
 
 <p align="center">
 
-<img src="./man/figures/post_calc.jpg" alt="post_calc" width="70%">
+<img src="./man/figures/zone_calc.jpg" alt="zone_calc" width="70%">
 
 </p>
 
@@ -316,9 +431,9 @@ asking for origin `"123"` and origin `"456"`:
 
 #### Well, not all of it
 
-The `zips_zones` dataset included in this package contains a 1,000,000
-row sample of all the 3 digit origin-destination pairs. You can access
-it with:
+The `zips_zones` dataset included in this package contains a random
+sample of 1,000,000 rows of all the 3 digit origin-destination pairs.
+Load it with:
 
 ``` r
 data(zips_zones)
