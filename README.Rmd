@@ -84,7 +84,8 @@ fetch_mail_package(origin_zip = "88201",
                    width = 10,
                    height = 5,
                    girth = 7,
-                   shape = "nonrectangular")
+                   shape = "nonrectangular",
+                   verbose = FALSE)
 ```
 
 

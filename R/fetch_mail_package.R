@@ -52,15 +52,15 @@ fetch_mail_package <- function(
                      height = 0,
                      width = 0,
                      girth = 0,
-                     shape = "rectangular",
+                     shape = c("rectangular", "nonrectangular"),
                      show_details = FALSE,
                      verbose = TRUE, ...) {
 
-
-  if(!shape %in% c("rectangular", "nonrectangular")) stop("shape must be either rectangular or nonrectangular")
+  if(length(shape) > 1 ||
+    !shape %in% c("rectangular", "nonrectangular")) stop("shape must be either rectangular or nonrectangular")
 
   if (shape == "nonrectangular") {
-    if (is.null(girth)) {stop("If shape is nonrectangular girth must be non-null.")}
+    if (is.null(girth) || girth == 0) {stop("If shape is nonrectangular girth must be non-null.")}
   }
 
   if (live_animals && verbose) {

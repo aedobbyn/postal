@@ -9,16 +9,17 @@ fetch_mail_package(origin_zip = NULL, destination_zip = NULL,
   ground_transportation_needed = FALSE, live_animals = FALSE,
   day_old_poultry = FALSE, hazardous_materials = FALSE, pounds = 0,
   ounces = 0, length = 0, height = 0, width = 0, girth = 0,
-  shape = "rectangular", show_details = FALSE, verbose = TRUE, ...)
+  shape = c("rectangular", "nonrectangular"), show_details = FALSE,
+  verbose = TRUE, ...)
 }
 \arguments{
-\item{origin_zip}{A single origin zip as character. If > 3 digits and contains leading zeros, make sure to supply as character.}
+\item{origin_zip}{5-digit origin zip code.}
 
-\item{destination_zip}{Optional destination zip. If not included, returns all possible destinations for the origin provided. If > 3 digits and contains leading zeros, make sure to supply as character.}
+\item{destination_zip}{5-digit destination zip code.}
 
-\item{shipping_date}{Date you plan to ship the package on in "MM-DD-YYY" format as character, or "today".}
+\item{shipping_date}{Date you plan to ship the package on in "MM-DD-YYYY" format as character, or "today".}
 
-\item{shipping_time}{Time of day you plan to ship in "HH:MM" form, or "now".}
+\item{shipping_time}{Time of day you plan to ship in 24-hour "HH:MM" format as character, or "now".}
 
 \item{ground_transportation_needed}{Does the package need to be transported by ground?}
 
@@ -40,13 +41,15 @@ fetch_mail_package(origin_zip = NULL, destination_zip = NULL,
 
 \item{girth}{Girth of the package, required if \code{shape} is "nonrectangular". This is the distance around the thickest part.}
 
-\item{shape}{Shape of the package: "rectangular" or "nonrectangular". "Nonrectangular" reqires a non-null \code{girth} value.}
+\item{shape}{Shape of the package: "rectangular" or "nonrectangular". "nonrectangular" reqires a non-null \code{girth} value.}
 
-\item{show_details}{Extra details?}
+\item{show_details}{Non-essential details of the response are hidden by default. Show them by setting this to TRUE.}
 
-\item{verbose}{More messages}
+\item{verbose}{Should messages, (e.g. shipping date time be dispalyed if the defaults "today" and "now" are chosen) be messageed?}
 
-\item{...}{Other args}
+\item{...}{Other arguments.}
+
+\item{type}{One of: "box", "envelope".}
 }
 \value{
 A tibble with information for different postage options.
@@ -55,7 +58,7 @@ A tibble with information for different postage options.
 Supply some information about the package.
 }
 \details{
-Displays the result of a query to the ["Postage Price Calculator"](https://postcalc.usps.com/Calculator/).
+Displays the result of a query to the ["Postage Price Calculator"](https://postcalc.usps.com/Calculator/). For flat rate envelopes or boxes, use \code{\link{fetch_mail_flat_rate}}.
 }
 \examples{
 \dontrun{

@@ -2,46 +2,46 @@
 % Please edit documentation in R/fetch_mail_flat_rate.R
 \name{fetch_mail_flat_rate}
 \alias{fetch_mail_flat_rate}
-\title{Get postage options for a package}
+\title{Get postage options for a flat-rate envelope or box}
 \usage{
 fetch_mail_flat_rate(origin_zip = NULL, destination_zip = NULL,
-  shipping_date = "today", shipping_time = "now", type = NULL,
-  ground_transportation_needed = FALSE, show_details = FALSE,
+  shipping_date = "today", shipping_time = "now", type = c("envelope",
+  "box"), ground_transportation_needed = FALSE, show_details = FALSE,
   verbose = TRUE, ...)
 }
 \arguments{
-\item{origin_zip}{A single origin zip as character. If > 3 digits and contains leading zeros, make sure to supply as character.}
+\item{origin_zip}{5-digit origin zip code.}
 
-\item{destination_zip}{Optional destination zip. If not included, returns all possible destinations for the origin provided. If > 3 digits and contains leading zeros, make sure to supply as character.}
+\item{destination_zip}{5-digit destination zip code.}
 
-\item{shipping_date}{Date you plan to ship the package on in "MM-DD-YYY" format as character, or "today".}
+\item{shipping_date}{Date you plan to ship the package on in "MM-DD-YYYY" format as character, or "today".}
 
-\item{shipping_time}{Time of day you plan to ship in "HH:MM" form, or "now".}
+\item{shipping_time}{Time of day you plan to ship in 24-hour "HH:MM" format as character, or "now".}
 
 \item{type}{One of: "box", "envelope".}
 
 \item{ground_transportation_needed}{Does the package need to be transported by ground?}
 
-\item{show_details}{Extra details?}
+\item{show_details}{Non-essential details of the response are hidden by default. Show them by setting this to TRUE.}
 
-\item{verbose}{More messages}
+\item{verbose}{Should messages, (e.g. shipping date time be dispalyed if the defaults "today" and "now" are chosen) be messageed?}
 
-\item{...}{Other args}
+\item{...}{Other arguments.}
 }
 \value{
-A tibble with information for different postage options.
+A tibble with information for different postage options, including price and box/envelope dimensions.
 }
 \description{
-Supply some information about the package.
+Get postage options for a flat-rate envelope or box
 }
 \details{
-Displays the result of a query to the ["Postage Price Calculator"](https://postcalc.usps.com/Calculator/).
+Supply the required information about the package and receive a tibble. Displays the result of a query to the ["Postage Price Calculator"](https://postcalc.usps.com/Calculator/). For non-flat-rate packages, use \code{\link{fetch_mail_package}}.
 }
 \examples{
 \dontrun{
 
 fetch_mail_flat_rate(origin_zip = "60647",
-         destination_zip = "11238")
+         destination_zip = "11238", type = "envelope")
 }
 
 }

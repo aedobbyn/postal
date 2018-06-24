@@ -30,25 +30,22 @@ fetch_mail_flat_rate <- function(
                      destination_zip = NULL,
                      shipping_date = "today",
                      shipping_time = "now",
-                     type = c("rectangular", "nonrectangular"),
+                     type = c("envelope", "box"),
                      ground_transportation_needed = FALSE,
                      show_details = FALSE,
                      verbose = TRUE, ...) {
 
-  if (any(is.null(origin_zip, destination_zip))) {
-    stop("zips provided must both be non-null")
-  }
-
-  if (is.null(type)) stop("type must be either box or envelope.")
+  if (length(type) > 1) stop ("type must be either envelope or box")
 
   if (type == "envelope") {
     type <- "FlatRateEnvelope"
   } else if (type == "box") {
     type <- "FlatRateBox"
+    shape <- "Rectangular"
   }
 
   pounds <- ounces <- length <- height <- width <- girth <- 0
-  shape <- ""
+  shape <- "Rectangular"
 
   resp <- get_mail(origin_zip = origin_zip,
                   destination_zip = destination_zip,

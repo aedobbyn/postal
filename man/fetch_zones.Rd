@@ -32,7 +32,7 @@ A tibble with origin zip and destination zips (in ranges or unspooled) and the U
 For a given 3-digit origin zip code, grab all destination zips and their corresponding zones.
 }
 \details{
-Displays the result of a query to the ["Get Zone Chart"](https://postcalc.usps.com/DomesticZoneChart/) tab.
+Displays the result of a query to the ["Get Zone Chart"](https://postcalc.usps.com/DomesticZoneChart/) tab. If you just want to supply two 5-digit zips and get a single zone back, use \code{\link{fetch_five_digit}}.
 }
 \examples{
 \dontrun{
