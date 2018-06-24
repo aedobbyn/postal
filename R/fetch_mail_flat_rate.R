@@ -35,6 +35,10 @@ fetch_mail_flat_rate <- function(
                      show_details = FALSE,
                      verbose = TRUE, ...) {
 
+  if (any(is.null(origin_zip, destination_zip))) {
+    stop("zips provided must both be non-null")
+  }
+
   if (is.null(type)) stop("type must be either box or envelope.")
 
   if (type == "envelope") {
@@ -43,13 +47,8 @@ fetch_mail_flat_rate <- function(
     type <- "FlatRateBox"
   }
 
-  pounds <- 0
-  ounces <- 0
-  length <- 0
-  height <- 0
-  width <- 0
-  girth <- 0
-  shape <- 0
+  pounds <- ounces <- length <- height <- width <- girth <- 0
+  shape <- ""
 
   resp <- get_mail(origin_zip = origin_zip,
                   destination_zip = destination_zip,
