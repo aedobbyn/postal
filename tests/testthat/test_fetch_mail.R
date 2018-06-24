@@ -78,7 +78,12 @@ testthat::test_that("fetch_mail_package()", {
   testthat::expect_is(
     fetch_mail_package(origin_zip = "60647",
                        destination_zip = "11238",
-                       show_details = TRUE),
+                       show_details = TRUE,
+                       shape = "rectangular",
+                       pounds = 10,
+                       length = 12,
+                       width = 8,
+                       height = 4),
     "data.frame"
   )
 

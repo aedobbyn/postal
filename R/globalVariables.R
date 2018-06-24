@@ -17,14 +17,15 @@ globalVariables(c(
   "specific_to_priority_mail",
   "zone",
   # ---- Mail ---- #
-  "DeliveryOptions",
-  "name",
   "cn_s_price",
-  "title",
-  "delivery_day",
-  "retail_price",
   "click_n_ship_price",
+  "delivery_day",
   "delivery_option",
+  "DeliveryOptions",
   "dimensions",
-  "postage_service_id"
+  "name",
+  "postage_service_id",
+  "retail_price",
+  "title",
+  "type"
 ))
