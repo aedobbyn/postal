@@ -320,7 +320,7 @@ get_mail <- function(origin_zip = NULL,
                      height = 0,
                      width = 0,
                      girth = 0,
-                     shape = "Rectangular",
+                     shape = c("rectangular", "nonrectangular"),
                      verbose = TRUE, ...) {
 
   if (shipping_date == "today") {

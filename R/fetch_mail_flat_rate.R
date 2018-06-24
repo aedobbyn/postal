@@ -1,18 +1,16 @@
-#' Get postage options for a package
+#' Get postage options for a flat-rate envelope or box
 #'
-#' Supply some information about the package.
-#'
-#' @param origin_zip A single origin zip as character. If > 3 digits and contains leading zeros, make sure to supply as character.
-#' @param destination_zip Optional destination zip. If not included, returns all possible destinations for the origin provided. If > 3 digits and contains leading zeros, make sure to supply as character.
-#' @param shipping_date Date you plan to ship the package on in "MM-DD-YYY" format as character, or "today".
-#' @param shipping_time Time of day you plan to ship in "HH:MM" form, or "now".
+#' @param origin_zip 5-digit origin zip code.
+#' @param destination_zip 5-digit destination zip code.
+#' @param shipping_date Date you plan to ship the package on in "MM-DD-YYYY" format as character, or "today".
+#' @param shipping_time Time of day you plan to ship in 24-hour "HH:MM" format as character, or "now".
 #' @param type One of: "box", "envelope".
 #' @param ground_transportation_needed Does the package need to be transported by ground?
-#' @param show_details Extra details?
-#' @param verbose More messages
-#' @param ... Other args
+#' @param show_details Non-essential details of the response are hidden by default. Show them by setting this to TRUE.
+#' @param verbose Should messages, (e.g. shipping date time be dispalyed if the defaults "today" and "now" are chosen) be messageed?
+#' @param ... Other arguments.
 #'
-#' @details Displays the result of a query to the ["Postage Price Calculator"](https://postcalc.usps.com/Calculator/).
+#' @details Supply the required information about the package and receive a tibble. Displays the result of a query to the ["Postage Price Calculator"](https://postcalc.usps.com/Calculator/). For non-flat-rate packages, use \code{\link{fetch_mail_package}}.
 #'
 #' @importFrom magrittr %>%
 #' @importFrom janitor clean_names
@@ -20,20 +18,19 @@
 #' @examples \dontrun{
 #'
 #' fetch_mail_flat_rate(origin_zip = "60647",
-#'          destination_zip = "11238")
+#'          destination_zip = "11238", type = "envelope")
 #' }
 #'
-#' @return A tibble with information for different postage options.
+#' @return A tibble with information for different postage options, including price and box/envelope dimensions.
 #' @export
 #'
-
 
 fetch_mail_flat_rate <- function(
                      origin_zip = NULL,
                      destination_zip = NULL,
                      shipping_date = "today",
                      shipping_time = "now",
-                     type = NULL,
+                     type = c("rectangular", "nonrectangular"),
                      ground_transportation_needed = FALSE,
                      show_details = FALSE,
                      verbose = TRUE, ...) {

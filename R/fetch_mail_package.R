@@ -2,10 +2,11 @@
 #'
 #' Supply some information about the package.
 #'
-#' @param origin_zip A single origin zip as character. If > 3 digits and contains leading zeros, make sure to supply as character.
-#' @param destination_zip Optional destination zip. If not included, returns all possible destinations for the origin provided. If > 3 digits and contains leading zeros, make sure to supply as character.
-#' @param shipping_date Date you plan to ship the package on in "MM-DD-YYY" format as character, or "today".
-#' @param shipping_time Time of day you plan to ship in "HH:MM" form, or "now".
+#' @param origin_zip 5-digit origin zip code.
+#' @param destination_zip 5-digit destination zip code.
+#' @param shipping_date Date you plan to ship the package on in "MM-DD-YYYY" format as character, or "today".
+#' @param shipping_time Time of day you plan to ship in 24-hour "HH:MM" format as character, or "now".
+#' @param type One of: "box", "envelope".
 #' @param ground_transportation_needed Does the package need to be transported by ground?
 #' @param live_animals Boolean: does this contain live animals?
 #' @param day_old_poultry Boolean: does this contain day-old poultry?
@@ -16,12 +17,12 @@
 #' @param height Height of the package.
 #' @param width Width of the package.
 #' @param girth Girth of the package, required if \code{shape} is "nonrectangular". This is the distance around the thickest part.
-#' @param shape Shape of the package: "rectangular" or "nonrectangular". "Nonrectangular" reqires a non-null \code{girth} value.
-#' @param show_details Extra details?
-#' @param verbose More messages
-#' @param ... Other args
+#' @param shape Shape of the package: "rectangular" or "nonrectangular". "nonrectangular" reqires a non-null \code{girth} value.
+#' @param show_details Non-essential details of the response are hidden by default. Show them by setting this to TRUE.
+#' @param verbose Should messages, (e.g. shipping date time be dispalyed if the defaults "today" and "now" are chosen) be messageed?
+#' @param ... Other arguments.
 #'
-#' @details Displays the result of a query to the ["Postage Price Calculator"](https://postcalc.usps.com/Calculator/).
+#' @details Displays the result of a query to the ["Postage Price Calculator"](https://postcalc.usps.com/Calculator/). For flat rate envelopes or boxes, use \code{\link{fetch_mail_flat_rate}}.
 #'
 #' @importFrom magrittr %>%
 #' @importFrom janitor clean_names

@@ -11,7 +11,7 @@
 #' @param verbose Message what's going on?
 #' @param ... Other arguments
 #'
-#' @details Displays the result of a query to the ["Get Zone Chart"](https://postcalc.usps.com/DomesticZoneChart/) tab.
+#' @details Displays the result of a query to the ["Get Zone Chart"](https://postcalc.usps.com/DomesticZoneChart/) tab. If you just want to supply two 5-digit zips and get a single zone back, use \code{\link{fetch_five_digit}}.
 #'
 #' @importFrom magrittr %>%
 #'
