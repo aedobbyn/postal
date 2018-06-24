@@ -296,22 +296,24 @@ cap_word <- function(x) {
   x
 }
 
-check_mail <- function(origin_zip = NULL,
-                       destination_zip = NULL,
-                       shipping_date = "today",
-                       shipping_time = "now",
-                       ground_transportation_needed = TRUE,
-                       live_animals = FALSE,
-                       day_old_poultry = FALSE,
-                       hazardous_materials = FALSE,
-                       type = c("box", "envelope"),
-                       pounds = 0,
-                       ounces = 0,
-                       length = 0,
-                       height = 0,
-                       width = 0,
-                       girth = 0,
-                       shape = c("rectangular", "nonrectangular")) {
+
+get_mail <- function(origin_zip = NULL,
+                     destination_zip = NULL,
+                     shipping_date = "today",
+                     shipping_time = "now",
+                     ground_transportation_needed = TRUE,
+                     live_animals = FALSE,
+                     day_old_poultry = FALSE,
+                     hazardous_materials = FALSE,
+                     type = c("box", "envelope"),
+                     pounds = 0,
+                     ounces = 0,
+                     length = 0,
+                     height = 0,
+                     width = 0,
+                     girth = 0,
+                     shape = c("rectangular", "nonrectangular"),
+                     verbose = TRUE, ...) {
 
   char_args <- list(
     origin_zip, destination_zip,
@@ -344,44 +346,6 @@ check_mail <- function(origin_zip = NULL,
       stringr::str_c(collapse = ", ")
     stop(glue::glue("Argument {not_lgl} is not of type logical."))
   }
-
-}
-
-
-get_mail <- function(origin_zip = NULL,
-                     destination_zip = NULL,
-                     shipping_date = "today",
-                     shipping_time = "now",
-                     ground_transportation_needed = TRUE,
-                     live_animals = FALSE,
-                     day_old_poultry = FALSE,
-                     hazardous_materials = FALSE,
-                     type = c("box", "envelope"),
-                     pounds = 0,
-                     ounces = 0,
-                     length = 0,
-                     height = 0,
-                     width = 0,
-                     girth = 0,
-                     shape = c("rectangular", "nonrectangular"),
-                     verbose = TRUE, ...) {
-
-  check_mail(origin_zip = origin_zip,
-             destination_zip = destination_zip,
-             shipping_date = shipping_date,
-             shipping_time = shipping_time,
-             type = type,
-             ground_transportation_needed = ground_transportation_needed,
-             live_animals = live_animals,
-             day_old_poultry = day_old_poultry,
-             hazardous_materials = hazardous_materials,
-             pounds = pounds,
-             ounces = ounces,
-             length = length,
-             height = height,
-             width = width,
-             girth = girth,
-             shape = shape)
 
   if (shipping_date == "today") {
     shipping_date <-
