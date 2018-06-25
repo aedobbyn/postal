@@ -51,12 +51,12 @@ Specify a 5-digit origin zip and destination zip, along with the date and time y
 library(usps)
 ```
 
-Since we specified `type = "box"`, we get back all the options for boxes along with their prices and dimensions. 
+We'll ask for `type = "box"` and get back all the options for boxes along with their prices and dimensions. 
 
 ```{r}
 fetch_mail_flat_rate(origin_zip = "11238", 
                      destination_zip = "60647",
-                     shipping_date = "today",
+                     shipping_date = "2018-06-25",
                      shipping_time = "now", 
                      type = "box")
 ```
@@ -69,7 +69,7 @@ The website should display the same results.
 
 USPS also offers some more colorful options to handle all your shipping needs. 
 
-So to answer the burning question...what if we wanted to ship live animals from Wyoming to Philly by ground at 2:30pm in a nonrectangular package?? How long will it take and how much will it cost?
+So to answer the burning question...what if we wanted to ship live animals from Wyoming to Philly by ground at 2:30pm in a nonrectangular package?? When will it get there and how much will it cost?
 
 ```{r}
 fetch_mail_package(origin_zip = "88201", 
@@ -106,10 +106,10 @@ That doesn't sound so bad, but there are `99999^2` or 9,999,800,001 possible 5-d
 
 ### Usage
 
-`fetch_zones` lets you find the zone corresponding to a 3-digit origin zip prefix and one or many 3-digit destination zip prefixes.
+`fetch_zones_three_digit` lets you find the zone corresponding to a 3-digit origin zip prefix and one or many 3-digit destination zip prefixes.
 
 ```{r}
-fetch_zones(origin_zip = "123", 
+fetch_zones_three_digit(origin_zip = "123", 
             destination_zip = "581")
 ```
 
@@ -117,7 +117,7 @@ fetch_zones(origin_zip = "123",
 If no destination is supplied, all valid desination zips and zones are returned for the origin.
 
 ```{r}
-fetch_zones(origin_zip = "321")
+fetch_zones_three_digit(origin_zip = "321")
 ```
 
 
@@ -134,7 +134,7 @@ If an origin zip is supplied that is [not in use](https://en.wikipedia.org/wiki/
 origin_zips <- c("001", "271", "828")
 
 origin_zips %>% 
-  purrr::map_dfr(fetch_zones)
+  purrr::map_dfr(fetch_zones_three_digit)
 ```
 
 
@@ -144,7 +144,7 @@ Similarly, map over both origin and destination zips and end up at a dataframe. 
 dest_zips <- c("867", "53", "09")
 
 purrr::map2_dfr(origin_zips, dest_zips, 
-                fetch_zones,
+                fetch_zones_three_digit,
                 verbose = TRUE)
 ```
 
@@ -168,7 +168,7 @@ If you prefer the range representation, you can set `as_range = TRUE`. Instead o
 
 
 ```{r}
-fetch_zones("42", "42",
+fetch_zones_three_digit("42", "42",
             as_range = TRUE)
 ```
 
@@ -181,7 +181,7 @@ fetch_zones("42", "42",
 You can optionally display other details about the zips, zones, and type of postage the zone designation applies to.
 
 ```{r}
-fetch_zones(origin_zip = "404",
+fetch_zones_three_digit(origin_zip = "404",
             show_details = TRUE)  
 ```
 
@@ -198,7 +198,7 @@ zone_detail_definitions %>%
 
 ### On Digits
 
-The API endpoint used in `fetch_zones` accepts exactly 3 digits for the origin zip; it mostly returns 3 digit destination zips, but also some 5 digit exceptions. For that reason,
+The API endpoint used in `fetch_zones_three_digit` accepts exactly 3 digits for the origin zip; it mostly returns 3 digit destination zips, but also some 5 digit exceptions. For that reason,
 
 * If *fewer than 3 digits* are supplied, leading zeroes are added with a message
   * e.g. `"8"` becomes `"008"`
@@ -209,7 +209,7 @@ The API endpoint used in `fetch_zones` accepts exactly 3 digits for the origin z
 For example, when a 5-digit destination is supplied and `exact_destination` is `FALSE`, we include results for the destination `962` as well as for the exact one supplied, `96240`.
 
 ```{r}
-fetch_zones(origin_zip = "12358132134558", 
+fetch_zones_three_digit(origin_zip = "12358132134558", 
             destination_zip = "96240",
             exact_destination = FALSE)     
 ```
@@ -217,7 +217,7 @@ fetch_zones(origin_zip = "12358132134558",
 When `exact_destination` is `TRUE`, we filter only to `96240`, which is a 5 digit exception as its zone is different from its 3-digit prefix's.
 
 ```{r}
-fetch_zones(origin_zip = "12358132134558", 
+fetch_zones_three_digit(origin_zip = "12358132134558", 
             destination_zip = "96240",
             exact_destination = TRUE)  
 ```
@@ -227,14 +227,14 @@ fetch_zones(origin_zip = "12358132134558",
 
 #### I just want to supply 5 digits
 
-`fetch_zones` should cover most 5 digit cases and supply the most information when `show_details` is `TRUE`. 
-But if you just want to use the equivalent of the ["Get Zone for ZIP Code Pair"](https://postcalc.usps.com/DomesticZoneChart/) tab, you can use `fetch_five_digit`.
+`fetch_zones_three_digit` should cover most 5 digit cases and supply the most information when `show_details` is `TRUE`. 
+But if you just want to use the equivalent of the ["Get Zone for ZIP Code Pair"](https://postcalc.usps.com/DomesticZoneChart/) tab, you can use `fetch_zones_five_digit`.
 
 ```{r}
-fetch_five_digit("31415", "92653")
+fetch_zones_five_digit("31415", "92653")
 ```
 
-Details given when `show_details = TRUE` in `fetch_five_digit` are slightly different than they are for `fetch_zones` (see [Details](https://github.com/aedobbyn/usps#details)).
+Details given when `show_details = TRUE` in `fetch_zones_five_digit` are slightly different than they are for `fetch_zones_three_digit` (see [Details](https://github.com/aedobbyn/usps#details)).
 
 <br>
 

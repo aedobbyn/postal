@@ -50,27 +50,27 @@ and time you’re going to be shipping (`"today"` and `"now` are allowed).
 library(usps)
 ```
 
-Since we specified `type = "box"`, we get back all the options for boxes
+We’ll ask for `type = "box"` and get back all the options for boxes
 along with their prices and dimensions.
 
 ``` r
 fetch_mail_flat_rate(origin_zip = "11238", 
                      destination_zip = "60647",
-                     shipping_date = "today",
+                     shipping_date = "2018-06-25",
                      shipping_time = "now", 
                      type = "box")
-#> Using ship on date 2018-06-25.
-#> Using ship on time 11:50.
-#> https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&origin=11238&isOrigMil=False&destination=60647&isDestMil=False&shippingDate=2018%2F06%2F25&shippingTime=11%3A50&itemValue=&dayOldPoultry=False&groundTransportation=False&hazmat=False&liveAnimals=False&nonnegotiableDocument=False&mailShapeAndSize=FlatRateBox&pounds=0&ounces=0&length=0&height=0&width=0&girth=0&shape=Rectangular&nonmachinable=False&isEmbedded=False
-#> # A tibble: 6 x 5
-#>   title      delivery_day retail_price click_n_ship_pr… dimensions        
-#>   <chr>      <chr>        <chr>        <chr>            <chr>             
-#> 1 Priority … Wed, Jun 27  $18.90       $18.90           "USPS-Produced Bo…
-#> 2 Priority … Wed, Jun 27  Not availab… $18.90           "USPS-Produced Bo…
-#> 3 Priority … Wed, Jun 27  $13.65       $13.65           "USPS-Produced Bo…
-#> 4 Priority … Wed, Jun 27  Not availab… $13.65           "USPS-Produced Bo…
-#> 5 Priority … Wed, Jun 27  $7.20        $7.20            "USPS-Produced Bo…
-#> 6 Priority … Wed, Jun 27  Not availab… $7.20            "USPS-Produced Bo…
+#> Using ship on time 14:11.
+#> Requesting https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&origin=11238&isOrigMil=False&destination=60647&isDestMil=False&shippingDate=2018%2F06%2F25&shippingTime=14%3A11&itemValue=&dayOldPoultry=False&groundTransportation=False&hazmat=False&liveAnimals=False&nonnegotiableDocument=False&mailShapeAndSize=FlatRateBox&pounds=0&ounces=0&length=0&height=0&width=0&girth=0&shape=Rectangular&nonmachinable=False&isEmbedded=False
+#> # A tibble: 6 x 7
+#>   origin_zip dest_zip title     delivery_day retail_price click_n_ship_pr…
+#>   <chr>      <chr>    <chr>     <chr>        <chr>        <chr>           
+#> 1 11238      60647    Priority… Wed, Jun 27  $18.90       $18.90          
+#> 2 11238      60647    Priority… Wed, Jun 27  Not availab… $18.90          
+#> 3 11238      60647    Priority… Wed, Jun 27  $13.65       $13.65          
+#> 4 11238      60647    Priority… Wed, Jun 27  Not availab… $13.65          
+#> 5 11238      60647    Priority… Wed, Jun 27  $7.20        $7.20           
+#> 6 11238      60647    Priority… Wed, Jun 27  Not availab… $7.20           
+#> # ... with 1 more variable: dimensions <chr>
 ```
 
 The website should display the same results.
@@ -86,7 +86,7 @@ needs.
 
 So to answer the burning question…what if we wanted to ship live animals
 from Wyoming to Philly by ground at 2:30pm in a nonrectangular package??
-How long will it take and how much will it cost?
+When will it get there and how much will it cost?
 
 ``` r
 fetch_mail_package(origin_zip = "88201", 
@@ -103,11 +103,11 @@ fetch_mail_package(origin_zip = "88201",
                    girth = 7,
                    shape = "nonrectangular",
                    verbose = FALSE)
-#> https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&origin=88201&isOrigMil=False&destination=19109&isDestMil=False&shippingDate=2018%2F06%2F25&shippingTime=14%3A30&itemValue=&dayOldPoultry=False&groundTransportation=True&hazmat=False&liveAnimals=True&nonnegotiableDocument=False&mailShapeAndSize=Package&pounds=15&ounces=0&length=15&height=5&width=10&girth=7&shape=Nonrectangular&nonmachinable=False&isEmbedded=False
-#> # A tibble: 1 x 5
-#>   title             delivery_day retail_price click_n_ship_pri… dimensions
-#>   <chr>             <chr>        <chr>        <chr>             <chr>     
-#> 1 USPS Retail Grou… Mon, Jul 2   $42.24       Not available     ""
+#> # A tibble: 1 x 7
+#>   origin_zip dest_zip title     delivery_day retail_price click_n_ship_pr…
+#>   <chr>      <chr>    <chr>     <chr>        <chr>        <chr>           
+#> 1 88201      19109    USPS Ret… Mon, Jul 2   $42.24       Not available   
+#> # ... with 1 more variable: dimensions <chr>
 ```
 
 Finally, the important questions have been answered.
@@ -135,11 +135,12 @@ digits.
 
 ### Usage
 
-`fetch_zones` lets you find the zone corresponding to a 3-digit origin
-zip prefix and one or many 3-digit destination zip prefixes.
+`fetch_zones_three_digit` lets you find the zone corresponding to a
+3-digit origin zip prefix and one or many 3-digit destination zip
+prefixes.
 
 ``` r
-fetch_zones(origin_zip = "123", 
+fetch_zones_three_digit(origin_zip = "123", 
             destination_zip = "581")
 #> # A tibble: 1 x 3
 #>   origin_zip dest_zip zone 
@@ -151,7 +152,7 @@ If no destination is supplied, all valid desination zips and zones are
 returned for the origin.
 
 ``` r
-fetch_zones(origin_zip = "321")
+fetch_zones_three_digit(origin_zip = "321")
 #> # A tibble: 2,422 x 3
 #>    origin_zip dest_zip zone 
 #>    <chr>      <chr>    <chr>
@@ -185,7 +186,7 @@ example, the origin `"001"` is not a valid 3-digit zip prefix.
 origin_zips <- c("001", "271", "828")
 
 origin_zips %>% 
-  purrr::map_dfr(fetch_zones)
+  purrr::map_dfr(fetch_zones_three_digit)
 #> Origin zip 001 is not in use.
 #> # A tibble: 4,845 x 3
 #>    origin_zip dest_zip zone 
@@ -212,7 +213,7 @@ Digits](https://github.com/aedobbyn/usps#on-digits) section below.)
 dest_zips <- c("867", "53", "09")
 
 purrr::map2_dfr(origin_zips, dest_zips, 
-                fetch_zones,
+                fetch_zones_three_digit,
                 verbose = TRUE)
 #> Grabbing origin ZIP 001
 #> Origin zip 001 is not in use.
@@ -250,7 +251,7 @@ Instead of a `dest_zip` column, you’ll get a marker of the beginning of
 and end of the range in `dest_zip_start` and `dest_zip_end`.
 
 ``` r
-fetch_zones("42", "42",
+fetch_zones_three_digit("42", "42",
             as_range = TRUE)
 #> # A tibble: 1 x 4
 #>   origin_zip dest_zip_start dest_zip_end zone 
@@ -266,7 +267,7 @@ You can optionally display other details about the zips, zones, and type
 of postage the zone designation applies to.
 
 ``` r
-fetch_zones(origin_zip = "404",
+fetch_zones_three_digit(origin_zip = "404",
             show_details = TRUE)  
 #> # A tibble: 2,422 x 6
 #>    origin_zip dest_zip zone  specific_to_prior… same_ndc has_five_digit_e…
@@ -291,25 +292,26 @@ zone_detail_definitions %>%
   knitr::kable()
 ```
 
-| name                         | digit\_endpoint | definition                                                                                                                            |
-| :--------------------------- | :-------------- | :------------------------------------------------------------------------------------------------------------------------------------ |
-| specific\_to\_priority\_mail | 3, 5            | This zone designation applies to Priority Mail only.                                                                                  |
-| same\_ndc                    | 3, 5            | The origin and destination zips are in the same Network Distribution Center.                                                          |
-| has\_five\_digit\_exceptions | 3               | This 3 digit destination zip prefix appears at the beginning of certain 5 digit destination zips that correspond to a different zone. |
-| local                        | 5               | Is this a local zone?                                                                                                                 |
-| full\_response               | 5               | Entire response you’d get from filling out the 5-digit form at <https://postcalc.usps.com/DomesticZoneChart/>                         |
+| name                         | digit\_endpoint  | definition                                                                   |
+| :--------------------------- | :--------------- | :--------------------------------------------------------------------------- |
+| specific\_to\_priority\_mail | 3, 5             | This zone designation applies to Priority Mail only.                         |
+| same\_ndc                    | 3, 5             | The origin and destination zips are in the same Network Distribution Center. |
+| has\_five\_digit\_exceptions | 3                | This 3 digit destination zip prefix appears at the \\                        |
+| beginning of certain 5 d     | igit destination | zips that correspond to a different zone.                                    |
+| local                        | 5                | Is this a local zone?                                                        |
+| full\_response               | 5                | Prose API response for these two 5-digit zips.                               |
 
 <br>
 
 ### On Digits
 
-The API endpoint used in `fetch_zones` accepts exactly 3 digits for the
-origin zip; it mostly returns 3 digit destination zips, but also some 5
-digit exceptions. For that reason,
+The API endpoint used in `fetch_zones_three_digit` accepts exactly 3
+digits for the origin zip; it mostly returns 3 digit destination zips,
+but also some 5 digit exceptions. For that reason,
 
   - If *fewer than 3 digits* are supplied, leading zeroes are added with
     a message
-      - e.g. `"08"` becomes `"008"`
+      - e.g. `"8"` becomes `"008"`
   - If *more than 5 digits* are supplied, the zip is truncated to the
     first 5 with a warning
       - If the zip is an origin, only the first 3 of those 5 digits are
@@ -323,7 +325,7 @@ For example, when a 5-digit destination is supplied and
 `962` as well as for the exact one supplied, `96240`.
 
 ``` r
-fetch_zones(origin_zip = "12358132134558", 
+fetch_zones_three_digit(origin_zip = "12358132134558", 
             destination_zip = "96240",
             exact_destination = FALSE)     
 #> Warning in prep_zip(., verbose = verbose): Zip can be at most 5 characters;
@@ -339,7 +341,7 @@ When `exact_destination` is `TRUE`, we filter only to `96240`, which is
 a 5 digit exception as its zone is different from its 3-digit prefix’s.
 
 ``` r
-fetch_zones(origin_zip = "12358132134558", 
+fetch_zones_three_digit(origin_zip = "12358132134558", 
             destination_zip = "96240",
             exact_destination = TRUE)  
 #> Warning in prep_zip(., verbose = verbose): Zip can be at most 5 characters;
@@ -354,22 +356,23 @@ fetch_zones(origin_zip = "12358132134558",
 
 #### I just want to supply 5 digits
 
-`fetch_zones` should cover most 5 digit cases and supply the most
-information when `show_details` is `TRUE`. But if you just want to use
-the equivalent of the [“Get Zone for ZIP Code
+`fetch_zones_three_digit` should cover most 5 digit cases and supply the
+most information when `show_details` is `TRUE`. But if you just want to
+use the equivalent of the [“Get Zone for ZIP Code
 Pair”](https://postcalc.usps.com/DomesticZoneChart/) tab, you can use
-`fetch_five_digit`.
+`fetch_zones_five_digit`.
 
 ``` r
-fetch_five_digit("31415", "92653")
+fetch_zones_five_digit("31415", "92653")
 #> # A tibble: 1 x 3
 #>   origin_zip dest_zip zone 
 #>   <chr>      <chr>    <chr>
 #> 1 31415      92653    8
 ```
 
-Details given when `show_details = TRUE` in `fetch_five_digit` are
-slightly different than they are for `fetch_zones`.
+Details given when `show_details = TRUE` in `fetch_zones_five_digit` are
+slightly different than they are for `fetch_zones_three_digit` (see
+[Details](https://github.com/aedobbyn/usps#details)).
 
 <br>
 

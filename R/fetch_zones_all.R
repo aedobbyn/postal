@@ -9,7 +9,7 @@
 #' @param verbose Message what's going on?
 #' @param ... Other arguments
 #'
-#' @details For all the 3-digit origin zip codes, grab all destination zips and their corresponding zones. This is equivalent to running \code{\link{fetch_zones}} for all possible 3 digit origin zips.
+#' @details For all the 3-digit origin zip codes, grab all destination zips and their corresponding zones. This is equivalent to running \code{\link{fetch_zones_three_digit}} for all possible 3 digit origin zips.
 #'
 #' If this fails partway through, origins that could not be retrieved get a "no_success" value in their \code{dest_zip} and \code{zone} columns but we continue trying to grab results for all supplied \code{origins}.
 #'
@@ -36,7 +36,7 @@ fetch_all <- function(origins = all_possible_origins,
                       verbose = TRUE, ...) {
   fetch_and_sleep <- function(origin, sleep_time = 1,
                                 verbose = TRUE, ...) {
-    this <- fetch_zones(origin,
+    this <- fetch_zones_three_digit(origin,
       as_range = as_range,
       show_details = show_details,
       verbose = verbose, ...

@@ -11,24 +11,25 @@
 #' @param verbose Message what's going on?
 #' @param ... Other arguments
 #'
-#' @details Displays the result of a query to the ["Get Zone Chart"](https://postcalc.usps.com/DomesticZoneChart/) tab. If you just want to supply two 5-digit zips and get a single zone back, use \code{\link{fetch_five_digit}}.
+#' @details Displays the result of a query to the ["Get Zone Chart"](https://postcalc.usps.com/DomesticZoneChart/) tab. If you just want to supply two 5-digit zips and get a single zone back, use \code{\link{fetch_zones_five_digit}}.
 #'
 #' @importFrom magrittr %>%
 #'
 #' @examples \dontrun{
 #'
-#' a_zip <- fetch_zones("123")
+#' a_zip <- fetch_zones_three_digit("123")
 #' nrow(a_zip)
 #'
-#' fetch_zones("123", "456", show_details = TRUE)
+#' fetch_zones_three_digit("123", "456", show_details = TRUE)
 #'
-#' (double_oh_seven <- fetch_zones("007", as_range = TRUE))
+#' (double_oh_seven <- fetch_zones_three_digit("007", as_range = TRUE))
 #' }
 #'
 #' @return A tibble with origin zip and destination zips (in ranges or unspooled) and the USPS zones the origin-destination pair corresponds to.
 #' @export
 
-fetch_zones <- function(origin_zip = NULL,
+fetch_zones_three_digit <-
+                function(origin_zip = NULL,
                         destination_zip = NULL,
                         exact_destination = FALSE,
                         as_range = FALSE,

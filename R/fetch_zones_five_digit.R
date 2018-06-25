@@ -11,25 +11,25 @@
 #'
 #' @details Displays the result of a query to the ["Get Zone for ZIP Code Pair"](https://postcalc.usps.com/DomesticZoneChart/) tab.
 #'
-#' If you want all destinations for a given origin, use \code{\link{fetch_zones}} with the first 3 digits of the origin; there you don't need to supply a destination.
+#' If you want all destinations for a given origin, use \code{\link{fetch_zones_three_digit}} with the first 3 digits of the origin; there you don't need to supply a destination.
 #'
 #' @importFrom magrittr %>%
 #' @importFrom stats runif
 #'
 #' @examples \dontrun{
-#' fetch_five_digit("90210", "20500")
+#' fetch_zones_five_digit("90210", "20500")
 #'
-#' fetch_five_digit("40360", "09756", show_details = TRUE)
+#' fetch_zones_five_digit("40360", "09756", show_details = TRUE)
 #'
 #' purrr::map2_dfr(c("11238", "60647", "80205"),
 #'                 c("98109", "02210", "94707"),
-#'       fetch_five_digit)
+#'       fetch_zones_five_digit)
 #' }
 #'
 #' @return A tibble with origin zip and destination zips (in ranges or unspooled) and the USPS zones the origin-destination pair corresponds to.
 #' @export
 
-fetch_five_digit <- function(origin_zip, destination_zip,
+fetch_zones_five_digit <- function(origin_zip, destination_zip,
                              n_tries = 3,
                              show_details = FALSE,
                              verbose = FALSE, ...) {
