@@ -31,19 +31,42 @@ fetch_five_digit <- function(origin_zip, destination_zip,
                              show_details = FALSE, ...) {
   origin_zip <-
     origin_zip %>%
-    prep_zip()
+    prep_zip(verbose = verbose)
 
   destination_zip <-
     destination_zip %>%
-    prep_zip()
+    prep_zip(verbose = verbose)
 
   url <-
     glue::glue("{five_digit_base_url}?origin={origin_zip}&destination={destination_zip}")
 
   resp_full <-
-    try_get_data(url)
+    try_n_times(url)
 
-  if (!is.null(resp_full$error)) stop("An error occurred on the USPS side.")
+  if (!is.null(resp_full$error)) {
+    no_success <-
+      tibble::tibble(
+        origin_zip = origin_zip,
+        dest_zip = destination_zip,
+        zone = "no_success",
+        specific_to_priority_mail = NA,
+        local = NA,
+        same_ndc = NA,
+        full_response = NA
+      )
+
+      if (show_details == FALSE) {
+        no_success <-
+          no_success %>%
+          dplyr::select(origin_zip, dest_zip, zone)
+      }
+
+    message(glue::glue("Unsuccessful grabbing data for \\
+                       origin {origin_zip} and \\
+                       destination {destination_zip}."))
+
+    return(no_success)
+  }
 
   resp <- resp_full$result
 
@@ -63,7 +86,7 @@ fetch_five_digit <- function(origin_zip, destination_zip,
       origin_zip = origin_zip,
       dest_zip = destination_zip,
       zone = zone,
-      specific_to_priority_mail = NA,   # Default to NA
+      specific_to_priority_mail = NA, # Default to NA
       full_response = full_response
     ) %>%
     dplyr::mutate(

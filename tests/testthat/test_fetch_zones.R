@@ -14,29 +14,45 @@ testthat::test_that("fetch_zones()", {
 
   testthat::expect_message(fetch_zones("0123456", verbose = TRUE))
 
-  testthat::expect_equal(1,
-                         fetch_zones("123", "456", as_range = TRUE) %>% nrow())
+  testthat::expect_equal(
+    1,
+    fetch_zones("123", "456", as_range = TRUE) %>% nrow()
+  )
 
-  testthat::expect_equal(1,
-                         fetch_zones("123", "456", as_range = FALSE) %>% nrow())
+  testthat::expect_equal(
+    1,
+    fetch_zones("123", "456", as_range = FALSE) %>% nrow()
+  )
 
-  testthat::expect_equal(6,
-                         fetch_zones("987", "654", show_details = TRUE) %>% ncol())
+  testthat::expect_equal(
+    6,
+    fetch_zones("987", "654", show_details = TRUE) %>% ncol()
+  )
 
-  testthat::expect_equal(3,
-                         fetch_zones("456", "789", show_details = FALSE) %>% ncol())
+  testthat::expect_equal(
+    3,
+    fetch_zones("456", "789", show_details = FALSE) %>% ncol()
+  )
 
-  testthat::expect_equal(1,
-    fetch_zones(origin_zip = "123",
-              destination_zip = "96240",
-              exact_destination = TRUE) %>%
-      nrow())
+  testthat::expect_equal(
+    1,
+    fetch_zones(
+      origin_zip = "123",
+      destination_zip = "96240",
+      exact_destination = TRUE
+    ) %>%
+      nrow()
+  )
 
-  testthat::expect_equal(2,
-     fetch_zones(origin_zip = "123",
-                 destination_zip = "96240",
-                 exact_destination = FALSE) %>%
-                           nrow())
+  testthat::expect_equal(
+    2,
+    fetch_zones(
+      origin_zip = "123",
+      destination_zip = "96240",
+      exact_destination = FALSE
+    ) %>%
+      nrow()
+  )
 
   # # Not in use
   testthat::expect_is(
@@ -95,6 +111,3 @@ testthat::test_that("We can grab all origins", {
     "data.frame"
   )
 })
-
-
-

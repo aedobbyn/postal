@@ -38,29 +38,32 @@
 #' @export
 
 fetch_mail_package <- function(
-                     origin_zip = NULL,
-                     destination_zip = NULL,
-                     shipping_date = "today",
-                     shipping_time = "now",
-                     ground_transportation_needed = FALSE,
-                     live_animals = FALSE,
-                     day_old_poultry = FALSE,
-                     hazardous_materials = FALSE,
-                     pounds = 0,
-                     ounces = 0,
-                     length = 0,
-                     height = 0,
-                     width = 0,
-                     girth = 0,
-                     shape = c("rectangular", "nonrectangular"),
-                     show_details = FALSE,
-                     verbose = TRUE, ...) {
-
-  if(length(shape) > 1 ||
-    !shape %in% c("rectangular", "nonrectangular")) stop("shape must be either rectangular or nonrectangular")
+                               origin_zip = NULL,
+                               destination_zip = NULL,
+                               shipping_date = "today",
+                               shipping_time = "now",
+                               ground_transportation_needed = FALSE,
+                               live_animals = FALSE,
+                               day_old_poultry = FALSE,
+                               hazardous_materials = FALSE,
+                               pounds = 0,
+                               ounces = 0,
+                               length = 0,
+                               height = 0,
+                               width = 0,
+                               girth = 0,
+                               shape = c("rectangular", "nonrectangular"),
+                               show_details = FALSE,
+                               verbose = TRUE, ...) {
+  if (length(shape) > 1 ||
+    !shape %in% c("rectangular", "nonrectangular")) {
+    stop("shape must be either rectangular or nonrectangular")
+  }
 
   if (shape == "nonrectangular") {
-    if (is.null(girth) || girth == 0) {stop("If shape is nonrectangular girth must be non-null.")}
+    if (is.null(girth) || girth == 0) {
+      stop("If shape is nonrectangular girth must be non-null.")
+    }
   }
 
   if (live_animals && verbose) {
@@ -69,23 +72,25 @@ fetch_mail_package <- function(
 
   type <- "Package"
 
-  resp <- get_mail(origin_zip = origin_zip,
-                   destination_zip = destination_zip,
-                   shipping_date = shipping_date,
-                   shipping_time = shipping_time,
-                   type = type,
-                   ground_transportation_needed = ground_transportation_needed,
-                   live_animals = live_animals,
-                   day_old_poultry = day_old_poultry,
-                   hazardous_materials = hazardous_materials,
-                   pounds = pounds,
-                   ounces = ounces,
-                   length = length,
-                   height = height,
-                   width = width,
-                   girth = girth,
-                   shape = shape,
-                   verbose = verbose)
+  resp <- get_mail(
+    origin_zip = origin_zip,
+    destination_zip = destination_zip,
+    shipping_date = shipping_date,
+    shipping_time = shipping_time,
+    type = type,
+    ground_transportation_needed = ground_transportation_needed,
+    live_animals = live_animals,
+    day_old_poultry = day_old_poultry,
+    hazardous_materials = hazardous_materials,
+    pounds = pounds,
+    ounces = ounces,
+    length = length,
+    height = height,
+    width = width,
+    girth = girth,
+    shape = shape,
+    verbose = verbose
+  )
 
   out <-
     resp %>%
@@ -93,4 +98,3 @@ fetch_mail_package <- function(
 
   return(out)
 }
-

@@ -16,18 +16,17 @@ five_digit_base_url <-
 #' @usage zone_detail_definitions
 zone_detail_definitions <-
   tibble::tribble(
-    ~name,  ~digit_endpoint, ~definition,
+    ~name, ~digit_endpoint, ~definition,
     "specific_to_priority_mail", "3, 5",
-      "This zone designation applies to Priority Mail only.",
+    "This zone designation applies to Priority Mail only.",
     "same_ndc", "3, 5",
-      "The origin and destination zips are in the same Network Distribution Center.",
+    "The origin and destination zips are in the same Network Distribution Center.",
     "has_five_digit_exceptions", "3",
-      "This 3 digit destination zip prefix appears at the beginning of certain 5 digit destination zips that correspond to a different zone.",
+    "This 3 digit destination zip prefix appears at the beginning of certain 5 digit destination zips that correspond to a different zone.",
     "local", "5",
-      "Is this a local zone?",
+    "Is this a local zone?",
     "full_response", "5",
-      "Prose API response for these two 5-digit zips."
-
+    "Prose API response for these two 5-digit zips."
   )
 
 
@@ -161,7 +160,7 @@ clean_data <- function(dat, o_zip) {
       -modifier_star, -modifier_plus
     ) %>%
     dplyr::mutate(
-      origin_zip = o_zip
+      origin_zip = inp
     ) %>%
     dplyr::distinct(origin_zip, dest_zip_start, dest_zip_end, zone, .keep_all = TRUE) %>%
     dplyr::select(origin_zip, dplyr::everything()) %>%
@@ -176,36 +175,17 @@ clean_data <- function(dat, o_zip) {
 
 try_n_times <- function(url, n_tries = 3, ...) {
 
-  o_zip <- substr(url, nchar(url) - 2, nchar(url))
-
-  no_success <-
-    tibble::tibble(
-      origin_zip = o_zip,
-      dest_zip_start = "no_success",
-      dest_zip_end = "no_success",
-      zone = "no_success",
-      specific_to_priority_mail = NA,
-      same_ndc = NA,
-      has_five_digit_exceptions = NA,
-      validity = "no_success"
-    )
-
   this_try <- 1
   resp <- try_get_data(url)
 
   if (!is.null(resp$error)) {
-    while (this_try <= n_tries) {
+    while (this_try < n_tries) {
       this_try <- this_try + 1
       message(glue::glue("Error on request. Beginning try {this_try} of {n_tries}."))
-      Sys.sleep(this_try ^ 2)
+      Sys.sleep(this_try^2)
       resp <- try_get_data(url)
-
-      if (this_try == n_tries) {
-        message(glue::glue("Unsuccessful grabbing data for {o_zip}."))
-
-        return(no_success)
-      }
     }
+    return(resp)
   } else {
     return(resp)
   }
@@ -220,6 +200,23 @@ get_zones <- function(inp, verbose = FALSE, n_tries = 3, ...) {
   this_url <- stringr::str_c(three_digit_base_url, inp, collapse = "")
   this_try <- 1
   resp <- try_n_times(this_url)
+
+  if (!is.null(resp$error)) {
+    no_success <-
+      tibble::tibble(
+        origin_zip = inp,
+        dest_zip_start = "no_success",
+        dest_zip_end = "no_success",
+        zone = "no_success",
+        specific_to_priority_mail = NA,
+        same_ndc = NA,
+        has_five_digit_exceptions = NA,
+        validity = "no_success"
+      )
+
+    message(glue::glue("Unsuccessful grabbing data for origin zip {inp}."))
+    return(no_success)
+  }
 
   out <- resp$result
 
@@ -318,8 +315,8 @@ get_mail <- function(origin_zip = NULL,
                      width = 0,
                      girth = 0,
                      shape = c("rectangular", "nonrectangular"),
+                     n_tries = 3,
                      verbose = TRUE, ...) {
-
   char_args <- list(
     origin_zip, destination_zip,
     shipping_date, shipping_time, type, shape
@@ -354,16 +351,19 @@ get_mail <- function(origin_zip = NULL,
 
   if (shipping_date == "today") {
     shipping_date <-
-      Sys.Date() %>% as.character()
+      Sys.Date() %>%
+      as.character()
 
     if (verbose) message(glue::glue("Using ship on date {shipping_date}."))
   }
 
   if (shipping_time == "now") {
     shipping_time <-
-      stringr::str_c(lubridate::now() %>% lubridate::hour(),
-                     ":",
-                     lubridate::now() %>% lubridate::minute())
+      stringr::str_c(
+        lubridate::now() %>% lubridate::hour(),
+        ":",
+        lubridate::now() %>% lubridate::minute()
+      )
 
     if (verbose) message(glue::glue("Using ship on time {shipping_time}."))
   }
@@ -377,19 +377,29 @@ get_mail <- function(origin_zip = NULL,
     stringr::str_replace_all(":", "%3A")
 
   ground_transportation_needed <-
-    ground_transportation_needed %>% tolower() %>% cap_word()
+    ground_transportation_needed %>%
+    tolower() %>%
+    cap_word()
 
   live_animals <-
-    live_animals %>% tolower() %>% cap_word()
+    live_animals %>%
+    tolower() %>%
+    cap_word()
 
   day_old_poultry <-
-    day_old_poultry %>% tolower() %>% cap_word()
+    day_old_poultry %>%
+    tolower() %>%
+    cap_word()
 
   hazardous_materials <-
-    hazardous_materials %>% tolower() %>% cap_word()
+    hazardous_materials %>%
+    tolower() %>%
+    cap_word()
 
   shape <-
-    shape %>% tolower() %>% cap_word()
+    shape %>%
+    tolower() %>%
+    cap_word()
 
   url <- glue::glue("https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&\\
                     origin={origin_zip}&\\
@@ -413,16 +423,15 @@ get_mail <- function(origin_zip = NULL,
                     girth={girth}&\\
                     shape={shape}\\
                     &nonmachinable=False&isEmbedded=False")
-  print(url)
+  if (verbose) message(glue::glue("Requesting {url}"))
 
-  resp <- jsonlite::fromJSON(url)
+  resp <- try_n_times(url, n_tries = n_tries)
 
   return(resp)
 }
 
 
 clean_mail <- function(resp, show_details = FALSE) {
-
   if (resp$PageError == "No Mail Services were found.") {
     stop("No Mail Services were found for this request. Try modifying the argument inputs.")
   }
@@ -455,8 +464,10 @@ clean_mail <- function(resp, show_details = FALSE) {
   } else if (show_details == TRUE) {
     out <-
       out %>%
-      dplyr::select(title, delivery_day, retail_price, click_n_ship_price, dimensions,
-                    delivery_option)
+      dplyr::select(
+        title, delivery_day, retail_price, click_n_ship_price, dimensions,
+        delivery_option
+      )
   }
 
   return(out)

@@ -1,7 +1,6 @@
 testthat::context("Test get_mail")
 
 testthat::test_that("postcalc returns something", {
-
   test <- "https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&origin=60647&isOrigMil=False&destination=11238&isDestMil=False&shippingDate=6%2F22%2F2018+12%3A00%3A00+AM&shippingTime=14%3A29&itemValue=&dayOldPoultry=False&groundTransportation=False&hazmat=False&liveAnimals=False&nonnegotiableDocument=False&mailShapeAndSize=Package&pounds=15&ounces=0&length=0&height=0&width=0&girth=0&shape=Rectangular&nonmachinable=False&isEmbedded=False"
 
   lst <- jsonlite::fromJSON(test)
@@ -31,12 +30,10 @@ testthat::test_that("postcalc returns something", {
     lst %>% clean_mail(),
     "data.frame"
   )
-
 })
 
 
 testthat::test_that("fetch_mail_package()", {
-
   testthat::expect_error(
     fetch_mail_package()
   )
@@ -47,51 +44,56 @@ testthat::test_that("fetch_mail_package()", {
 
   testthat::expect_error(
     fetch_mail_package("11238", "60647",
-                       shape = "neither")
+      shape = "neither"
+    )
   )
 
   testthat::expect_error(
     fetch_mail_package("11238", "60647",
-                       shape = "nonrectangular",
-                       girth = 0)
+      shape = "nonrectangular",
+      girth = 0
+    )
   )
 
   testthat::expect_is(
     fetch_mail_package("11238", "60647",
-                       shape = "rectangular",
-                       verbose = TRUE),
+      shape = "rectangular",
+      verbose = TRUE
+    ),
     "data.frame"
   )
 
   testthat::expect_is(
-    fetch_mail_package(origin_zip = "60647",
-                       destination_zip = "11238",
-                       shape = "nonrectangular",
-                       pounds = 10,
-                       length = 12,
-                       width = 8,
-                       height = 4,
-                       girth = 7),
+    fetch_mail_package(
+      origin_zip = "60647",
+      destination_zip = "11238",
+      shape = "nonrectangular",
+      pounds = 10,
+      length = 12,
+      width = 8,
+      height = 4,
+      girth = 7
+    ),
     "data.frame"
   )
 
   testthat::expect_is(
-    fetch_mail_package(origin_zip = "60647",
-                       destination_zip = "11238",
-                       show_details = TRUE,
-                       shape = "rectangular",
-                       pounds = 10,
-                       length = 12,
-                       width = 8,
-                       height = 4),
+    fetch_mail_package(
+      origin_zip = "60647",
+      destination_zip = "11238",
+      show_details = TRUE,
+      shape = "rectangular",
+      pounds = 10,
+      length = 12,
+      width = 8,
+      height = 4
+    ),
     "data.frame"
   )
-
 })
 
 
 testthat::test_that("fetch_mail_flat_rate()", {
-
   testthat::expect_error(
     fetch_mail_flat_rate()
   )
@@ -102,22 +104,26 @@ testthat::test_that("fetch_mail_flat_rate()", {
 
   testthat::expect_error(
     fetch_mail_flat_rate("11238", "60647",
-                       type = "neither")
+      type = "neither"
+    )
   )
 
   testthat::expect_is(
-    fetch_mail_flat_rate(origin_zip = "60647",
-                       destination_zip = "11238",
-                       type = "envelope"),
+    fetch_mail_flat_rate(
+      origin_zip = "60647",
+      destination_zip = "11238",
+      type = "envelope"
+    ),
     "data.frame"
   )
 
   testthat::expect_is(
-    fetch_mail_flat_rate(origin_zip = "60647",
-                       destination_zip = "11238",
-                       type = "box",
-                       show_details = TRUE),
+    fetch_mail_flat_rate(
+      origin_zip = "60647",
+      destination_zip = "11238",
+      type = "box",
+      show_details = TRUE
+    ),
     "data.frame"
   )
-
 })

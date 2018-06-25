@@ -96,8 +96,8 @@ fetch_zones <- function(origin_zip = NULL,
         out %>%
         dplyr::filter(
           as.numeric(dest_zip_start) <= as.numeric(destination_zip) &
-          as.numeric(dest_zip_end) >= as.numeric(destination_zip) |
-          is.na(dest_zip_start) & is.na(dest_zip_end) # Or our origin isn't in use
+            as.numeric(dest_zip_end) >= as.numeric(destination_zip) |
+            is.na(dest_zip_start) & is.na(dest_zip_end) # Or our origin isn't in use
         ) %>%
         dplyr::select(
           origin_zip, dest_zip_start, dest_zip_end, zone,

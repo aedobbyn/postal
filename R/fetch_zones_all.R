@@ -34,21 +34,20 @@ fetch_all <- function(origins = all_possible_origins,
                       as_range = FALSE,
                       show_details = FALSE,
                       verbose = TRUE, ...) {
-
   fetch_and_sleep <- function(origin, sleep_time = 1,
                                 verbose = TRUE, ...) {
-
     this <- fetch_zones(origin,
-                        as_range = as_range,
-                        show_details = show_details,
-                        verbose = verbose, ...)
+      as_range = as_range,
+      show_details = show_details,
+      verbose = verbose, ...
+    )
 
     this_sleep <- sleep_time + runif(1)
     if (verbose) message(glue::glue("Sleeping {round(this_sleep, 3)} seconds."))
     Sys.sleep(this_sleep)
 
     if (!is.null(write_to)) {
-      if (origin == origins[1]) {  # Only add headers to the first origin
+      if (origin == origins[1]) { # Only add headers to the first origin
         readr::write_csv(this, write_to, append = TRUE, col_names = TRUE)
         if (substr(write_to, nchar(write_to) - 3, nchar(write_to)) != ".csv") {
           warning("write_to file extension is not csv but will still be written as CSV.")

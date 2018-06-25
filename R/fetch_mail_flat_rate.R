@@ -26,16 +26,15 @@
 #'
 
 fetch_mail_flat_rate <- function(
-                     origin_zip = NULL,
-                     destination_zip = NULL,
-                     shipping_date = "today",
-                     shipping_time = "now",
-                     type = c("envelope", "box"),
-                     ground_transportation_needed = FALSE,
-                     show_details = FALSE,
-                     verbose = TRUE, ...) {
-
-  if (length(type) > 1) stop ("type must be either envelope or box")
+                                 origin_zip = NULL,
+                                 destination_zip = NULL,
+                                 shipping_date = "today",
+                                 shipping_time = "now",
+                                 type = c("envelope", "box"),
+                                 ground_transportation_needed = FALSE,
+                                 show_details = FALSE,
+                                 verbose = TRUE, ...) {
+  if (length(type) > 1) stop("type must be either envelope or box")
 
   if (type == "envelope") {
     type <- "FlatRateEnvelope"
@@ -47,22 +46,25 @@ fetch_mail_flat_rate <- function(
   pounds <- ounces <- length <- height <- width <- girth <- 0
   shape <- "Rectangular"
 
-  resp <- get_mail(origin_zip = origin_zip,
-                  destination_zip = destination_zip,
-                  shipping_date = shipping_date,
-                  shipping_time = shipping_time,
-                  type = type,
-                  ground_transportation_needed = ground_transportation_needed,
-                  pounds = pounds,
-                  ounces = ounces,
-                  length = length,
-                  height = height,
-                  width = width,
-                  girth = girth,
-                  shape = shape)
+  resp <- get_mail(
+    origin_zip = origin_zip,
+    destination_zip = destination_zip,
+    shipping_date = shipping_date,
+    shipping_time = shipping_time,
+    type = type,
+    ground_transportation_needed = ground_transportation_needed,
+    pounds = pounds,
+    ounces = ounces,
+    length = length,
+    height = height,
+    width = width,
+    girth = girth,
+    shape = shape
+  )
 
   out <-
-    resp %>% clean_mail(show_details = show_details)
+    resp %>%
+    clean_mail(show_details = show_details)
 
   return(out)
 }

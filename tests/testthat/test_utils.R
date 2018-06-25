@@ -2,14 +2,15 @@
 
 testthat::test_that("Safely getting data works", {
   testthat::expect_null(try_get_data("foo") %>%
-                          purrr::pluck("result"))
+    purrr::pluck("result"))
 
   testthat::expect_null(try_get_data(glue::glue("{three_digit_base_url}{'007'}")) %>%
-                          purrr::pluck("error"))
+    purrr::pluck("error"))
 
   testthat::expect_null(try_get_data(
-    glue::glue("{five_digit_base_url}?origin={'06840'}&destination={'68007'}")) %>%
-      purrr::pluck("error"))
+    glue::glue("{five_digit_base_url}?origin={'06840'}&destination={'68007'}")
+  ) %>%
+    purrr::pluck("error"))
 
   testthat::expect_error(get_zones("foo"))
 })
@@ -32,7 +33,8 @@ testthat::test_that("Zips are prepped correctly", {
   testthat::expect_warning(testthat::expect_equal(prep_zip("123456"), "12345"))
 
   testthat::expect_equal(testthat::expect_message(prepend_zeros("4",
-                                                                verbose = TRUE)), "004")
+    verbose = TRUE
+  )), "004")
   testthat::expect_equal(prepend_zeros("40"), "040")
   testthat::expect_message(testthat::expect_equal(prepend_zeros("40", verbose = TRUE), "040"))
   testthat::expect_equal(prepend_zeros("404"), "404")
@@ -57,10 +59,12 @@ testthat::test_that("Trying n times", {
 
 testthat::test_that("Assignment of validity", {
   testthat::expect_message(fetch_zones("1"), "Origin zip 001 is not in use.")
-  testthat::expect_equal("valid",
-                         get_zones("112") %>%
-                           dplyr::pull(validity) %>%
-                           dplyr::first())
+  testthat::expect_equal(
+    "valid",
+    get_zones("112") %>%
+      dplyr::pull(validity) %>%
+      dplyr::first()
+  )
 })
 
 
@@ -74,15 +78,19 @@ testthat::test_that("Replacement of nulls", {
 
 
 testthat::test_that("Interpolation of zips in between ranges", {
-  testthat::expect_equal(2422,
-                         get_zones("123") %>%
-                           interpolate_zips() %>%
-                           nrow())
+  testthat::expect_equal(
+    2422,
+    get_zones("123") %>%
+      interpolate_zips() %>%
+      nrow()
+  )
 
-  testthat::expect_equal("invalid",
-                         get_zones("001") %>%
-                           interpolate_zips() %>%
-                           dplyr::pull("validity"))
+  testthat::expect_equal(
+    "invalid",
+    get_zones("001") %>%
+      interpolate_zips() %>%
+      dplyr::pull("validity")
+  )
 })
 
 
