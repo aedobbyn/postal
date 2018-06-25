@@ -1,5 +1,5 @@
-#' @importFrom janitor clean_names
 #' @import magrittr
+#' @importFrom janitor clean_names
 
 three_digit_base_url <-
   "https://postcalc.usps.com/DomesticZoneChart/GetZoneChart?zipCode3Digit="
@@ -492,12 +492,3 @@ clean_mail <- function(resp, show_details = FALSE) {
 #' @export
 #' @importFrom magrittr %>%
 #' @usage lhs \%>\% rhs
-
-#' Assignment pipe operator
-#'
-#' @name %<>%
-#' @rdname assignment_pipe
-#' @keywords internal
-#' @export
-#' @importFrom magrittr %<>%
-#' @usage lhs \%<>\% rhs
