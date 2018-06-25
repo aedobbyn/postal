@@ -7,7 +7,7 @@
 fetch_mail_flat_rate(origin_zip = NULL, destination_zip = NULL,
   shipping_date = "today", shipping_time = "now", type = c("envelope",
   "box"), ground_transportation_needed = FALSE, show_details = FALSE,
-  verbose = TRUE, ...)
+  n_tries = 3, verbose = TRUE, ...)
 }
 \arguments{
 \item{origin_zip}{5-digit origin zip code.}
@@ -24,11 +24,11 @@ fetch_mail_flat_rate(origin_zip = NULL, destination_zip = NULL,
 
 \item{show_details}{Non-essential details of the response are hidden by default. Show them by setting this to TRUE.}
 
+\item{n_tries}{How many times to try the API if at first we don't succeed?}
+
 \item{verbose}{Should messages, (e.g. shipping date time be dispalyed if the defaults "today" and "now" are chosen) be messageed?}
 
 \item{...}{Other arguments.}
-
-\item{n_tries}{How many times to try the API if at first we don't succeed?}
 }
 \value{
 A tibble with information for different postage options, including price and box/envelope dimensions.

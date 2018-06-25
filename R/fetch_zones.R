@@ -35,7 +35,10 @@ fetch_zones <- function(origin_zip = NULL,
                         show_details = FALSE,
                         n_tries = 3,
                         verbose = FALSE, ...) {
-  if (is.null(origin_zip) | is.na((origin_zip))) stop("origin_zip cannot be missing.")
+
+  if (length(origin_zip) < 0 | is.null(origin_zip) | is.na(origin_zip)) {
+    stop("origin_zip cannot be missing.")
+  }
 
   origin_zip <-
     origin_zip %>%

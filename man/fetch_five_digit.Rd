@@ -17,6 +17,8 @@ fetch_five_digit(origin_zip, destination_zip, n_tries = 3,
 \item{show_details}{Extract extra stuff from the response?}
 
 \item{...}{Other arguments}
+
+\item{verbose}{Message what's going on?}
 }
 \value{
 A tibble with origin zip and destination zips (in ranges or unspooled) and the USPS zones the origin-destination pair corresponds to.

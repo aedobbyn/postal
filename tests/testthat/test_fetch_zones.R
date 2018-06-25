@@ -1,4 +1,4 @@
-testthat::context("Test fetching")
+testthat::context("Test zone fetching")
 
 
 testthat::test_that("fetch_zones()", {

@@ -34,6 +34,7 @@ fetch_mail_flat_rate <- function(
                                  type = c("envelope", "box"),
                                  ground_transportation_needed = FALSE,
                                  show_details = FALSE,
+                                 n_tries = 3,
                                  verbose = TRUE, ...) {
   if (length(type) > 1) stop("type must be either envelope or box")
 

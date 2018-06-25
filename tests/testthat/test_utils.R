@@ -1,4 +1,4 @@
-
+testthat::context("Test utility functions")
 
 testthat::test_that("Safely getting data works", {
   testthat::expect_null(try_get_data("foo") %>%
@@ -43,10 +43,9 @@ testthat::test_that("Zips are prepped correctly", {
 
 
 testthat::test_that("Trying n times", {
-  testthat::expect_equal(
-    "no_success",
+  testthat::expect_null(
     try_n_times("foo") %>%
-      purrr::pluck("zone")
+      purrr::pluck("result")
   )
 
   testthat::expect_equal(
