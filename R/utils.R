@@ -59,7 +59,7 @@ replace_x <- function(x, replacement = NA_character_) {
 }
 
 
-prep_zip <- function(zip, ...) {
+prep_zip <- function(zip, verbose = FALSE, ...) {
   if (!is.character(zip)) {
     stop(glue::glue("Invalid zip {zip}; must be of type character."))
   }
@@ -78,7 +78,7 @@ prep_zip <- function(zip, ...) {
   }
 
   zip <- zip %>%
-    prepend_zeros()
+    prepend_zeros(verbose = verbose)
 
   return(zip)
 }
