@@ -63,11 +63,11 @@ fetch_five_digit <- function(origin_zip, destination_zip,
       origin_zip = origin_zip,
       dest_zip = destination_zip,
       zone = zone,
-      priority_mail_zone = NA,   # Default to NA
+      specific_to_priority_mail = NA,   # Default to NA
       full_response = full_response
     ) %>%
     dplyr::mutate(
-      priority_mail_zone = full_response %>%
+      specific_to_priority_mail = full_response %>%
         stringr::str_extract(
           "except for Priority Mail services where the Zone is [0-9]"
         ) %>%
@@ -91,7 +91,7 @@ fetch_five_digit <- function(origin_zip, destination_zip,
           FALSE, TRUE
         ),
       ) %>%
-      dplyr::select(origin_zip, dest_zip, zone, priority_mail_zone, local, same_ndc, full_response)
+      dplyr::select(origin_zip, dest_zip, zone, specific_to_priority_mail, local, same_ndc, full_response)
   } else {
     out <- out %>%
       dplyr::select(origin_zip, dest_zip, zone)

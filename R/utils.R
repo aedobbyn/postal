@@ -10,19 +10,24 @@ five_digit_base_url <-
 
 #' Details
 #'
-#' @name detail_definitions
-#' @rdname detail_definitions
+#' @name zone_detail_definitions
+#' @rdname zone_detail_definitions
 #' @export
-#' @usage detail_definitions
-detail_definitions <-
+#' @usage zone_detail_definitions
+zone_detail_definitions <-
   tibble::tribble(
-    ~name, ~definition,
-    "specific_to_priority_mail",
-      "This 5 digit zone designation applies to Priority Mail only; for Standard, refer to the 3 digit zone designation.",
-    "same_ndc",
+    ~name,  ~digit_endpoint, ~definition,
+    "specific_to_priority_mail", "3, 5",
+      "This zone designation applies to Priority Mail only.",
+    "same_ndc", "3, 5",
       "The origin and destination zips are in the same Network Distribution Center.",
-    "has_five_digit_exceptions",
-      "This 3 digit destination zip prefix appears at the beginning of certain 5 digit destination zips that correspond to a different zone."
+    "has_five_digit_exceptions", "3",
+      "This 3 digit destination zip prefix appears at the beginning of certain 5 digit destination zips that correspond to a different zone.",
+    "local", "5",
+      "Is this a local zone?",
+    "full_response", "5",
+      "Entire response you'd get from filling out the 5-digit form at https://postcalc.usps.com/DomesticZoneChart/"
+
   )
 
 

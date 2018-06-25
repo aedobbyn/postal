@@ -12,7 +12,6 @@ globalVariables(c(
   "modifier_plus",
   "modifier_star",
   "origin_zip",
-  "priority_mail_zone",
   "same_ndc",
   "specific_to_priority_mail",
   "zone",

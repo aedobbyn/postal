@@ -186,10 +186,10 @@ fetch_zones(origin_zip = "404",
 ```
 
 
-Definitions of these details can be found in `detail_definitions`.
+Definitions of these details can be found in `zone_detail_definitions`.
 
 ```{r}
-detail_definitions %>% 
+zone_detail_definitions %>% 
   knitr::kable()
 ```
 
