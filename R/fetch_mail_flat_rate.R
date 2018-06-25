@@ -42,6 +42,8 @@ fetch_mail_flat_rate <- function(origin_zip = NULL,
   } else if (type == "box") {
     type <- "FlatRateBox"
     shape <- "Rectangular"
+  } else {
+    stop("type must be either envelope or box")
   }
 
   pounds <- ounces <- length <- height <- width <- girth <- 0

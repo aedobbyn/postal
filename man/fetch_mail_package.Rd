@@ -50,8 +50,6 @@ fetch_mail_package(origin_zip = NULL, destination_zip = NULL,
 \item{verbose}{Should messages, (e.g. shipping date time be dispalyed if the defaults "today" and "now" are chosen) be messageed?}
 
 \item{...}{Other arguments.}
-
-\item{type}{One of: "box", "envelope".}
 }
 \value{
 A tibble with information for different postage options.

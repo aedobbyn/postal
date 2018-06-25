@@ -6,7 +6,6 @@
 #' @param destination_zip 5-digit destination zip code.
 #' @param shipping_date Date you plan to ship the package on in "MM-DD-YYYY" format as character, or "today".
 #' @param shipping_time Time of day you plan to ship in 24-hour "HH:MM" format as character, or "now".
-#' @param type One of: "box", "envelope".
 #' @param ground_transportation_needed Does the package need to be transported by ground?
 #' @param live_animals Boolean: does this contain live animals?
 #' @param day_old_poultry Boolean: does this contain day-old poultry?
