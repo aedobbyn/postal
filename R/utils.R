@@ -26,7 +26,7 @@ zone_detail_definitions <-
     "local", "5",
       "Is this a local zone?",
     "full_response", "5",
-      "Entire response you'd get from filling out the 5-digit form at https://postcalc.usps.com/DomesticZoneChart/"
+      "Prose API response for these two 5-digit zips."
 
   )
 

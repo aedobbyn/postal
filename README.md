@@ -59,18 +59,18 @@ fetch_mail_flat_rate(origin_zip = "11238",
                      shipping_date = "today",
                      shipping_time = "now", 
                      type = "box")
-#> Using ship on date 2018-06-23.
-#> Using ship on time 12:52.
-#> https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&origin=11238&isOrigMil=False&destination=60647&isDestMil=False&shippingDate=2018%2F06%2F23&shippingTime=12%3A52&itemValue=&dayOldPoultry=False&groundTransportation=False&hazmat=False&liveAnimals=False&nonnegotiableDocument=False&mailShapeAndSize=FlatRateBox&pounds=0&ounces=0&length=0&height=0&width=0&girth=0&shape=0&nonmachinable=False&isEmbedded=False
+#> Using ship on date 2018-06-25.
+#> Using ship on time 11:50.
+#> https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&origin=11238&isOrigMil=False&destination=60647&isDestMil=False&shippingDate=2018%2F06%2F25&shippingTime=11%3A50&itemValue=&dayOldPoultry=False&groundTransportation=False&hazmat=False&liveAnimals=False&nonnegotiableDocument=False&mailShapeAndSize=FlatRateBox&pounds=0&ounces=0&length=0&height=0&width=0&girth=0&shape=Rectangular&nonmachinable=False&isEmbedded=False
 #> # A tibble: 6 x 5
 #>   title      delivery_day retail_price click_n_ship_pr… dimensions        
 #>   <chr>      <chr>        <chr>        <chr>            <chr>             
-#> 1 Priority … Mon, Jun 25  $18.90       $18.90           "USPS-Produced Bo…
-#> 2 Priority … Mon, Jun 25  Not availab… $18.90           "USPS-Produced Bo…
-#> 3 Priority … Mon, Jun 25  $13.65       $13.65           "USPS-Produced Bo…
-#> 4 Priority … Mon, Jun 25  Not availab… $13.65           "USPS-Produced Bo…
-#> 5 Priority … Mon, Jun 25  $7.20        $7.20            "USPS-Produced Bo…
-#> 6 Priority … Mon, Jun 25  Not availab… $7.20            "USPS-Produced Bo…
+#> 1 Priority … Wed, Jun 27  $18.90       $18.90           "USPS-Produced Bo…
+#> 2 Priority … Wed, Jun 27  Not availab… $18.90           "USPS-Produced Bo…
+#> 3 Priority … Wed, Jun 27  $13.65       $13.65           "USPS-Produced Bo…
+#> 4 Priority … Wed, Jun 27  Not availab… $13.65           "USPS-Produced Bo…
+#> 5 Priority … Wed, Jun 27  $7.20        $7.20            "USPS-Produced Bo…
+#> 6 Priority … Wed, Jun 27  Not availab… $7.20            "USPS-Produced Bo…
 ```
 
 The website should display the same results.
@@ -88,7 +88,7 @@ So to answer the burning question…what if we wanted to ship live animals
 from Wyoming to Philly by ground at 2:30pm in a nonrectangular package??
 How long will it take and how much will it cost?
 
-````` r
+``` r
 fetch_mail_package(origin_zip = "88201", 
                    destination_zip = "19109", 
                    shipping_date = "today", 
@@ -101,35 +101,14 @@ fetch_mail_package(origin_zip = "88201",
                    width = 10,
                    height = 5,
                    girth = 7,
-                   shape = "nonrectangular")
-#> 
-#>     
-#>  -------------- 
-#> Woah Nelly! 
-#>  --------------
-#>     \
-#>       \
-#>         \
-#>                    _.-````'-,_
-#>          _,.,_ ,-'`           `'-.,_
-#>        /)     (                   '``-.
-#>       ((      ) )                      `\
-#>         \)    (_/                        )\
-#>         |       /)           '    ,'    / \
-#>         `\    ^'            '     (    /  ))
-#>           |      _/\ ,     /    ,,`\   (  "`
-#>           \Y,   |   \  \  | ````| / \_ \
-#>             `)_/      \  \  )    ( >  ( >
-#>                        \( \(     |/   |/
-#>           mic & dwb  /_(/_(    /_(  /_(
-#> 
-#> Using ship on date 2018-06-23.
-#> https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&origin=88201&isOrigMil=False&destination=19109&isDestMil=False&shippingDate=2018%2F06%2F23&shippingTime=14%3A30&itemValue=&dayOldPoultry=False&groundTransportation=True&hazmat=False&liveAnimals=True&nonnegotiableDocument=False&mailShapeAndSize=Package&pounds=15&ounces=0&length=15&height=5&width=10&girth=7&shape=Nonrectangular&nonmachinable=False&isEmbedded=False
+                   shape = "nonrectangular",
+                   verbose = FALSE)
+#> https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&origin=88201&isOrigMil=False&destination=19109&isDestMil=False&shippingDate=2018%2F06%2F25&shippingTime=14%3A30&itemValue=&dayOldPoultry=False&groundTransportation=True&hazmat=False&liveAnimals=True&nonnegotiableDocument=False&mailShapeAndSize=Package&pounds=15&ounces=0&length=15&height=5&width=10&girth=7&shape=Nonrectangular&nonmachinable=False&isEmbedded=False
 #> # A tibble: 1 x 5
 #>   title             delivery_day retail_price click_n_ship_pri… dimensions
 #>   <chr>             <chr>        <chr>        <chr>             <chr>     
 #> 1 USPS Retail Grou… Mon, Jul 2   $42.24       Not available     ""
-`````
+```
 
 Finally, the important questions have been answered.
 
@@ -139,14 +118,14 @@ Finally, the important questions have been answered.
 
 ## Zones
 
-A **zone** is a [measure of
+A **zone** is a [representation of
 distance](https://ribbs.usps.gov/zone_charts/documents/tech_guides/ZoneChartExceptionsWebinar.pdf)
-between the origin and the destination zip codes and are used in
-determining postage rates.
+between the origin and the destination zip codes. Zones are used in
+determining postage rates and delivery times.
 
 Sometimes you just need to know the shipping zone between your origin
-and destination. Or may between *all* origins and *all* destinations for
-some app you’re building.
+and destination. Or maybe between *all* origins and *all* destinations
+for some app you’re building.
 
 That doesn’t sound so bad, but there are `99999^2` or 9,999,800,001
 possible 5-digit origin-destination zip combinations in the US. Luckily,
@@ -237,8 +216,10 @@ purrr::map2_dfr(origin_zips, dest_zips,
                 verbose = TRUE)
 #> Grabbing origin ZIP 001
 #> Origin zip 001 is not in use.
+#> Making 53 into 053
 #> Grabbing origin ZIP 271
 #> Recieved 994 destination ZIPs for 8 zones.
+#> Making 09 into 009
 #> Grabbing origin ZIP 828
 #> Recieved 994 destination ZIPs for 8 zones.
 #> # A tibble: 3 x 3
@@ -303,18 +284,20 @@ fetch_zones(origin_zip = "404",
 #> # ... with 2,412 more rows
 ```
 
-Definitions of these details can be found in `detail_definitions`.
+Definitions of these details can be found in `zone_detail_definitions`.
 
 ``` r
-detail_definitions %>% 
+zone_detail_definitions %>% 
   knitr::kable()
 ```
 
-| name                         | definition                                                                                                                            |
-| :--------------------------- | :------------------------------------------------------------------------------------------------------------------------------------ |
-| specific\_to\_priority\_mail | This 5 digit zone designation applies to Priority Mail only; for Standard, refer to the 3 digit zone designation.                     |
-| same\_ndc                    | The origin and destination zips are in the same Network Distribution Center.                                                          |
-| has\_five\_digit\_exceptions | This 3 digit destination zip prefix appears at the beginning of certain 5 digit destination zips that correspond to a different zone. |
+| name                         | digit\_endpoint | definition                                                                                                                            |
+| :--------------------------- | :-------------- | :------------------------------------------------------------------------------------------------------------------------------------ |
+| specific\_to\_priority\_mail | 3, 5            | This zone designation applies to Priority Mail only.                                                                                  |
+| same\_ndc                    | 3, 5            | The origin and destination zips are in the same Network Distribution Center.                                                          |
+| has\_five\_digit\_exceptions | 3               | This 3 digit destination zip prefix appears at the beginning of certain 5 digit destination zips that correspond to a different zone. |
+| local                        | 5               | Is this a local zone?                                                                                                                 |
+| full\_response               | 5               | Entire response you’d get from filling out the 5-digit form at <https://postcalc.usps.com/DomesticZoneChart/>                         |
 
 <br>
 
@@ -343,8 +326,8 @@ For example, when a 5-digit destination is supplied and
 fetch_zones(origin_zip = "12358132134558", 
             destination_zip = "96240",
             exact_destination = FALSE)     
-#> Warning in prep_zip(.): Zip can be at most 5 characters; trimming
-#> 12358132134558 to 12358.
+#> Warning in prep_zip(., verbose = verbose): Zip can be at most 5 characters;
+#> trimming 12358132134558 to 12358.
 #> # A tibble: 2 x 3
 #>   origin_zip dest_zip zone 
 #>   <chr>      <chr>    <chr>
@@ -359,8 +342,8 @@ a 5 digit exception as its zone is different from its 3-digit prefix’s.
 fetch_zones(origin_zip = "12358132134558", 
             destination_zip = "96240",
             exact_destination = TRUE)  
-#> Warning in prep_zip(.): Zip can be at most 5 characters; trimming
-#> 12358132134558 to 12358.
+#> Warning in prep_zip(., verbose = verbose): Zip can be at most 5 characters;
+#> trimming 12358132134558 to 12358.
 #> # A tibble: 1 x 3
 #>   origin_zip dest_zip zone 
 #>   <chr>      <chr>    <chr>
@@ -413,19 +396,20 @@ indicate that the origin zip is not in use) in the destination zip
 columns.
 
 What that looks like in the event we switch on the internet between
-asking for origin `"123"` and origin `"456"`:
+asking for origin `"456"` and origin `"789"`:
 
-    #> # A tibble: 8 x 3
+    #> # A tibble: 9 x 3
     #>   origin_zip dest_zip   zone      
     #>   <chr>      <chr>      <chr>     
     #> 1 123        no_success no_success
-    #> 2 456        005        4         
-    #> 3 456        006        7         
-    #> 4 456        007        7         
-    #> 5 456        008        7         
-    #> 6 456        009        7         
-    #> 7 456        010        4         
-    #> 8 ...        ...        ...
+    #> 2 456        no_success no_success
+    #> 3 789        005        7         
+    #> 4 789        006        8         
+    #> 5 789        007        8         
+    #> 6 789        008        8         
+    #> 7 789        009        8         
+    #> 8 789        010        7         
+    #> 9 ...        ...        ...
 
 <br>
 
