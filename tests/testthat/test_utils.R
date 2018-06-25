@@ -4,7 +4,8 @@ testthat::test_that("Safely getting data works", {
   testthat::expect_null(try_get_data("foo") %>%
     purrr::pluck("result"))
 
-  testthat::expect_null(try_get_data(glue::glue("{three_digit_base_url}{'007'}")) %>%
+  testthat::expect_null(
+    try_get_data(glue::glue("{three_digit_base_url}{'007'}")) %>%
     purrr::pluck("error"))
 
   testthat::expect_null(try_get_data(
@@ -36,7 +37,8 @@ testthat::test_that("Zips are prepped correctly", {
     verbose = TRUE
   )), "004")
   testthat::expect_equal(prepend_zeros("40"), "040")
-  testthat::expect_message(testthat::expect_equal(prepend_zeros("40", verbose = TRUE), "040"))
+  testthat::expect_message(testthat::expect_equal(
+    prepend_zeros("40", verbose = TRUE), "040"))
   testthat::expect_equal(prepend_zeros("404"), "404")
   testthat::expect_equal(prepend_zeros("4040"), "04040")
 })

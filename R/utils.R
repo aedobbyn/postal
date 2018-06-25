@@ -1,5 +1,5 @@
-#' @import magrittr
 #' @importFrom janitor clean_names
+#' @import magrittr
 
 three_digit_base_url <-
   "https://postcalc.usps.com/DomesticZoneChart/GetZoneChart?zipCode3Digit="
@@ -22,7 +22,8 @@ zone_detail_definitions <-
     "same_ndc", "3, 5",
     "The origin and destination zips are in the same Network Distribution Center.",
     "has_five_digit_exceptions", "3",
-    "This 3 digit destination zip prefix appears at the beginning of certain 5 digit destination zips that correspond to a different zone.",
+    "This 3 digit destination zip prefix appears at the \\
+    beginning of certain 5 digit destination zips that correspond to a different zone.",
     "local", "5",
     "Is this a local zone?",
     "full_response", "5",
@@ -73,11 +74,13 @@ prep_zip <- function(zip, verbose = FALSE, ...) {
   }
 
   if (nchar(zip) == 4) {
-    stop(glue::glue("Invalid zip {zip}; don't know whether 4 digit zip supplied should be interpreted as 3 or 5 digits."))
+    stop(glue::glue("Invalid zip {zip}; don't know whether 4 \\
+                    digit zip supplied should be interpreted as 3 or 5 digits."))
   }
 
   if (nchar(zip) > 5) {
-    warning(glue::glue("Zip can be at most 5 characters; trimming {zip} to {substr(zip, 1, 5)}."))
+    warning(glue::glue("Zip can be at most 5 characters; \\
+                       trimming {zip} to {substr(zip, 1, 5)}."))
     zip <- zip %>% substr(1, 5)
   }
 
@@ -105,7 +108,8 @@ try_get_data <-
 
 clean_data <- function(dat, inp) {
   if (dat$ZIPCodeError != "") {
-    stop(glue::glue("ZIPCodeError returned from API for {inp}: {dat$ZIPCodeError}"))
+    stop(glue::glue("ZIPCodeError returned from \\
+                    API for {inp}: {dat$ZIPCodeError}"))
   }
 
   to_ignore <- c("ZIPCodeError", "PageError")
@@ -174,14 +178,14 @@ clean_data <- function(dat, inp) {
 
 
 try_n_times <- function(url, n_tries = 3, ...) {
-
   this_try <- 1
   resp <- try_get_data(url)
 
   if (!is.null(resp$error)) {
     while (this_try < n_tries) {
       this_try <- this_try + 1
-      message(glue::glue("Error on request. Beginning try {this_try} of {n_tries}."))
+      message(glue::glue("Error on request. \\
+                         Beginning try {this_try} of {n_tries}."))
       Sys.sleep(this_try^2)
       resp <- try_get_data(url)
     }
@@ -251,7 +255,11 @@ get_zones <- function(inp, verbose = FALSE, n_tries = 3, ...) {
         dplyr::mutate(validity = "valid")
 
       if (verbose) {
-        message(glue::glue("Recieved {as.numeric(max(out$dest_zip_end)) - as.numeric(min(out$dest_zip_start))} destination ZIPs for {as.numeric(max(out$zone)) - as.numeric(min(out$zone))} zones."))
+        message(glue::glue("Recieved \\
+                           {as.numeric(max(out$dest_zip_end)) - as.numeric(min(out$dest_zip_start))} \\
+                           destination ZIPs for \\
+                           {as.numeric(max(out$zone)) - as.numeric(min(out$zone))} \\
+                           zones."))
       }
     })
   }
@@ -454,8 +462,9 @@ clean_mail <- function(resp, show_details = FALSE) {
       click_n_ship_price = cn_s_price
     ) %>%
     dplyr::select(
-      title, delivery_day, retail_price, click_n_ship_price,
-      delivery_option, dimensions, postage_service_id
+      title, delivery_day, retail_price,
+      click_n_ship_price, delivery_option,
+      dimensions, postage_service_id
     )
 
   if (show_details == FALSE) {
@@ -475,12 +484,20 @@ clean_mail <- function(resp, show_details = FALSE) {
 }
 
 
-
-#' Pipe operator
+#' Forward pipe operator
 #'
 #' @name %>%
-#' @rdname pipe
+#' @rdname forward_pipe
 #' @keywords internal
 #' @export
 #' @importFrom magrittr %>%
 #' @usage lhs \%>\% rhs
+
+#' Assignment pipe operator
+#'
+#' @name %<>%
+#' @rdname assignment_pipe
+#' @keywords internal
+#' @export
+#' @importFrom magrittr %<>%
+#' @usage lhs \%<>\% rhs

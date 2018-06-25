@@ -5,7 +5,7 @@
 \title{Fetch zones for a 5-digit origin origin-destination pair}
 \usage{
 fetch_five_digit(origin_zip, destination_zip, n_tries = 3,
-  show_details = FALSE, ...)
+  show_details = FALSE, verbose = FALSE, ...)
 }
 \arguments{
 \item{origin_zip}{A single origin zip as 5-digit character.}
@@ -16,9 +16,9 @@ fetch_five_digit(origin_zip, destination_zip, n_tries = 3,
 
 \item{show_details}{Extract extra stuff from the response?}
 
-\item{...}{Other arguments}
-
 \item{verbose}{Message what's going on?}
+
+\item{...}{Other arguments}
 }
 \value{
 A tibble with origin zip and destination zips (in ranges or unspooled) and the USPS zones the origin-destination pair corresponds to.

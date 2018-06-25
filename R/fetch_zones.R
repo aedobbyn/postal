@@ -35,7 +35,6 @@ fetch_zones <- function(origin_zip = NULL,
                         show_details = FALSE,
                         n_tries = 3,
                         verbose = FALSE, ...) {
-
   if (length(origin_zip) < 0 | is.null(origin_zip) | is.na(origin_zip)) {
     stop("origin_zip cannot be missing.")
   }
@@ -45,7 +44,9 @@ fetch_zones <- function(origin_zip = NULL,
     prep_zip(verbose = verbose)
 
   if (nchar(origin_zip) > 3 & verbose) {
-    message(glue::glue("Only 3-character origin zips can be sent to the API. Zip {origin_zip} will be requested as {substr(origin_zip, 1, 3)}."))
+    message(glue::glue("Only 3-character origin zips can be \\
+                       sent to the API. Zip {origin_zip} will \\
+                       be requested as {substr(origin_zip, 1, 3)}."))
   }
 
   origin_zip <-
@@ -90,7 +91,8 @@ fetch_zones <- function(origin_zip = NULL,
             is.na(dest_zip))
       }
       if (nrow(out) == 0 & verbose) {
-        message(glue::glue("No zones found for the {origin_zip} to {destination_zip} pair."))
+        message(glue::glue("No zones found for the \\
+                           {origin_zip} to {destination_zip} pair."))
       }
     }
   } else {

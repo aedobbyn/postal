@@ -98,6 +98,8 @@ fetch_mail_package <- function(
   if (!is.null(resp$error)) {
     no_success <-
       tibble::tibble(
+        origin_zip = origin_zip,
+        dest_zip = destination_zip,
         title = "no_success",
         delivery_day = "no_success",
         retail_price = "no_success",
@@ -120,7 +122,15 @@ fetch_mail_package <- function(
 
   out <-
     out %>%
-    clean_mail(show_details = show_details)
+    clean_mail(show_details = show_details) %>%
+    dplyr::mutate(
+      origin_zip = origin_zip,
+      dest_zip = destination_zip
+    ) %>%
+    dplyr::select(
+      origin_zip, dest_zip,
+      dplyr::everything()
+    )
 
   return(out)
 }

@@ -31,7 +31,8 @@
 
 fetch_five_digit <- function(origin_zip, destination_zip,
                              n_tries = 3,
-                             show_details = FALSE, ...) {
+                             show_details = FALSE,
+                             verbose = FALSE, ...) {
   origin_zip <-
     origin_zip %>%
     prep_zip(verbose = verbose)
@@ -41,7 +42,9 @@ fetch_five_digit <- function(origin_zip, destination_zip,
     prep_zip(verbose = verbose)
 
   url <-
-    glue::glue("{five_digit_base_url}?origin={origin_zip}&destination={destination_zip}")
+    glue::glue("{five_digit_base_url}?\\
+               origin={origin_zip}&\\
+               destination={destination_zip}")
 
   resp_full <-
     try_n_times(url, n_tries = n_tries)
@@ -58,11 +61,11 @@ fetch_five_digit <- function(origin_zip, destination_zip,
         full_response = NA
       )
 
-      if (show_details == FALSE) {
-        no_success <-
-          no_success %>%
-          dplyr::select(origin_zip, dest_zip, zone)
-      }
+    if (show_details == FALSE) {
+      no_success <-
+        no_success %>%
+        dplyr::select(origin_zip, dest_zip, zone)
+    }
 
     message(glue::glue("Unsuccessful grabbing data for \\
                        origin {origin_zip} and \\
@@ -112,7 +115,8 @@ fetch_five_digit <- function(origin_zip, destination_zip,
 
         same_ndc = ifelse(
           stringr::str_detect(
-            full_response, "The destination ZIP Code is not within the same NDC as the origin ZIP Code"
+            full_response, "The destination ZIP Code is not \\
+            within the same NDC as the origin ZIP Code"
           ),
           FALSE, TRUE
         ),

@@ -50,7 +50,8 @@ fetch_all <- function(origins = all_possible_origins,
       if (origin == origins[1]) { # Only add headers to the first origin
         readr::write_csv(this, write_to, append = TRUE, col_names = TRUE)
         if (substr(write_to, nchar(write_to) - 3, nchar(write_to)) != ".csv") {
-          warning("write_to file extension is not csv but will still be written as CSV.")
+          warning("write_to file extension is not csv \\
+                  but will still be written as CSV.")
         }
       } else {
         readr::write_csv(this, write_to, append = TRUE, col_names = FALSE)
