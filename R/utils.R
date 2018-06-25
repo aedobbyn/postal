@@ -103,9 +103,9 @@ try_get_data <-
   purrr::safely(get_data)
 
 
-clean_data <- function(dat, o_zip) {
+clean_data <- function(dat, inp) {
   if (dat$ZIPCodeError != "") {
-    stop(glue::glue("ZIPCodeError returned from API for {o_zip}: {dat$ZIPCodeError}"))
+    stop(glue::glue("ZIPCodeError returned from API for {inp}: {dat$ZIPCodeError}"))
   }
 
   to_ignore <- c("ZIPCodeError", "PageError")
@@ -242,8 +242,9 @@ get_zones <- function(inp, verbose = FALSE, n_tries = 3, ...) {
     message(glue::glue("Origin zip {inp} is not in use."))
   } else {
     suppressWarnings({
-      out <- get_data(this_url) %>%
-        clean_data(o_zip = inp)
+      out <-
+        out %>%
+        clean_data(inp)
 
       out <-
         out %>%

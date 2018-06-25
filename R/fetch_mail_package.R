@@ -119,7 +119,7 @@ fetch_mail_package <- function(
   }
 
   out <-
-    resp %>%
+    out %>%
     clean_mail(show_details = show_details)
 
   return(out)
