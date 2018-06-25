@@ -7,6 +7,7 @@
 #' @param type One of: "box", "envelope".
 #' @param ground_transportation_needed Does the package need to be transported by ground?
 #' @param show_details Non-essential details of the response are hidden by default. Show them by setting this to TRUE.
+#' @param n_tries How many times to try the API if at first we don't succeed?
 #' @param verbose Should messages, (e.g. shipping date time be dispalyed if the defaults "today" and "now" are chosen) be messageed?
 #' @param ... Other arguments.
 #'
@@ -59,11 +60,35 @@ fetch_mail_flat_rate <- function(
     height = height,
     width = width,
     girth = girth,
-    shape = shape
+    shape = shape,
+    n_tries = n_tries
   )
 
+  if (!is.null(resp$error)) {
+    no_success <-
+      tibble::tibble(
+        title = "no_success",
+        delivery_day = "no_success",
+        retail_price = "no_success",
+        click_n_ship_price = "no_success",
+        dimensions = "no_success",
+        delivery_option = "no_success"
+      )
+
+    if (show_details == FALSE) {
+      no_success <-
+        no_success %>%
+        dplyr::select(-delivery_option)
+    }
+
+    message(glue::glue("Unsuccessful grabbing data for the supplied arguments."))
+    return(no_success)
+  } else {
+    out <- resp$result
+  }
+
   out <-
-    resp %>%
+    out %>%
     clean_mail(show_details = show_details)
 
   return(out)

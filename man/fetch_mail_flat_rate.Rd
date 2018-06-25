@@ -27,6 +27,8 @@ fetch_mail_flat_rate(origin_zip = NULL, destination_zip = NULL,
 \item{verbose}{Should messages, (e.g. shipping date time be dispalyed if the defaults "today" and "now" are chosen) be messageed?}
 
 \item{...}{Other arguments.}
+
+\item{n_tries}{How many times to try the API if at first we don't succeed?}
 }
 \value{
 A tibble with information for different postage options, including price and box/envelope dimensions.

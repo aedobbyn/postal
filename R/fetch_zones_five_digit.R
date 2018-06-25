@@ -5,6 +5,7 @@
 #' @param origin_zip A single origin zip as 5-digit character.
 #' @param destination_zip Required destination zip as 5-digit character.
 #' @param show_details Extract extra stuff from the response?
+#' @param n_tries How many times to try the API if at first we don't succeed?
 #' @param ... Other arguments
 #'
 #' @details Displays the result of a query to the ["Get Zone for ZIP Code Pair"](https://postcalc.usps.com/DomesticZoneChart/) tab.
@@ -28,6 +29,7 @@
 #' @export
 
 fetch_five_digit <- function(origin_zip, destination_zip,
+                             n_tries = 3,
                              show_details = FALSE, ...) {
   origin_zip <-
     origin_zip %>%
@@ -41,7 +43,7 @@ fetch_five_digit <- function(origin_zip, destination_zip,
     glue::glue("{five_digit_base_url}?origin={origin_zip}&destination={destination_zip}")
 
   resp_full <-
-    try_n_times(url)
+    try_n_times(url, n_tries = n_tries)
 
   if (!is.null(resp_full$error)) {
     no_success <-

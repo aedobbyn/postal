@@ -10,7 +10,7 @@ fetch_mail_package(origin_zip = NULL, destination_zip = NULL,
   day_old_poultry = FALSE, hazardous_materials = FALSE, pounds = 0,
   ounces = 0, length = 0, height = 0, width = 0, girth = 0,
   shape = c("rectangular", "nonrectangular"), show_details = FALSE,
-  verbose = TRUE, ...)
+  n_tries = 3, verbose = TRUE, ...)
 }
 \arguments{
 \item{origin_zip}{5-digit origin zip code.}
@@ -44,6 +44,8 @@ fetch_mail_package(origin_zip = NULL, destination_zip = NULL,
 \item{shape}{Shape of the package: "rectangular" or "nonrectangular". "nonrectangular" reqires a non-null \code{girth} value.}
 
 \item{show_details}{Non-essential details of the response are hidden by default. Show them by setting this to TRUE.}
+
+\item{n_tries}{How many times to try the API if at first we don't succeed?}
 
 \item{verbose}{Should messages, (e.g. shipping date time be dispalyed if the defaults "today" and "now" are chosen) be messageed?}
 

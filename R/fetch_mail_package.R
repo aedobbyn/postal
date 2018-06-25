@@ -19,6 +19,7 @@
 #' @param girth Girth of the package, required if \code{shape} is "nonrectangular". This is the distance around the thickest part.
 #' @param shape Shape of the package: "rectangular" or "nonrectangular". "nonrectangular" reqires a non-null \code{girth} value.
 #' @param show_details Non-essential details of the response are hidden by default. Show them by setting this to TRUE.
+#' @param n_tries How many times to try the API if at first we don't succeed?
 #' @param verbose Should messages, (e.g. shipping date time be dispalyed if the defaults "today" and "now" are chosen) be messageed?
 #' @param ... Other arguments.
 #'
@@ -54,6 +55,7 @@ fetch_mail_package <- function(
                                girth = 0,
                                shape = c("rectangular", "nonrectangular"),
                                show_details = FALSE,
+                               n_tries = 3,
                                verbose = TRUE, ...) {
   if (length(shape) > 1 ||
     !shape %in% c("rectangular", "nonrectangular")) {
@@ -89,8 +91,32 @@ fetch_mail_package <- function(
     width = width,
     girth = girth,
     shape = shape,
-    verbose = verbose
+    verbose = verbose,
+    n_tries = n_tries
   )
+
+  if (!is.null(resp$error)) {
+    no_success <-
+      tibble::tibble(
+        title = "no_success",
+        delivery_day = "no_success",
+        retail_price = "no_success",
+        click_n_ship_price = "no_success",
+        dimensions = "no_success",
+        delivery_option = "no_success"
+      )
+
+    if (show_details == FALSE) {
+      no_success <-
+        no_success %>%
+        dplyr::select(-delivery_option)
+    }
+
+    message(glue::glue("Unsuccessful grabbing data for the supplied arguments."))
+    return(no_success)
+  } else {
+    out <- resp$result
+  }
 
   out <-
     resp %>%
