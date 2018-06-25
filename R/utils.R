@@ -186,7 +186,7 @@ try_n_times <- function(url, n_tries = 3, ...) {
       this_try <- this_try + 1
       message(glue::glue("Error on request. \\
                          Beginning try {this_try} of {n_tries}."))
-      Sys.sleep(this_try^2)
+      Sys.sleep(this_try ^ 2)
       resp <- try_get_data(url)
     }
     return(resp)

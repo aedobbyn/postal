@@ -7,7 +7,8 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   fig.path = "man/figures/README-",
-  out.width = "100%"
+  out.width = "100%",
+  cache = TRUE
 )
 library(magrittr)
 ```
@@ -90,6 +91,28 @@ fetch_mail_package(origin_zip = "88201",
 
 
 Finally, the important questions have been answered.
+
+
+#### Multiple inputs and error handling
+
+These functions work on a single origin and single destination, but multiple can be mapped into a tidy dataframe. 
+
+By default we try the API 3 times before giving up. You can modify that by changing `n_tries`. If after `n_tries` we still have an error (here, `"foo"` and `"bar"` are not good zips), a `"no_success"` row is returned so that we don't error out on the first failure.
+
+```{r fetch_bad_zips}
+origins <- c("11238", "foo", "60647", "80222")
+destinations <- c("98109", "94707", "bar", "04123")
+
+purrr::map2_dfr(
+  origins, destinations,
+  fetch_mail_flat_rate,
+  type = "box",
+  n_tries = 3,
+  verbose = FALSE
+)
+```
+
+
 
 ***
 

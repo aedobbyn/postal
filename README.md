@@ -59,8 +59,8 @@ fetch_mail_flat_rate(origin_zip = "11238",
                      shipping_date = "2018-06-25",
                      shipping_time = "now", 
                      type = "box")
-#> Using ship on time 14:11.
-#> Requesting https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&origin=11238&isOrigMil=False&destination=60647&isDestMil=False&shippingDate=2018%2F06%2F25&shippingTime=14%3A11&itemValue=&dayOldPoultry=False&groundTransportation=False&hazmat=False&liveAnimals=False&nonnegotiableDocument=False&mailShapeAndSize=FlatRateBox&pounds=0&ounces=0&length=0&height=0&width=0&girth=0&shape=Rectangular&nonmachinable=False&isEmbedded=False
+#> Using ship on time 15:31.
+#> Requesting https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&origin=11238&isOrigMil=False&destination=60647&isDestMil=False&shippingDate=2018%2F06%2F25&shippingTime=15%3A31&itemValue=&dayOldPoultry=False&groundTransportation=False&hazmat=False&liveAnimals=False&nonnegotiableDocument=False&mailShapeAndSize=FlatRateBox&pounds=0&ounces=0&length=0&height=0&width=0&girth=0&shape=Rectangular&nonmachinable=False&isEmbedded=False
 #> # A tibble: 6 x 7
 #>   origin_zip dest_zip title     delivery_day retail_price click_n_ship_pr…
 #>   <chr>      <chr>    <chr>     <chr>        <chr>        <chr>           
@@ -111,6 +111,65 @@ fetch_mail_package(origin_zip = "88201",
 ```
 
 Finally, the important questions have been answered.
+
+#### Multiple inputs and error handling
+
+These functions work on a single origin and single destination, but
+multiple can be mapped into a tidy dataframe.
+
+By default we try the API 3 times before giving up. You can modify that
+by changing `n_tries`. If after `n_tries` we still have an error (here,
+`"foo"` and `"bar"` are not good zips), a `"no_success"` row is returned
+so that we don’t error out on the first failure.
+
+``` r
+origins <- c("11238", "foo", "60647", "80222")
+destinations <- c("98109", "94707", "bar", "04123")
+
+purrr::map2_dfr(
+  origins, destinations,
+  fetch_mail_flat_rate,
+  type = "box",
+  n_tries = 3,
+  verbose = TRUE
+)
+#> Using ship on date 2018-06-25.
+#> Using ship on time 15:31.
+#> Requesting https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&origin=11238&isOrigMil=False&destination=98109&isDestMil=False&shippingDate=2018%2F06%2F25&shippingTime=15%3A31&itemValue=&dayOldPoultry=False&groundTransportation=False&hazmat=False&liveAnimals=False&nonnegotiableDocument=False&mailShapeAndSize=FlatRateBox&pounds=0&ounces=0&length=0&height=0&width=0&girth=0&shape=Rectangular&nonmachinable=False&isEmbedded=False
+#> Using ship on date 2018-06-25.
+#> Using ship on time 15:31.
+#> Requesting https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&origin=foo&isOrigMil=False&destination=94707&isDestMil=False&shippingDate=2018%2F06%2F25&shippingTime=15%3A31&itemValue=&dayOldPoultry=False&groundTransportation=False&hazmat=False&liveAnimals=False&nonnegotiableDocument=False&mailShapeAndSize=FlatRateBox&pounds=0&ounces=0&length=0&height=0&width=0&girth=0&shape=Rectangular&nonmachinable=False&isEmbedded=False
+#> Error on request. Beginning try 2 of 3.
+#> Error on request. Beginning try 3 of 3.
+#> Unsuccessful grabbing data for the supplied arguments.
+#> Using ship on date 2018-06-25.
+#> Using ship on time 15:31.
+#> Requesting https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&origin=60647&isOrigMil=False&destination=bar&isDestMil=False&shippingDate=2018%2F06%2F25&shippingTime=15%3A31&itemValue=&dayOldPoultry=False&groundTransportation=False&hazmat=False&liveAnimals=False&nonnegotiableDocument=False&mailShapeAndSize=FlatRateBox&pounds=0&ounces=0&length=0&height=0&width=0&girth=0&shape=Rectangular&nonmachinable=False&isEmbedded=False
+#> Error on request. Beginning try 2 of 3.
+#> Error on request. Beginning try 3 of 3.
+#> Unsuccessful grabbing data for the supplied arguments.
+#> Using ship on date 2018-06-25.
+#> Using ship on time 15:32.
+#> Requesting https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&origin=80222&isOrigMil=False&destination=04123&isDestMil=False&shippingDate=2018%2F06%2F25&shippingTime=15%3A32&itemValue=&dayOldPoultry=False&groundTransportation=False&hazmat=False&liveAnimals=False&nonnegotiableDocument=False&mailShapeAndSize=FlatRateBox&pounds=0&ounces=0&length=0&height=0&width=0&girth=0&shape=Rectangular&nonmachinable=False&isEmbedded=False
+#> # A tibble: 14 x 7
+#>    origin_zip dest_zip title    delivery_day retail_price click_n_ship_pr…
+#>    <chr>      <chr>    <chr>    <chr>        <chr>        <chr>           
+#>  1 11238      98109    Priorit… Wed, Jun 27  $18.90       $18.90          
+#>  2 11238      98109    Priorit… Wed, Jun 27  Not availab… $18.90          
+#>  3 11238      98109    Priorit… Wed, Jun 27  $13.65       $13.65          
+#>  4 11238      98109    Priorit… Wed, Jun 27  Not availab… $13.65          
+#>  5 11238      98109    Priorit… Wed, Jun 27  $7.20        $7.20           
+#>  6 11238      98109    Priorit… Wed, Jun 27  Not availab… $7.20           
+#>  7 foo        94707    no_succ… no_success   no_success   no_success      
+#>  8 60647      bar      no_succ… no_success   no_success   no_success      
+#>  9 80222      04123    Priorit… Wed, Jun 27  $18.90       $18.90          
+#> 10 80222      04123    Priorit… Wed, Jun 27  Not availab… $18.90          
+#> 11 80222      04123    Priorit… Wed, Jun 27  $13.65       $13.65          
+#> 12 80222      04123    Priorit… Wed, Jun 27  Not availab… $13.65          
+#> 13 80222      04123    Priorit… Wed, Jun 27  $7.20        $7.20           
+#> 14 80222      04123    Priorit… Wed, Jun 27  Not availab… $7.20           
+#> # ... with 1 more variable: dimensions <chr>
+```
 
 -----
 

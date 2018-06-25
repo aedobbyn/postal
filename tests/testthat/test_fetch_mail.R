@@ -90,6 +90,22 @@ testthat::test_that("fetch_mail_package()", {
     ),
     "data.frame"
   )
+
+  origins <- c("11238", "foo", "60647")
+  destinations <- c("98109", "94707", "bar")
+
+  much_mail_package <- purrr::map2_dfr(
+    origins, destinations,
+    fetch_mail_package,
+    shape = "rectangular",
+    pounds = 8,
+    length = 7,
+    width = 6,
+    height = 5
+  )
+
+  testthat::expect_is(much_mail_package,
+                      "data.frame")
 })
 
 
@@ -126,4 +142,24 @@ testthat::test_that("fetch_mail_flat_rate()", {
     ),
     "data.frame"
   )
+
+  origins <- c("11238", "foo", "60647")
+  destinations <- c("98109", "94707", "bar")
+
+  much_mail_flat <- purrr::map2_dfr(
+    origins, destinations,
+    fetch_mail_flat_rate,
+    type = "box"
+  )
+
+  testthat::expect_is(much_mail_flat,
+                      "data.frame")
+
 })
+
+
+
+
+
+
+
