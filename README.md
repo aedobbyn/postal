@@ -54,13 +54,13 @@ We’ll ask for `type = "box"` and get back all the options for boxes
 along with their prices and dimensions.
 
 ``` r
-fetch_mail_flat_rate(origin_zip = "11238", 
+(mail <- fetch_mail_flat_rate(origin_zip = "11238", 
                      destination_zip = "60647",
                      shipping_date = "2018-06-25",
                      shipping_time = "now", 
-                     type = "box")
-#> Using ship on time 15:31.
-#> Requesting https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&origin=11238&isOrigMil=False&destination=60647&isDestMil=False&shippingDate=2018%2F06%2F25&shippingTime=15%3A31&itemValue=&dayOldPoultry=False&groundTransportation=False&hazmat=False&liveAnimals=False&nonnegotiableDocument=False&mailShapeAndSize=FlatRateBox&pounds=0&ounces=0&length=0&height=0&width=0&girth=0&shape=Rectangular&nonmachinable=False&isEmbedded=False
+                     type = "box"))
+#> Using ship on time 11:42.
+#> Requesting https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&origin=11238&isOrigMil=False&destination=60647&isDestMil=False&shippingDate=2018%2F06%2F25&shippingTime=11%3A42&itemValue=&dayOldPoultry=False&groundTransportation=False&hazmat=False&liveAnimals=False&nonnegotiableDocument=False&mailShapeAndSize=FlatRateBox&pounds=0&ounces=0&length=0&height=0&width=0&girth=0&shape=Rectangular&nonmachinable=False&isEmbedded=False
 #> # A tibble: 6 x 7
 #>   origin_zip dest_zip title     delivery_day retail_price click_n_ship_pr…
 #>   <chr>      <chr>    <chr>     <chr>        <chr>        <chr>           
@@ -73,13 +73,31 @@ fetch_mail_flat_rate(origin_zip = "11238",
 #> # ... with 1 more variable: dimensions <chr>
 ```
 
-The website should display the same results.
+The website should display the same results,
 
 <p align="center">
 
 <img src="./man/figures/bk_to_chi.jpg" alt="post_calc" width="70%">
 
 </p>
+
+which can be tidied with `scrub_mail`. This allows for computing on the
+prices and dates.
+
+``` r
+mail %>% 
+  scrub_mail()
+#> # A tibble: 6 x 8
+#>   origin_zip dest_zip title    delivery_date delivery_by_time retail_price
+#>   <chr>      <chr>    <chr>    <date>        <chr>                   <dbl>
+#> 1 11238      60647    Priorit… 2018-06-27    <NA>                    18.9 
+#> 2 11238      60647    Priorit… 2018-06-27    <NA>                    NA   
+#> 3 11238      60647    Priorit… 2018-06-27    <NA>                    13.6 
+#> 4 11238      60647    Priorit… 2018-06-27    <NA>                    NA   
+#> 5 11238      60647    Priorit… 2018-06-27    <NA>                     7.20
+#> 6 11238      60647    Priorit… 2018-06-27    <NA>                    NA   
+#> # ... with 2 more variables: click_n_ship_price <dbl>, dimensions <chr>
+```
 
 USPS also offers some more colorful options to handle all your shipping
 needs.
@@ -131,43 +149,31 @@ purrr::map2_dfr(
   fetch_mail_flat_rate,
   type = "box",
   n_tries = 3,
-  verbose = TRUE
+  verbose = FALSE
 )
-#> Using ship on date 2018-06-25.
-#> Using ship on time 15:31.
-#> Requesting https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&origin=11238&isOrigMil=False&destination=98109&isDestMil=False&shippingDate=2018%2F06%2F25&shippingTime=15%3A31&itemValue=&dayOldPoultry=False&groundTransportation=False&hazmat=False&liveAnimals=False&nonnegotiableDocument=False&mailShapeAndSize=FlatRateBox&pounds=0&ounces=0&length=0&height=0&width=0&girth=0&shape=Rectangular&nonmachinable=False&isEmbedded=False
-#> Using ship on date 2018-06-25.
-#> Using ship on time 15:31.
-#> Requesting https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&origin=foo&isOrigMil=False&destination=94707&isDestMil=False&shippingDate=2018%2F06%2F25&shippingTime=15%3A31&itemValue=&dayOldPoultry=False&groundTransportation=False&hazmat=False&liveAnimals=False&nonnegotiableDocument=False&mailShapeAndSize=FlatRateBox&pounds=0&ounces=0&length=0&height=0&width=0&girth=0&shape=Rectangular&nonmachinable=False&isEmbedded=False
 #> Error on request. Beginning try 2 of 3.
 #> Error on request. Beginning try 3 of 3.
 #> Unsuccessful grabbing data for the supplied arguments.
-#> Using ship on date 2018-06-25.
-#> Using ship on time 15:31.
-#> Requesting https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&origin=60647&isOrigMil=False&destination=bar&isDestMil=False&shippingDate=2018%2F06%2F25&shippingTime=15%3A31&itemValue=&dayOldPoultry=False&groundTransportation=False&hazmat=False&liveAnimals=False&nonnegotiableDocument=False&mailShapeAndSize=FlatRateBox&pounds=0&ounces=0&length=0&height=0&width=0&girth=0&shape=Rectangular&nonmachinable=False&isEmbedded=False
 #> Error on request. Beginning try 2 of 3.
 #> Error on request. Beginning try 3 of 3.
 #> Unsuccessful grabbing data for the supplied arguments.
-#> Using ship on date 2018-06-25.
-#> Using ship on time 15:32.
-#> Requesting https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&origin=80222&isOrigMil=False&destination=04123&isDestMil=False&shippingDate=2018%2F06%2F25&shippingTime=15%3A32&itemValue=&dayOldPoultry=False&groundTransportation=False&hazmat=False&liveAnimals=False&nonnegotiableDocument=False&mailShapeAndSize=FlatRateBox&pounds=0&ounces=0&length=0&height=0&width=0&girth=0&shape=Rectangular&nonmachinable=False&isEmbedded=False
 #> # A tibble: 14 x 7
 #>    origin_zip dest_zip title    delivery_day retail_price click_n_ship_pr…
 #>    <chr>      <chr>    <chr>    <chr>        <chr>        <chr>           
-#>  1 11238      98109    Priorit… Wed, Jun 27  $18.90       $18.90          
-#>  2 11238      98109    Priorit… Wed, Jun 27  Not availab… $18.90          
-#>  3 11238      98109    Priorit… Wed, Jun 27  $13.65       $13.65          
-#>  4 11238      98109    Priorit… Wed, Jun 27  Not availab… $13.65          
-#>  5 11238      98109    Priorit… Wed, Jun 27  $7.20        $7.20           
-#>  6 11238      98109    Priorit… Wed, Jun 27  Not availab… $7.20           
+#>  1 11238      98109    Priorit… Thu, Jun 28  $18.90       $18.90          
+#>  2 11238      98109    Priorit… Thu, Jun 28  Not availab… $18.90          
+#>  3 11238      98109    Priorit… Thu, Jun 28  $13.65       $13.65          
+#>  4 11238      98109    Priorit… Thu, Jun 28  Not availab… $13.65          
+#>  5 11238      98109    Priorit… Thu, Jun 28  $7.20        $7.20           
+#>  6 11238      98109    Priorit… Thu, Jun 28  Not availab… $7.20           
 #>  7 foo        94707    no_succ… no_success   no_success   no_success      
 #>  8 60647      bar      no_succ… no_success   no_success   no_success      
-#>  9 80222      04123    Priorit… Wed, Jun 27  $18.90       $18.90          
-#> 10 80222      04123    Priorit… Wed, Jun 27  Not availab… $18.90          
-#> 11 80222      04123    Priorit… Wed, Jun 27  $13.65       $13.65          
-#> 12 80222      04123    Priorit… Wed, Jun 27  Not availab… $13.65          
-#> 13 80222      04123    Priorit… Wed, Jun 27  $7.20        $7.20           
-#> 14 80222      04123    Priorit… Wed, Jun 27  Not availab… $7.20           
+#>  9 80222      04123    Priorit… Thu, Jun 28  $18.90       $18.90          
+#> 10 80222      04123    Priorit… Thu, Jun 28  Not availab… $18.90          
+#> 11 80222      04123    Priorit… Thu, Jun 28  $13.65       $13.65          
+#> 12 80222      04123    Priorit… Thu, Jun 28  Not availab… $13.65          
+#> 13 80222      04123    Priorit… Thu, Jun 28  $7.20        $7.20           
+#> 14 80222      04123    Priorit… Thu, Jun 28  Not availab… $7.20           
 #> # ... with 1 more variable: dimensions <chr>
 ```
 

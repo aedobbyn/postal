@@ -55,18 +55,26 @@ library(usps)
 We'll ask for `type = "box"` and get back all the options for boxes along with their prices and dimensions. 
 
 ```{r}
-fetch_mail_flat_rate(origin_zip = "11238", 
+(mail <- fetch_mail_flat_rate(origin_zip = "11238", 
                      destination_zip = "60647",
                      shipping_date = "2018-06-25",
                      shipping_time = "now", 
-                     type = "box")
+                     type = "box"))
 ```
 
-The website should display the same results.
+The website should display the same results,
 
 <p align="center">
   <img src="./man/figures/bk_to_chi.jpg" alt="post_calc" width="70%">
 </p>
+
+which can be tidied with `scrub_mail`. This allows for computing on the prices and dates.
+
+```{r}
+mail %>% 
+  scrub_mail()
+```
+
 
 USPS also offers some more colorful options to handle all your shipping needs. 
 

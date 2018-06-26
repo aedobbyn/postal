@@ -153,12 +153,12 @@ fetch_zones_three_digit <-
 #'
 #' @examples \dontrun{
 #'
-#' a_zip <- fetch_zones_three_digit("123")
+#' a_zip <- fetch_zones("123")
 #' nrow(a_zip)
 #'
-#' fetch_zones_three_digit("123", "456", show_details = TRUE)
+#' fetch_zones("123", "456", show_details = TRUE)
 #'
-#' (double_oh_seven <- fetch_zones_three_digit("007", as_range = TRUE))
+#' (double_oh_seven <- fetch_zones("007", as_range = TRUE))
 #' }
 #'
 #' @return A tibble with origin zip and destination zips (in ranges or unspooled) and the USPS zones the origin-destination pair corresponds to.
