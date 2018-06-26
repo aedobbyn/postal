@@ -131,9 +131,10 @@ try_n_times <- function(url, n_tries = 3, ...) {
 
 
 do_try_n_times <- function(url,
-                           origin_zip = NULL,
-                           destination_zip = NULL,
-                           n_tries = 3, show_details = FALSE) {
+                           origin_zip,
+                           destination_zip,
+                           n_tries = 3,
+                           show_details = FALSE) {
   resp <-
     try_n_times(url, n_tries = n_tries)
 
@@ -166,11 +167,13 @@ do_try_n_times <- function(url,
 }
 
 
-clean_zones <- function(dat, inp) {
+clean_zones <- function(dat, origin_zip) {
+  # nocov start
   if (dat$ZIPCodeError != "") {
     stop(glue::glue("ZIPCodeError returned from \\
-                    API for {inp}: {dat$ZIPCodeError}"))
+                    API for {origin_zip}: {dat$ZIPCodeError}"))
   }
+  # nocov end
 
   to_ignore <- c("ZIPCodeError", "PageError")
 
@@ -194,8 +197,8 @@ clean_zones <- function(dat, inp) {
 
   out <- out %>%
     tidyr::separate(ZipCodes,
-      into = c("dest_zip_start", "dest_zip_end"),
-      sep = "---"
+                    into = c("dest_zip_start", "dest_zip_end"),
+                    sep = "---"
     ) %>%
     dplyr::rowwise() %>%
     dplyr::mutate(
@@ -224,7 +227,7 @@ clean_zones <- function(dat, inp) {
       -modifier_star, -modifier_plus
     ) %>%
     dplyr::mutate(
-      origin_zip = inp
+      origin_zip = origin_zip
     ) %>%
     dplyr::distinct(origin_zip, dest_zip_start, dest_zip_end, zone, .keep_all = TRUE) %>%
     dplyr::select(origin_zip, dplyr::everything()) %>%
@@ -237,20 +240,22 @@ clean_zones <- function(dat, inp) {
 }
 
 
-get_zones <- function(inp, verbose = FALSE, n_tries = 3, ...) {
+get_zones <- function(origin_zip, destination_zip,
+                      verbose = FALSE, n_tries = 3, ...) {
   if (verbose) {
-    message(glue::glue("Grabbing origin ZIP {inp}"))
+    message(glue::glue("Grabbing origin ZIP {origin_zip}"))
   }
 
-  this_url <- stringr::str_c(three_digit_base_url, inp, collapse = "")
-  resp <- do_try_n_times(this_url)
+  this_url <- stringr::str_c(three_digit_base_url, origin_zip, collapse = "")
+  resp <- do_try_n_times(this_url, origin_zip = origin_zip,
+                         destination_zip = NA)
 
   out <- resp$result
 
   if (out$PageError != "") {
     if (out$PageError == "No Zones found for the entered ZIP Code.") {
       out <- tibble::tibble(
-        origin_zip = inp,
+        origin_zip = origin_zip,
         dest_zip_start = NA,
         dest_zip_end = NA,
         specific_to_priority_mail = NA,
@@ -259,19 +264,19 @@ get_zones <- function(inp, verbose = FALSE, n_tries = 3, ...) {
         has_five_digit_exceptions = NA
       )
     } else if (out$PageError != "") {
-      stop(glue::glue("PageError returned from API for {inp}: {out$PageError}"))
+      stop(glue::glue("PageError returned from API for {origin_zip}: {out$PageError}"))
     }
 
     out <-
       out %>%
       dplyr::mutate(validity = "invalid")
 
-    message(glue::glue("Origin zip {inp} is not in use."))
+    message(glue::glue("Origin zip {origin_zip} is not in use."))
   } else {
     suppressWarnings({
       out <-
         out %>%
-        clean_zones(inp)
+        clean_zones(origin_zip)
 
       out <-
         out %>%
@@ -304,7 +309,8 @@ get_zones_five_digit <- function(origin_zip, destination_zip,
                origin={origin_zip}&\\
                destination={destination_zip}")
 
-  resp <- do_try_n_times(url)
+  resp <- do_try_n_times(url, origin_zip = origin_zip,
+                         destination_zip = destination_zip)
 
   out <- resp$result
 

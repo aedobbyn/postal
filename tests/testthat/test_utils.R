@@ -67,10 +67,21 @@ testthat::test_that("Trying n times", {
       purrr::pluck("result")
   )
 
-  testthat::expect_equal(
-    NULL,
+  testthat::expect_null(
     try_n_times(stringr::str_c(three_digit_base_url, "123", collapse = "")) %>%
       purrr::pluck("error")
+  )
+
+  testthat::expect_equal(
+    "no_success",
+    do_try_n_times("foo", "123", "456") %>%
+      purrr::pluck("zone")
+  )
+
+  testthat::expect_equal(
+    "no_success",
+    do_try_n_times("foo", "12345", "45678") %>%
+      purrr::pluck("zone")
   )
 })
 

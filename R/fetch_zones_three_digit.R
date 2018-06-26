@@ -65,8 +65,9 @@ fetch_zones_three_digit <-
     }
 
     out <-
-      origin_zip %>%
-      get_zones(verbose = verbose, n_tries = n_tries)
+      get_zones(origin_zip = origin_zip,
+                destination_zip = NULL,
+                verbose = verbose, n_tries = n_tries)
 
     if (as_range == FALSE) {
       out <-
