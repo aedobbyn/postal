@@ -133,5 +133,34 @@ fetch_zones_three_digit <-
   }
 
 
+
+#' Fetch zones for a 3-digit origin zip or an origin-destination pair
+#'
+#' For a given 3-digit origin zip code, grab all destination zips and their corresponding zones.
+#'
+#' @param origin_zip A single origin zip as character. If > 3 digits and contains leading zeros, make sure to supply as character.
+#' @param destination_zip Optional destination zip. If not included, returns all possible destinations for the origin provided. If > 3 digits and contains leading zeros, make sure to supply as character.
+#' @param exact_destination If \code{destination_zip} is supplied, should the result be filtered to the full destination zip, or its first 3 digits?
+#' @param as_range Do you want zones corresponding to a range of destination zips or a full listing of them?
+#' @param show_details Should columns with more details be retained?
+#' @param n_tries How many times to try getting an origin if we're unsuccessful the first time?
+#' @param verbose Message what's going on?
+#' @param ... Other arguments
+#'
+#' @details Displays the result of a query to the ["Get Zone Chart"](https://postcalc.usps.com/DomesticZoneChart/) tab. If you just want to supply two 5-digit zips and get a single zone back, use \code{\link{fetch_zones_five_digit}}.
+#'
+#' @importFrom magrittr %>%
+#'
+#' @examples \dontrun{
+#'
+#' a_zip <- fetch_zones_three_digit("123")
+#' nrow(a_zip)
+#'
+#' fetch_zones_three_digit("123", "456", show_details = TRUE)
+#'
+#' (double_oh_seven <- fetch_zones_three_digit("007", as_range = TRUE))
+#' }
+#'
+#' @return A tibble with origin zip and destination zips (in ranges or unspooled) and the USPS zones the origin-destination pair corresponds to.
 #' @export
 fetch_zones <- fetch_zones_three_digit
