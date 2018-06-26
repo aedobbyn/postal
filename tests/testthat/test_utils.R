@@ -1,5 +1,13 @@
 testthat::context("Test utility functions")
 
+testthat::test_that("zips_zones_sample", {
+  testthat::expect_is(zips_zones_sample,
+                      "data.frame")
+
+  testthat::expect_equal(nrow(zips_zones_sample),
+                         1000000)
+})
+
 testthat::test_that("Safely getting data works", {
   testthat::expect_null(try_get_data("foo") %>%
     purrr::pluck("result"))

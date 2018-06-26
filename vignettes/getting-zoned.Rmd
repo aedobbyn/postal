@@ -24,17 +24,17 @@ library(dplyr)
 library(tidyr)
 ```
 
-The `usps::zips_zones` dataset provides a quarter of the ~4 million 3-digit origin-destination pairs. (If you want allll of them, you can run `fetch_all` and put on a pot of coffee.) 
+The `usps::zips_zones_sample` dataset provides a quarter of the ~4 million 3-digit origin-destination pairs. (If you want allll of them, you can run `fetch_all` and put on a pot of coffee.) 
 
 What if we wanted to use that to plot how zones increase as the destination gets farther from the origin?
 
-We'll need a measure of latitude and longitude for that. Luckily, data from the [`zipcode`](https://github.com/cran/zipcode) package relates every zip codes to its latitude and longitude. We can that along with  the *partial* data in `usps::zips_zones` to match up zips to latitudes and longitudes.
+We'll need a measure of latitude and longitude for that. Luckily, data from the [`zipcode`](https://github.com/cran/zipcode) package relates every zip codes to its latitude and longitude. We can that along with  the *partial* data in `usps::zips_zones_sample` to match up zips to latitudes and longitudes.
 
 Let's load in the randomly sampled `usps` package data. 
 
 ```{r}
-data(zips_zones)
-zips_zones
+data(zips_zones_sample)
+zips_zones_sample
 ```
 
 Later we'll `select` away all the other details and focus just on `origin_zip`, `dest_zip`, and `zone`. As we know, the `usps::zip_zones` data displays all origin zips as 3 digit prefixes and most destination zips as 3 digits as well.
@@ -67,8 +67,8 @@ Let's get a tibble of all possible USPS zips, both origin prefixes and destinati
 (usps_zips <-
   tibble(
     zip =
-      unique(zips_zones$origin_zip) %>% 
-      c(unique(zips_zones$dest_zip)) 
+      unique(zips_zones_sample$origin_zip) %>% 
+      c(unique(zips_zones_sample$dest_zip)) 
   ) %>% 
   distinct())
 ```
@@ -84,13 +84,13 @@ Now we can join the `zipcode` trimmed zips on our `usps_zips` to get a correspon
   select(zip_trim, latitude, longitude))
 ```
 
-Now we have a mapping between each possible 3 digit zip and its latitude and longitude. But for every row in our `zips_zones` dataset, we have two lats and two longs: one for the origin and one for the destination. 
+Now we have a mapping between each possible 3 digit zip and its latitude and longitude. But for every row in our `zips_zones_sample` dataset, we have two lats and two longs: one for the origin and one for the destination. 
 
-So we'll want to take our `zips_lat_long` mapping and use that to attach latitude and longitude to each origin and each destination in `zips_zones`.
+So we'll want to take our `zips_lat_long` mapping and use that to attach latitude and longitude to each origin and each destination in `zips_zones_sample`.
 
 ```{r zips_zones_lat_long}
 (zips_zones_lat_long <- 
-  zips_zones %>% 
+  zips_zones_sample %>% 
   select(origin_zip, dest_zip, zone) %>% 
   left_join(zips_lat_long, by = c("origin_zip" = "zip_trim")) %>% 
   rename(

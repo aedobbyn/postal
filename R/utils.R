@@ -23,8 +23,7 @@ zone_detail_definitions <-
     "same_ndc", "3, 5",
     "The origin and destination zips are in the same Network Distribution Center.",
     "has_five_digit_exceptions", "3",
-    "This 3 digit destination zip prefix appears at the \\
-    beginning of certain 5 digit destination zips that correspond to a different zone.",
+    "This 3 digit destination zip prefix appears at the beginning of certain 5 digit destination zips that correspond to a different zone.",
     "local", "5",
     "Is this a local zone?",
     "full_response", "5",
@@ -310,6 +309,34 @@ cap_word <- function(x) {
   x
 }
 
+get_shipping_date <- function(shipping_date,
+                              verbose = FALSE) {
+  if (shipping_date == "today") {
+    shipping_date <-
+      Sys.Date() %>%
+      as.character()
+
+    if (verbose) message(glue::glue("Using ship on date {shipping_date}."))
+  }
+  return(shipping_date)
+}
+
+
+get_shipping_time <- function(shipping_time,
+                              verbose = FALSE) {
+  if (shipping_time == "now") {
+    shipping_time <-
+      stringr::str_c(
+        lubridate::now() %>% lubridate::hour(),
+        ":",
+        lubridate::now() %>% lubridate::minute()
+      )
+
+    if (verbose) message(glue::glue("Using ship on time {shipping_time}."))
+  }
+  return(shipping_time)
+}
+
 
 get_mail <- function(origin_zip = NULL,
                      destination_zip = NULL,
@@ -361,24 +388,10 @@ get_mail <- function(origin_zip = NULL,
     stop(glue::glue("Argument {not_lgl} is not of type logical."))
   }
 
-  if (shipping_date == "today") {
-    shipping_date <-
-      Sys.Date() %>%
-      as.character()
-
-    if (verbose) message(glue::glue("Using ship on date {shipping_date}."))
-  }
-
-  if (shipping_time == "now") {
-    shipping_time <-
-      stringr::str_c(
-        lubridate::now() %>% lubridate::hour(),
-        ":",
-        lubridate::now() %>% lubridate::minute()
-      )
-
-    if (verbose) message(glue::glue("Using ship on time {shipping_time}."))
-  }
+  shipping_date <- get_shipping_date(shipping_date,
+                                     verbose = verbose)
+  shipping_time <- get_shipping_time(shipping_time,
+                                     verbose = verbose)
 
   shipping_date <-
     shipping_date %>%
@@ -563,12 +576,19 @@ fetch_mail <- function(origin_zip = NULL,
     out <- resp$result
   }
 
+  shipping_date <- get_shipping_date(shipping_date,
+                                     verbose = verbose)
+  shipping_time <- get_shipping_time(shipping_time,
+                                     verbose = verbose)
+
   out <-
     out %>%
     clean_mail(show_details = show_details) %>%
     dplyr::mutate(
       origin_zip = origin_zip,
-      dest_zip = destination_zip
+      dest_zip = destination_zip,
+      shipping_date = shipping_date,
+      shipping_time = shipping_time
     ) %>%
     dplyr::select(
       origin_zip, dest_zip,

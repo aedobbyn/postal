@@ -14,7 +14,7 @@
 #'          destination_zip = "11238", type = "envelope") %>% scrub_mail()
 #' }
 #'
-#' @return A tibble with the same number of rows and same columns as the input, save that \code{delivery_day} is now \code{delivery_date} and \code{delivery_by_time}.
+#' @return A tibble with the same number of rows the input. \code{delivery_day} becomes \code{delivery_date} and \code{delivery_by_time}, from which \code{delivery_duration} in days is calculated (\code{delivery_date - shipping_date}).
 #' @export
 #'
 
@@ -40,7 +40,9 @@ scrub_mail <- function(tbl) {
 
       delivery_by_time = delivery_day %>%
         stringr::str_extract("by [A-Za-z0-9: ]+") %>%
-        stringr::str_replace_all("by ", "")
+        stringr::str_replace_all("by ", ""),
+
+      delivery_duration = delivery_date - lubridate::as_date(shipping_date)
     ) %>%
     dplyr::ungroup() %>%
     dplyr::select(-delivery_day) %>%

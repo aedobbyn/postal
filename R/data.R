@@ -1,6 +1,6 @@
 #' Zips and Zones
 #'
-#' All 3-digit zips and zones. The result of running fetch_all() with \code{as_range = TRUE}.
+#' A random sample of all 3-digit zips and zones. The result of running fetch_all() with \code{as_range = TRUE} and taking a 1m row sample.
 #'
 #' @format A data frame with 3,804,494 rows and 6 variables:
 #' \describe{
@@ -11,4 +11,4 @@
 #'   \item{same_ndc}{Origin and destination in same Network Distribution Center?}
 #'   \item{specific_to_priority_mail}{Zone specific to Priority Mail?}
 #' }
-"zips_zones"
+"zips_zones_sample"
