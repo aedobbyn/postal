@@ -111,8 +111,27 @@ testthat::test_that("3 and 5 digit endpoints agree on zone", {
 
 
 testthat::test_that("We can grab all origins", {
+
+  dir.create("tests/tmp")
+
+  some_zips <- fetch_all(sample(all_possible_origins, 2),
+                         write_to = "./tests/tmp/test_file.csv")
+
   testthat::expect_is(
-    fetch_all(sample(all_possible_origins, 2)),
+    some_zips,
     "data.frame"
   )
+
+  test_file <- readr::read_csv("./tests/tmp/test_file.csv")
+
+  testthat::expect_is(
+    test_file,
+    "data.frame"
+  )
+
+  unlink("tests/tmp", recursive = TRUE)
 })
+
+
+
+

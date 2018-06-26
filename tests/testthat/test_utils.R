@@ -23,6 +23,8 @@ testthat::test_that("Safely getting data works", {
     purrr::pluck("error"))
 
   testthat::expect_error(get_zones("foo"))
+
+  testthat::expect_error(get_zones_five_digit("bar"))
 })
 
 

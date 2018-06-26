@@ -267,6 +267,52 @@ get_zones <- function(inp, verbose = FALSE, n_tries = 3, ...) {
 }
 
 
+get_zones_five_digit <- function(origin_zip, destination_zip,
+                                 verbose = FALSE, n_tries = 3, ...) {
+  if (verbose) {
+    message(glue::glue("Grabbing zone for origin zip \\
+                       {origin_zip} and destination zip {destination_zip}"))
+  }
+
+  url <-
+    glue::glue("{five_digit_base_url}?\\
+               origin={origin_zip}&\\
+               destination={destination_zip}")
+
+  resp_full <-
+    try_n_times(url, n_tries = n_tries)
+
+  if (!is.null(resp_full$error)) {
+    no_success <-
+      tibble::tibble(
+        origin_zip = origin_zip,
+        dest_zip = destination_zip,
+        zone = "no_success",
+        specific_to_priority_mail = NA,
+        local = NA,
+        same_ndc = NA,
+        full_response = NA
+      )
+
+    if (show_details == FALSE) {
+      no_success <-
+        no_success %>%
+        dplyr::select(origin_zip, dest_zip, zone)
+    }
+
+    message(glue::glue("Unsuccessful grabbing data for \\
+                       origin {origin_zip} and \\
+                       destination {destination_zip}."))
+
+    return(no_success)
+  }
+
+  resp <- resp_full$result
+
+  return(resp)
+}
+
+
 interpolate_zips <- function(df) {
   if (df$validity[1] == "invalid") {
     df <-
