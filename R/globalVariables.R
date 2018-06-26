@@ -29,5 +29,7 @@ globalVariables(c(
   "type",
   # ---- Ours re: mail ---- #
   "delivery_by_time",
-  "delivery_date"
+  "delivery_date",
+  "shipping_date",
+  "shipping_time"
 ))

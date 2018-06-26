@@ -9,11 +9,16 @@ testthat::test_that("zips_zones_sample", {
 })
 
 testthat::test_that("Safely getting data works", {
+
+  good_url <- glue::glue("{three_digit_base_url}{'007'}")
+
+  testthat::expect_length(get_data(good_url), 7)
+
   testthat::expect_null(try_get_data("foo") %>%
     purrr::pluck("result"))
 
   testthat::expect_null(
-    try_get_data(glue::glue("{three_digit_base_url}{'007'}")) %>%
+    try_get_data(good_url) %>%
       purrr::pluck("error")
   )
 
@@ -137,9 +142,9 @@ testthat::test_that("Scrubbing works", {
     some_mail %>%
     scrub_mail()
 
-  testthat::expect_equal(
+  testthat::expect_gt(
     ncol(scrubbed_mail),
-    ncol(some_mail) + 1
+    ncol(some_mail)
   )
 
   sample_date_row <-

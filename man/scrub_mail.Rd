@@ -10,7 +10,7 @@ scrub_mail(tbl)
 \item{tbl}{A tibble; the result of a call to \code{\link{fetch_mail_flat_rate}} or \code{\link{fetch_mail_package}}.}
 }
 \value{
-A tibble with the same number of rows and same columns as the input, save that \code{delivery_day} is now \code{delivery_date} and \code{delivery_by_time}.
+A tibble with the same number of rows the input. \code{delivery_day} becomes \code{delivery_date} and \code{delivery_by_time}, from which \code{delivery_duration} in days is calculated (\code{delivery_date - shipping_date}).
 }
 \description{
 Clean the response from fetched mail

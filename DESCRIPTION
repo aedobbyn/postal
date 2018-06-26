@@ -29,6 +29,7 @@ Suggests:
     cowsay,
     ggmap,
     ggplot2,
+    here,
     knitr,
     rmarkdown,
     stats,

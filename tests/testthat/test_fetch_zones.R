@@ -110,28 +110,30 @@ testthat::test_that("3 and 5 digit endpoints agree on zone", {
 })
 
 
+# Create temp dir for our csv
+dir.create(here::here("tmp"))
+
+some_zips <- fetch_all(sample(all_possible_origins, 2),
+                       write_to = here::here("tmp", "test_file.csv"))
+
+test_file <- readr::read_csv(here::here("tmp", "test_file.csv"))
+
+
 testthat::test_that("We can grab all origins", {
-
-  dir.create("tests/tmp")
-
-  some_zips <- fetch_all(sample(all_possible_origins, 2),
-                         write_to = "./tests/tmp/test_file.csv")
 
   testthat::expect_is(
     some_zips,
     "data.frame"
   )
 
-  test_file <- readr::read_csv("./tests/tmp/test_file.csv")
-
   testthat::expect_is(
     test_file,
     "data.frame"
   )
 
-  unlink("tests/tmp", recursive = TRUE)
 })
 
-
+# Clean up
+unlink(here::here("tmp"), recursive = TRUE)
 
 

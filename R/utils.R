@@ -49,6 +49,12 @@ prepend_zeros <- function(x, verbose = FALSE, ...) {
 }
 
 
+#' All possible 3-digit origins
+#'
+#' @name all_possible_origins
+#' @rdname all_possible_origins
+#' @export
+#' @usage all_possible_origins
 all_possible_origins <-
   0:999 %>%
   as.character() %>%
@@ -92,9 +98,9 @@ prep_zip <- function(zip, verbose = FALSE, ...) {
 
 
 get_data <- function(url) {
-  if (!curl::has_internet()) {
+  if (!curl::has_internet()) {  # nocov start
     message("No internet connection detected.")
-  }
+  }                             # nocov end
 
   url %>%
     jsonlite::fromJSON()
@@ -138,7 +144,7 @@ clean_zones <- function(dat, inp) {
     five_digit_zips <-
       dat$Zip5Digit
   } else {
-    five_digit_zips <- tibble::tibble()
+    five_digit_zips <- tibble::tibble()   # nocov
   }
 
   three_digit_zips <-
@@ -268,6 +274,7 @@ get_zones <- function(inp, verbose = FALSE, n_tries = 3, ...) {
 
 
 get_zones_five_digit <- function(origin_zip, destination_zip,
+                                 show_details = FALSE,
                                  verbose = FALSE, n_tries = 3, ...) {
   if (verbose) {
     message(glue::glue("Grabbing zone for origin zip \\
