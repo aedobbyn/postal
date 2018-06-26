@@ -490,11 +490,27 @@ clean_mail <- function(resp, show_details = FALSE) {
 }
 
 
+extract_dates <- function(d) {
+
+  dte <- d %>%
+    stringr::str_extract("[A-Za-z]+ [0-9]+") %>%
+    stringr::str_c(glue::glue(", {lubridate::now() %>% lubridate::year()}")) %>%
+    lubridate::mdy()
+
+  if (dte - lubridate::today() < 0) {
+    dte <- dte + 365
+  }
+
+  return(dte)
+}
+
+
 tidy_mail <- function(df) {
   out <-
     df %>%
     purrr::map_dfr(stringr::str_replace_all,
                    "Not available", NA_character_) %>%
+    dplyr::rowwise() %>%
     dplyr::mutate(
       retail_price = retail_price %>%
         stringr::str_replace_all("\\$", "") %>%
@@ -505,11 +521,11 @@ tidy_mail <- function(df) {
         as.numeric(),
 
       delivery_date = delivery_day %>%
-        stringr::str_replace_all("[A-Za-z]+, ", "") %>%
-        stringr::str_replace_all("by, ", "") %>%
-        lubridate::as_date()
+        extract_dates(),
 
-      delivery_time_by =
+      delivery_time_by = delivery_day %>%
+        stringr::str_extract("by [A-Za-z0-9: ]+") %>%
+        stringr::str_replace_all("by ", "")
     )
 
   return(out)
