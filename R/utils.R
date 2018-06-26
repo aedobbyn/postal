@@ -490,6 +490,32 @@ clean_mail <- function(resp, show_details = FALSE) {
 }
 
 
+tidy_mail <- function(df) {
+  out <-
+    df %>%
+    purrr::map_dfr(stringr::str_replace_all,
+                   "Not available", NA_character_) %>%
+    dplyr::mutate(
+      retail_price = retail_price %>%
+        stringr::str_replace_all("\\$", "") %>%
+        as.numeric(),
+
+      click_n_ship_price = click_n_ship_price %>%
+        stringr::str_replace_all("\\$", "") %>%
+        as.numeric(),
+
+      delivery_date = delivery_day %>%
+        stringr::str_replace_all("[A-Za-z]+, ", "") %>%
+        stringr::str_replace_all("by, ", "") %>%
+        lubridate::as_date()
+
+      delivery_time_by =
+    )
+
+  return(out)
+}
+
+
 fetch_mail <- function(origin_zip = NULL,
                        destination_zip = NULL,
                        shipping_date = "today",

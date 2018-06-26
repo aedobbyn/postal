@@ -3,6 +3,7 @@
 export(fetch_all)
 export(fetch_mail_flat_rate)
 export(fetch_mail_package)
+export(fetch_zones)
 export(fetch_zones_five_digit)
 export(fetch_zones_three_digit)
 export(zone_detail_definitions)

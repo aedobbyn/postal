@@ -131,3 +131,7 @@ fetch_zones_three_digit <-
 
   return(out)
 }
+
+
+#' @export
+fetch_zones <- fetch_zones_three_digit
