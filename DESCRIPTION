@@ -12,6 +12,7 @@ LazyData: TRUE
 URL: http://github.com/aedobbyn/usps/
 BugReports: https://github.com/aedobbyn/usps/issues/
 Imports: 
+    curl,
     dplyr,
     glue,
     janitor,

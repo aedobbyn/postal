@@ -1,5 +1,8 @@
 #' @import magrittr
 #' @importFrom janitor clean_names
+#' @importFrom curl has_internet
+
+# -------------- Fetch Zones ---------------- #
 
 three_digit_base_url <-
   "https://postcalc.usps.com/DomesticZoneChart/GetZoneChart?zipCode3Digit="
@@ -93,9 +96,9 @@ prep_zip <- function(zip, verbose = FALSE, ...) {
 
 get_data <- function(url) {
   # TODO: figure out namespace error
-  # if (!curl::has_internet()) {
-  #   message("No internet connection detected.")
-  # }
+  if (!curl::has_internet()) {
+    message("No internet connection detected.")
+  }
 
   url %>%
     jsonlite::fromJSON()
@@ -106,7 +109,26 @@ try_get_data <-
   purrr::safely(get_data)
 
 
-clean_data <- function(dat, inp) {
+try_n_times <- function(url, n_tries = 3, ...) {
+  this_try <- 1
+  resp <- try_get_data(url)
+
+  if (!is.null(resp$error)) {
+    while (this_try < n_tries) {
+      this_try <- this_try + 1
+      message(glue::glue("Error on request. \\
+                         Beginning try {this_try} of {n_tries}."))
+      Sys.sleep(this_try ^ 2)
+      resp <- try_get_data(url)
+    }
+    return(resp)
+  } else {
+    return(resp)
+  }
+}
+
+
+clean_zones <- function(dat, inp) {
   if (dat$ZIPCodeError != "") {
     stop(glue::glue("ZIPCodeError returned from \\
                     API for {inp}: {dat$ZIPCodeError}"))
@@ -177,25 +199,6 @@ clean_data <- function(dat, inp) {
 }
 
 
-try_n_times <- function(url, n_tries = 3, ...) {
-  this_try <- 1
-  resp <- try_get_data(url)
-
-  if (!is.null(resp$error)) {
-    while (this_try < n_tries) {
-      this_try <- this_try + 1
-      message(glue::glue("Error on request. \\
-                         Beginning try {this_try} of {n_tries}."))
-      Sys.sleep(this_try ^ 2)
-      resp <- try_get_data(url)
-    }
-    return(resp)
-  } else {
-    return(resp)
-  }
-}
-
-
 get_zones <- function(inp, verbose = FALSE, n_tries = 3, ...) {
   if (verbose) {
     message(glue::glue("Grabbing origin ZIP {inp}"))
@@ -248,7 +251,7 @@ get_zones <- function(inp, verbose = FALSE, n_tries = 3, ...) {
     suppressWarnings({
       out <-
         out %>%
-        clean_data(inp)
+        clean_zones(inp)
 
       out <-
         out %>%
@@ -298,6 +301,9 @@ interpolate_zips <- function(df) {
 
   return(df)
 }
+
+
+# -------------- Fetch Mail ---------------- #
 
 
 cap_word <- function(x) {
@@ -479,6 +485,84 @@ clean_mail <- function(resp, show_details = FALSE) {
         delivery_option
       )
   }
+
+  return(out)
+}
+
+
+fetch_mail <- function(origin_zip = NULL,
+                       destination_zip = NULL,
+                       shipping_date = "today",
+                       shipping_time = "now",
+                       ground_transportation_needed = TRUE,
+                       live_animals = FALSE,
+                       day_old_poultry = FALSE,
+                       hazardous_materials = FALSE,
+                       type = c("box", "envelope"),
+                       pounds = 0,
+                       ounces = 0,
+                       length = 0,
+                       height = 0,
+                       width = 0,
+                       girth = 0,
+                       shape = c("rectangular", "nonrectangular"),
+                       n_tries = 3,
+                       show_details = TRUE,
+                       verbose = TRUE, ...) {
+  resp <- get_mail(
+    origin_zip = origin_zip,
+    destination_zip = destination_zip,
+    shipping_date = shipping_date,
+    shipping_time = shipping_time,
+    type = type,
+    ground_transportation_needed = ground_transportation_needed,
+    pounds = pounds,
+    ounces = ounces,
+    length = length,
+    height = height,
+    width = width,
+    girth = girth,
+    shape = shape,
+    n_tries = n_tries,
+    verbose = verbose
+  )
+
+  if (!is.null(resp$error)) {
+    no_success <-
+      tibble::tibble(
+        origin_zip = origin_zip,
+        dest_zip = destination_zip,
+        title = "no_success",
+        delivery_day = "no_success",
+        retail_price = "no_success",
+        click_n_ship_price = "no_success",
+        dimensions = "no_success",
+        delivery_option = "no_success"
+      )
+
+    if (show_details == FALSE) {
+      no_success <-
+        no_success %>%
+        dplyr::select(-delivery_option)
+    }
+
+    message(glue::glue("Unsuccessful grabbing data for the supplied arguments."))
+    return(no_success)
+  } else {
+    out <- resp$result
+  }
+
+  out <-
+    out %>%
+    clean_mail(show_details = show_details) %>%
+    dplyr::mutate(
+      origin_zip = origin_zip,
+      dest_zip = destination_zip
+    ) %>%
+    dplyr::select(
+      origin_zip, dest_zip,
+      dplyr::everything()
+    )
 
   return(out)
 }

@@ -73,62 +73,24 @@ fetch_mail_package <- function(
 
   type <- "Package"
 
-  resp <- get_mail(
-    origin_zip = origin_zip,
-    destination_zip = destination_zip,
-    shipping_date = shipping_date,
-    shipping_time = shipping_time,
-    type = type,
-    ground_transportation_needed = ground_transportation_needed,
-    live_animals = live_animals,
-    day_old_poultry = day_old_poultry,
-    hazardous_materials = hazardous_materials,
-    pounds = pounds,
-    ounces = ounces,
-    length = length,
-    height = height,
-    width = width,
-    girth = girth,
-    shape = shape,
-    verbose = verbose,
-    n_tries = n_tries
-  )
-
-  if (!is.null(resp$error)) {
-    no_success <-
-      tibble::tibble(
-        origin_zip = origin_zip,
-        dest_zip = destination_zip,
-        title = "no_success",
-        delivery_day = "no_success",
-        retail_price = "no_success",
-        click_n_ship_price = "no_success",
-        dimensions = "no_success",
-        delivery_option = "no_success"
-      )
-
-    if (show_details == FALSE) {
-      no_success <-
-        no_success %>%
-        dplyr::select(-delivery_option)
-    }
-
-    message(glue::glue("Unsuccessful grabbing data for the supplied arguments."))
-    return(no_success)
-  } else {
-    out <- resp$result
-  }
-
   out <-
-    out %>%
-    clean_mail(show_details = show_details) %>%
-    dplyr::mutate(
+    fetch_mail(
       origin_zip = origin_zip,
-      dest_zip = destination_zip
-    ) %>%
-    dplyr::select(
-      origin_zip, dest_zip,
-      dplyr::everything()
+      destination_zip = destination_zip,
+      shipping_date = shipping_date,
+      shipping_time = shipping_time,
+      type = type,
+      ground_transportation_needed = ground_transportation_needed,
+      pounds = pounds,
+      ounces = ounces,
+      length = length,
+      height = height,
+      width = width,
+      girth = girth,
+      shape = shape,
+      show_details = show_details,
+      n_tries = n_tries,
+      verbose = verbose
     )
 
   return(out)
