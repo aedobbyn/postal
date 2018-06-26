@@ -14,7 +14,6 @@
 #' If this fails partway through, origins that could not be retrieved get a "no_success" value in their \code{dest_zip} and \code{zone} columns but we continue trying to grab results for all supplied \code{origins}.
 #'
 #' @importFrom magrittr %>%
-#' @importFrom readr write_csv
 #'
 #' @examples \dontrun{
 #'
@@ -42,7 +41,7 @@ fetch_all <- function(origins = all_possible_origins,
       verbose = verbose, ...
     )
 
-    this_sleep <- sleep_time + runif(1)
+    this_sleep <- sleep_time + stats::runif(1)
     if (verbose) message(glue::glue("Sleeping {round(this_sleep, 3)} seconds."))
     Sys.sleep(this_sleep)
 

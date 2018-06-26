@@ -14,7 +14,6 @@
 #' @details Supply the required information about the package and receive a tibble. Displays the result of a query to the ["Postage Price Calculator"](https://postcalc.usps.com/Calculator/). For non-flat-rate packages, use \code{\link{fetch_mail_package}}.
 #'
 #' @importFrom magrittr %>%
-#' @importFrom janitor clean_names
 #'
 #' @examples \dontrun{
 #'
@@ -34,6 +33,7 @@ fetch_mail_flat_rate <- function(origin_zip = NULL,
                                  ground_transportation_needed = FALSE,
                                  show_details = FALSE,
                                  n_tries = 3,
+                                 scrub_mail = TRUE,
                                  verbose = TRUE, ...) {
   if (length(type) > 1) stop("type must be either envelope or box")
 

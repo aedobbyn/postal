@@ -98,3 +98,48 @@ testthat::test_that("Interpolation of zips in between ranges", {
 testthat::test_that("Assorted other utils", {
   testthat::expect_equal(cap_word("foo"), "Foo")
 })
+
+
+testthat::test_that("Scrubbing works", {
+  some_mail <-
+    fetch_mail_package(origin_zip = "60647",
+                       destination_zip = "11238",
+                       pounds = 15, shape = "rectangular")
+
+  # Grab a date with a time in it
+  sample_day <-
+    some_mail %>%
+    dplyr::select(delivery_day) %>%
+    dplyr::filter(stringr::str_detect(delivery_day, "by")) %>%
+    dplyr::slice(1) %>%
+    dplyr::pull(delivery_day)
+
+  sample_date <-
+    extract_dates(sample_day)
+
+  testthat::expect_is(sample_date, "Date")
+
+  scrubbed_mail <-
+    some_mail %>%
+    scrub_mail()
+
+  testthat::expect_equal(
+    ncol(scrubbed_mail),
+    ncol(some_mail) + 1)
+
+  sample_date_row <-
+    which(scrubbed_mail$delivery_date == sample_date)[1]
+
+  # Time shouldn't be NA because we had a "by" in the delivery_date
+  testthat::expect_true(
+    stringr::str_detect(scrubbed_mail$delivery_time_by[sample_date_row], "M")
+  )
+
+})
+
+
+
+
+
+
+

@@ -65,7 +65,7 @@ Displays the result of a query to the ["Postage Price Calculator"](https://postc
 
 fetch_mail_package(origin_zip = "60647",
          destination_zip = "11238",
-         pounds = 15)
+         pounds = 15, shape = "rectangular")
 }
 
 }

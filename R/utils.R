@@ -1,6 +1,4 @@
 #' @import magrittr
-#' @importFrom janitor clean_names
-#' @importFrom curl has_internet
 
 # -------------- Fetch Zones ---------------- #
 
@@ -95,7 +93,6 @@ prep_zip <- function(zip, verbose = FALSE, ...) {
 
 
 get_data <- function(url) {
-  # TODO: figure out namespace error
   if (!curl::has_internet()) {
     message("No internet connection detected.")
   }
@@ -492,43 +489,16 @@ clean_mail <- function(resp, show_details = FALSE) {
 
 extract_dates <- function(d) {
 
-  dte <- d %>%
+  d <- d %>%
     stringr::str_extract("[A-Za-z]+ [0-9]+") %>%
     stringr::str_c(glue::glue(", {lubridate::now() %>% lubridate::year()}")) %>%
     lubridate::mdy()
 
-  if (dte - lubridate::today() < 0) {
-    dte <- dte + 365
+  if (d - lubridate::today() < 0) {
+    d <- d + 365
   }
 
-  return(dte)
-}
-
-
-tidy_mail <- function(df) {
-  out <-
-    df %>%
-    purrr::map_dfr(stringr::str_replace_all,
-                   "Not available", NA_character_) %>%
-    dplyr::rowwise() %>%
-    dplyr::mutate(
-      retail_price = retail_price %>%
-        stringr::str_replace_all("\\$", "") %>%
-        as.numeric(),
-
-      click_n_ship_price = click_n_ship_price %>%
-        stringr::str_replace_all("\\$", "") %>%
-        as.numeric(),
-
-      delivery_date = delivery_day %>%
-        extract_dates(),
-
-      delivery_time_by = delivery_day %>%
-        stringr::str_extract("by [A-Za-z0-9: ]+") %>%
-        stringr::str_replace_all("by ", "")
-    )
-
-  return(out)
+  return(d)
 }
 
 

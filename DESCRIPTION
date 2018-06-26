@@ -31,6 +31,7 @@ Suggests:
     ggplot2,
     knitr,
     rmarkdown,
+    stats,
     testthat,
     zipcode
 VignetteBuilder: knitr

@@ -14,7 +14,6 @@
 #' If you want all destinations for a given origin, use \code{\link{fetch_zones_three_digit}} with the first 3 digits of the origin; there you don't need to supply a destination.
 #'
 #' @importFrom magrittr %>%
-#' @importFrom stats runif
 #'
 #' @examples \dontrun{
 #' fetch_zones_five_digit("90210", "20500")

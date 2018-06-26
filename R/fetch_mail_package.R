@@ -25,13 +25,12 @@
 #' @details Displays the result of a query to the ["Postage Price Calculator"](https://postcalc.usps.com/Calculator/). For flat rate envelopes or boxes, use \code{\link{fetch_mail_flat_rate}}.
 #'
 #' @importFrom magrittr %>%
-#' @importFrom janitor clean_names
 #'
 #' @examples \dontrun{
 #'
 #' fetch_mail_package(origin_zip = "60647",
 #'          destination_zip = "11238",
-#'          pounds = 15)
+#'          pounds = 15, shape = "rectangular")
 #' }
 #'
 #' @return A tibble with information for different postage options.
