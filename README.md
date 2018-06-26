@@ -73,7 +73,7 @@ along with their prices and dimensions.
 #> # ... with 1 more variable: dimensions <chr>
 ```
 
-The website should display the same results,
+The web interface should display the same results:
 
 <p align="center">
 
@@ -81,8 +81,13 @@ The website should display the same results,
 
 </p>
 
-which can be tidied with `scrub_mail`. This allows for computing on the
-prices and dates.
+and this is a good option if you want to display data in the way USPS
+does. If you want to compute on prices and dates, you can tidy the
+dataframe with `scrub_mail`.
+
+This replaces `"Not available"`s with `NA`s, changes prices to numeric,
+splits delivery day into a date and time of day (we infer year by the
+current year), and computes the delivery duration in days.
 
 ``` r
 mail %>% 
@@ -481,21 +486,21 @@ asking for origin `"456"` and origin `"789"`:
 
 <br>
 
-#### Well, not all of it
+#### Almost all of it
 
-The `zips_zones` dataset included in this package contains a random
-sample of 1,000,000 rows of all the 3 digit origin-destination pairs.
-Load it with:
+The `zips_zones_sample` dataset included in this package contains a
+random sample of 1,000,000 rows of all the 3 digit origin-destination
+pairs. Load it with:
 
 ``` r
-data(zips_zones)
+data(zips_zones_sample)
 ```
 
 It’s what you’d get by running `fetch_all(show_details = TRUE)`, waiting
 a while, and then taking a sample.
 
 ``` r
-zips_zones
+zips_zones_sample
 #> # A tibble: 1,000,000 x 6
 #>    origin_zip dest_zip  zone specific_to_prior… same_ndc has_five_digit_e…
 #>    <chr>      <chr>    <int> <lgl>              <lgl>    <lgl>            
@@ -514,7 +519,7 @@ zips_zones
 
 The sample is about a quarter of the total number of rows between all
 origin prefixes and all destination prefixes, plus the 5 digit
-exceptions (3,804,494 rows). See it put to use in the
+exceptions (~4m rows). See it put to use in the
 [vignette](https://github.com/aedobbyn/usps/blob/dev/vignettes/getting-zoned.Rmd).
 
 <br>
