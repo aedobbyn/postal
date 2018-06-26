@@ -49,6 +49,7 @@ scrub_mail <- function(tbl) {
     dplyr::select(
       origin_zip, dest_zip, title,
       delivery_date, delivery_by_time,
+      delivery_duration,
       retail_price, click_n_ship_price,
       dplyr::everything()
     )

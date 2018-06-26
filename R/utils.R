@@ -130,6 +130,42 @@ try_n_times <- function(url, n_tries = 3, ...) {
 }
 
 
+do_try_n_times <- function(url,
+                           origin_zip = NULL,
+                           destination_zip = NULL,
+                           n_tries = 3, show_details = FALSE) {
+  resp <-
+    try_n_times(url, n_tries = n_tries)
+
+  if (!is.null(resp$error)) {
+    no_success <-
+      tibble::tibble(
+        origin_zip = origin_zip,
+        dest_zip = destination_zip,
+        zone = "no_success",
+        specific_to_priority_mail = NA,
+        local = NA,
+        same_ndc = NA,
+        full_response = NA
+    )
+
+    if (show_details == FALSE) {
+      no_success <-
+        no_success %>%
+        dplyr::select(origin_zip, dest_zip, zone)
+    }
+
+    message(glue::glue("Unsuccessful grabbing data for \\
+                       origin {origin_zip} and \\
+                       destination {destination_zip}."))
+
+    return(no_success)
+  } else {
+    return(resp)
+  }
+}
+
+
 clean_zones <- function(dat, inp) {
   if (dat$ZIPCodeError != "") {
     stop(glue::glue("ZIPCodeError returned from \\
@@ -207,25 +243,7 @@ get_zones <- function(inp, verbose = FALSE, n_tries = 3, ...) {
   }
 
   this_url <- stringr::str_c(three_digit_base_url, inp, collapse = "")
-  this_try <- 1
-  resp <- try_n_times(this_url)
-
-  if (!is.null(resp$error)) {
-    no_success <-
-      tibble::tibble(
-        origin_zip = inp,
-        dest_zip_start = "no_success",
-        dest_zip_end = "no_success",
-        zone = "no_success",
-        specific_to_priority_mail = NA,
-        same_ndc = NA,
-        has_five_digit_exceptions = NA,
-        validity = "no_success"
-      )
-
-    message(glue::glue("Unsuccessful grabbing data for origin zip {inp}."))
-    return(no_success)
-  }
+  resp <- do_try_n_times(this_url)
 
   out <- resp$result
 
@@ -286,37 +304,11 @@ get_zones_five_digit <- function(origin_zip, destination_zip,
                origin={origin_zip}&\\
                destination={destination_zip}")
 
-  resp_full <-
-    try_n_times(url, n_tries = n_tries)
+  resp <- do_try_n_times(url)
 
-  if (!is.null(resp_full$error)) {
-    no_success <-
-      tibble::tibble(
-        origin_zip = origin_zip,
-        dest_zip = destination_zip,
-        zone = "no_success",
-        specific_to_priority_mail = NA,
-        local = NA,
-        same_ndc = NA,
-        full_response = NA
-      )
+  out <- resp$result
 
-    if (show_details == FALSE) {
-      no_success <-
-        no_success %>%
-        dplyr::select(origin_zip, dest_zip, zone)
-    }
-
-    message(glue::glue("Unsuccessful grabbing data for \\
-                       origin {origin_zip} and \\
-                       destination {destination_zip}."))
-
-    return(no_success)
-  }
-
-  resp <- resp_full$result
-
-  return(resp)
+  return(out)
 }
 
 
