@@ -29,108 +29,108 @@
 #' @export
 
 fetch_zones_three_digit <-
-                function(origin_zip = NULL,
-                        destination_zip = NULL,
-                        exact_destination = FALSE,
-                        as_range = FALSE,
-                        show_details = FALSE,
-                        n_tries = 3,
-                        verbose = FALSE, ...) {
-  if (length(origin_zip) < 0 | is.null(origin_zip) | is.na(origin_zip)) {
-    stop("origin_zip cannot be missing.")
-  }
+  function(origin_zip = NULL,
+             destination_zip = NULL,
+             exact_destination = FALSE,
+             as_range = FALSE,
+             show_details = FALSE,
+             n_tries = 3,
+             verbose = FALSE, ...) {
+    if (length(origin_zip) < 0 | is.null(origin_zip) | is.na(origin_zip)) {
+      stop("origin_zip cannot be missing.")
+    }
 
-  origin_zip <-
-    origin_zip %>%
-    prep_zip(verbose = verbose)
-
-  if (nchar(origin_zip) > 3 & verbose) {
-    message(glue::glue("Only 3-character origin zips can be \\
-                       sent to the API. Zip {origin_zip} will \\
-                       be requested as {substr(origin_zip, 1, 3)}."))
-  }
-
-  origin_zip <-
-    origin_zip %>%
-    substr(1, 3)
-
-  if (!is.null(destination_zip)) {
-    destination_zip <-
-      destination_zip %>%
+    origin_zip <-
+      origin_zip %>%
       prep_zip(verbose = verbose)
 
-    destination_zip_trim <-
-      destination_zip %>%
+    if (nchar(origin_zip) > 3 & verbose) {
+      message(glue::glue("Only 3-character origin zips can be \\
+                       sent to the API. Zip {origin_zip} will \\
+                       be requested as {substr(origin_zip, 1, 3)}."))
+    }
+
+    origin_zip <-
+      origin_zip %>%
       substr(1, 3)
-  }
-
-  out <-
-    origin_zip %>%
-    get_zones(verbose = verbose, n_tries = n_tries)
-
-  if (as_range == FALSE) {
-    out <-
-      out %>%
-      interpolate_zips() %>%
-      dplyr::select(
-        origin_zip, dest_zip, zone,
-        specific_to_priority_mail, same_ndc, has_five_digit_exceptions
-      ) %>%
-      dplyr::arrange(dest_zip)
 
     if (!is.null(destination_zip)) {
+      destination_zip <-
+        destination_zip %>%
+        prep_zip(verbose = verbose)
+
+      destination_zip_trim <-
+        destination_zip %>%
+        substr(1, 3)
+    }
+
+    out <-
+      origin_zip %>%
+      get_zones(verbose = verbose, n_tries = n_tries)
+
+    if (as_range == FALSE) {
       out <-
         out %>%
-        dplyr::filter(dest_zip == destination_zip |
-          dest_zip == destination_zip_trim |
-          is.na(dest_zip))
+        interpolate_zips() %>%
+        dplyr::select(
+          origin_zip, dest_zip, zone,
+          specific_to_priority_mail, same_ndc, has_five_digit_exceptions
+        ) %>%
+        dplyr::arrange(dest_zip)
 
-      if (exact_destination == TRUE) {
+      if (!is.null(destination_zip)) {
         out <-
           out %>%
           dplyr::filter(dest_zip == destination_zip |
+            dest_zip == destination_zip_trim |
             is.na(dest_zip))
-      }
-      if (nrow(out) == 0 & verbose) {
-        message(glue::glue("No zones found for the \\
+
+        if (exact_destination == TRUE) {
+          out <-
+            out %>%
+            dplyr::filter(dest_zip == destination_zip |
+              is.na(dest_zip))
+        }
+        if (nrow(out) == 0 & verbose) {
+          message(glue::glue("No zones found for the \\
                            {origin_zip} to {destination_zip} pair."))
+        }
+      }
+    } else {
+      if (!is.null(destination_zip)) {
+        out <-
+          out %>%
+          dplyr::filter(
+            as.numeric(dest_zip_start) <= as.numeric(destination_zip) &
+              as.numeric(dest_zip_end) >= as.numeric(destination_zip) |
+              is.na(dest_zip_start) & is.na(dest_zip_end) # Or our origin isn't in use
+          ) %>%
+          dplyr::select(
+            origin_zip, dest_zip_start, dest_zip_end, zone,
+            specific_to_priority_mail, same_ndc, has_five_digit_exceptions
+          )
       }
     }
-  } else {
-    if (!is.null(destination_zip)) {
+
+    if (show_details == FALSE) {
       out <-
         out %>%
-        dplyr::filter(
-          as.numeric(dest_zip_start) <= as.numeric(destination_zip) &
-            as.numeric(dest_zip_end) >= as.numeric(destination_zip) |
-            is.na(dest_zip_start) & is.na(dest_zip_end) # Or our origin isn't in use
-        ) %>%
         dplyr::select(
-          origin_zip, dest_zip_start, dest_zip_end, zone,
+          -specific_to_priority_mail,
+          -same_ndc,
+          -has_five_digit_exceptions
+        )
+    } else {
+      out <-
+        out %>%
+        dplyr::select(
+          dplyr::everything(),
           specific_to_priority_mail, same_ndc, has_five_digit_exceptions
         )
     }
-  }
 
-  if (show_details == FALSE) {
-    out <-
-      out %>%
-      dplyr::select(
-        -specific_to_priority_mail,
-        -same_ndc,
-        -has_five_digit_exceptions
-      )
-  } else {
-    out <-
-      out %>%
-      dplyr::select(
-        dplyr::everything(),
-        specific_to_priority_mail, same_ndc, has_five_digit_exceptions
-      )
+    return(out)
   }
-
-  return(out)
-}
 
 
 #' @export

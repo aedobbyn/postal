@@ -29,9 +29,9 @@
 #' @export
 
 fetch_zones_five_digit <- function(origin_zip, destination_zip,
-                             n_tries = 3,
-                             show_details = FALSE,
-                             verbose = FALSE, ...) {
+                                   n_tries = 3,
+                                   show_details = FALSE,
+                                   verbose = FALSE, ...) {
   origin_zip <-
     origin_zip %>%
     prep_zip(verbose = verbose)

@@ -104,8 +104,10 @@ testthat::test_that("fetch_mail_package()", {
     height = 5
   )
 
-  testthat::expect_is(much_mail_package,
-                      "data.frame")
+  testthat::expect_is(
+    much_mail_package,
+    "data.frame"
+  )
 })
 
 
@@ -152,14 +154,8 @@ testthat::test_that("fetch_mail_flat_rate()", {
     type = "box"
   )
 
-  testthat::expect_is(much_mail_flat,
-                      "data.frame")
-
+  testthat::expect_is(
+    much_mail_flat,
+    "data.frame"
+  )
 })
-
-
-
-
-
-
-

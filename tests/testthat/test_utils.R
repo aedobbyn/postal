@@ -6,7 +6,8 @@ testthat::test_that("Safely getting data works", {
 
   testthat::expect_null(
     try_get_data(glue::glue("{three_digit_base_url}{'007'}")) %>%
-    purrr::pluck("error"))
+      purrr::pluck("error")
+  )
 
   testthat::expect_null(try_get_data(
     glue::glue("{five_digit_base_url}?origin={'06840'}&destination={'68007'}")
@@ -38,7 +39,8 @@ testthat::test_that("Zips are prepped correctly", {
   )), "004")
   testthat::expect_equal(prepend_zeros("40"), "040")
   testthat::expect_message(testthat::expect_equal(
-    prepend_zeros("40", verbose = TRUE), "040"))
+    prepend_zeros("40", verbose = TRUE), "040"
+  ))
   testthat::expect_equal(prepend_zeros("404"), "404")
   testthat::expect_equal(prepend_zeros("4040"), "04040")
 })
@@ -102,9 +104,11 @@ testthat::test_that("Assorted other utils", {
 
 testthat::test_that("Scrubbing works", {
   some_mail <-
-    fetch_mail_package(origin_zip = "60647",
-                       destination_zip = "11238",
-                       pounds = 15, shape = "rectangular")
+    fetch_mail_package(
+      origin_zip = "60647",
+      destination_zip = "11238",
+      pounds = 15, shape = "rectangular"
+    )
 
   # Grab a date with a time in it
   sample_day <-
@@ -125,21 +129,14 @@ testthat::test_that("Scrubbing works", {
 
   testthat::expect_equal(
     ncol(scrubbed_mail),
-    ncol(some_mail) + 1)
+    ncol(some_mail) + 1
+  )
 
   sample_date_row <-
     which(scrubbed_mail$delivery_date == sample_date)[1]
 
   # Time shouldn't be NA because we had a "by" in the delivery_date
   testthat::expect_true(
-    stringr::str_detect(scrubbed_mail$delivery_time_by[sample_date_row], "M")
+    stringr::str_detect(scrubbed_mail$delivery_by_time[sample_date_row], "M")
   )
-
 })
-
-
-
-
-
-
-

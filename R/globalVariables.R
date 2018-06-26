@@ -26,5 +26,8 @@ globalVariables(c(
   "postage_service_id",
   "retail_price",
   "title",
-  "type"
+  "type",
+  # ---- Ours re: mail ---- #
+  "delivery_by_time",
+  "delivery_date"
 ))

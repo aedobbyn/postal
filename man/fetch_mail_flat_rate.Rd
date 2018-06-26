@@ -7,7 +7,7 @@
 fetch_mail_flat_rate(origin_zip = NULL, destination_zip = NULL,
   shipping_date = "today", shipping_time = "now", type = c("envelope",
   "box"), ground_transportation_needed = FALSE, show_details = FALSE,
-  n_tries = 3, scrub_mail = TRUE, verbose = TRUE, ...)
+  n_tries = 3, verbose = TRUE, ...)
 }
 \arguments{
 \item{origin_zip}{5-digit origin zip code.}

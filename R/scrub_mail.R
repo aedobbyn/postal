@@ -19,11 +19,12 @@
 #'
 
 scrub_mail <- function(tbl) {
-
   out <-
     tbl %>%
-    purrr::map_dfr(stringr::str_replace_all,
-                   "Not available", NA_character_) %>%
+    purrr::map_dfr(
+      stringr::str_replace_all,
+      "Not available", NA_character_
+    ) %>%
     dplyr::rowwise() %>%
     dplyr::mutate(
       retail_price = retail_price %>%

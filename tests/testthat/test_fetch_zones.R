@@ -85,8 +85,10 @@ testthat::test_that("Priority Mail exceptions are noted", {
   has_priority_exceptions <-
     fetch_zones_five_digit("40360", "09756", show_details = TRUE)
 
-  testthat::expect_equal("3",
-    has_priority_exceptions$specific_to_priority_mail)
+  testthat::expect_equal(
+    "3",
+    has_priority_exceptions$specific_to_priority_mail
+  )
 })
 
 
