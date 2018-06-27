@@ -565,42 +565,9 @@ extract_dates <- function(d) {
 }
 
 
-fetch_mail <- function(origin_zip = NULL,
-                       destination_zip = NULL,
-                       shipping_date = "today",
-                       shipping_time = "now",
-                       ground_transportation_needed = TRUE,
-                       live_animals = FALSE,
-                       day_old_poultry = FALSE,
-                       hazardous_materials = FALSE,
-                       type = c("box", "envelope"),
-                       pounds = 0,
-                       ounces = 0,
-                       length = 0,
-                       height = 0,
-                       width = 0,
-                       girth = 0,
-                       shape = c("rectangular", "nonrectangular"),
-                       n_tries = 3,
-                       show_details = TRUE,
-                       verbose = TRUE, ...) {
-  resp <- get_mail(
-    origin_zip = origin_zip,
-    destination_zip = destination_zip,
-    shipping_date = shipping_date,
-    shipping_time = shipping_time,
-    type = type,
-    ground_transportation_needed = ground_transportation_needed,
-    pounds = pounds,
-    ounces = ounces,
-    length = length,
-    height = height,
-    width = width,
-    girth = girth,
-    shape = shape,
-    n_tries = n_tries,
-    verbose = verbose
-  )
+fetch_mail <- function(...) {
+  args <- list(...)
+  resp <- do.call(get_mail, args)
 
   if (!is.null(resp$error)) {
     no_success <-
