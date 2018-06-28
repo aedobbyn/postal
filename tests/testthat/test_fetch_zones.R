@@ -78,12 +78,15 @@ testthat::test_that("Five digit fetch", {
   testthat::expect_error(fetch_zones_five_digit("123", "456"))
   testthat::expect_error(fetch_zones_five_digit("00001", "60647"))
   testthat::expect_error(fetch_zones_five_digit("11238", "00003"))
+  testthat::expect_error(fetch_zones_five_digit(11238, "00003"))
 })
 
 
 testthat::test_that("Priority Mail exceptions are noted", {
   has_priority_exceptions <-
-    fetch_zones_five_digit("40360", "09756", show_details = TRUE)
+    fetch_zones_five_digit("40360", "09756",
+                           show_details = TRUE,
+                           verbose = TRUE)
 
   testthat::expect_equal(
     "3",
@@ -113,8 +116,8 @@ testthat::test_that("3 and 5 digit endpoints agree on zone", {
 # Create temp dir for our csv
 dir.create(here::here("tmp"))
 
-some_zips <- testthat::expect_warning(fetch_all(sample(all_possible_origins, 2),
-                       write_to = here::here("tmp", "test_file.csv")))
+some_zips <- fetch_all(sample(all_possible_origins, 2),
+                       write_to = here::here("tmp", "test_file.csv"))
 
 test_file <- readr::read_csv(here::here("tmp", "test_file.csv"))
 

@@ -50,6 +50,23 @@ testthat::test_that("fetch_mail_package()", {
 
   testthat::expect_error(
     fetch_mail_package("11238", "60647",
+      shape = "rectangular",
+      pounds = "foo")
+  )
+
+  testthat::expect_error(
+    fetch_mail_package("11238", "60647",
+       live_animals = 14)
+  )
+
+  testthat::expect_error(
+    fetch_mail_package("11238", "60647",
+       shape = "nonrectangular",
+       shipping_time = 123)
+  )
+
+  testthat::expect_error(
+    fetch_mail_package("11238", "60647",
       shape = "nonrectangular",
       girth = 0
     )
@@ -72,7 +89,9 @@ testthat::test_that("fetch_mail_package()", {
       length = 12,
       width = 8,
       height = 4,
-      girth = 7
+      girth = 7,
+      live_animals = TRUE,
+      verbose = TRUE
     ),
     "data.frame"
   )

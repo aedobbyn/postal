@@ -92,10 +92,13 @@ fetch_zones_three_digit <-
             dplyr::filter(dest_zip == destination_zip |
               is.na(dest_zip))
         }
+        # Should be no way we get to this point
+        # nocov start
         if (nrow(out) == 0 & verbose) {
           message(glue::glue("No zones found for the \\
                            {origin_zip} to {destination_zip} pair."))
         }
+        # nocov end
       }
     } else {
       if (!is.null(destination_zip)) {

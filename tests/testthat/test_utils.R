@@ -166,3 +166,42 @@ testthat::test_that("Scrubbing works", {
     stringr::str_detect(scrubbed_mail$delivery_by_time[sample_date_row], "M")
   )
 })
+
+
+
+testthat::test_that("Extract date works", {
+  future_month <-
+    months(lubridate::today() + 365)
+
+  future_date <-
+    glue::glue("Fri, {future_month} 20")
+
+  testthat::expect_is(
+    extract_dates(future_date),
+    "Date"
+  )
+
+  # Package can't be delivered to a past date
+  testthat::expect_gt(
+    extract_dates(future_date) %>% as.numeric(),
+    lubridate::today() %>% as.numeric()
+  )
+
+  past_month <-
+    months(lubridate::today() - 365)
+
+  past_date <-
+    glue::glue("Fri, {past_month} 20")
+
+  testthat::expect_is(
+    extract_dates(past_date),
+    "Date"
+  )
+
+  # Package can't be delivered to a past date, so we assume it's next year
+  testthat::expect_gt(
+    extract_dates(past_date) %>% as.numeric(),
+    lubridate::today() %>% as.numeric()
+  )
+
+})
