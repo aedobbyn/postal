@@ -120,6 +120,20 @@ testthat::test_that("Interpolation of zips in between ranges", {
       interpolate_zips() %>%
       dplyr::pull("validity")
   )
+
+  unsuccessful <-
+    tibble::tribble(
+    ~"origin_zip", ~"dest_zip", ~"zone", ~"validity",
+    "123", NULL, "no_success", "no_success"
+  )
+
+  testthat::expect_equal(
+    "no_success",
+
+    unsuccessful %>%
+      interpolate_zips() %>%
+      purrr::pluck("dest_zip")
+  )
 })
 
 

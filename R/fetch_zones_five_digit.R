@@ -41,7 +41,9 @@ fetch_zones_five_digit <- function(origin_zip, destination_zip,
     prep_zip(verbose = verbose)
 
   resp <- get_zones_five_digit(origin_zip, destination_zip,
-                               show_details = show_details)
+                               show_details = show_details,
+                               n_tries = n_tries,
+                               verbose = verbose)
 
   if (resp$OriginError != "") stop("Invalid origin zip.")
   if (resp$DestinationError != "") stop("Invalid destination zip.")

@@ -297,7 +297,6 @@ get_zones <- function(origin_zip, destination_zip,
 
 
 get_zones_five_digit <- function(origin_zip, destination_zip,
-                                 show_details = FALSE,
                                  verbose = FALSE, n_tries = 3, ...) {
   if (verbose) {
     message(glue::glue("Grabbing zone for origin zip \\

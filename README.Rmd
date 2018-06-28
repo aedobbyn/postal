@@ -223,9 +223,9 @@ fetch_zones_three_digit(origin_zip = "404",
 
 Definitions of these details can be found in `zone_detail_definitions`.
 
-```{r}
+```{r zone_detail_definitions}
 zone_detail_definitions %>% 
-  knitr::kable()
+  knitr::kable() 
 ```
 
 

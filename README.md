@@ -360,17 +360,16 @@ Definitions of these details can be found in `zone_detail_definitions`.
 
 ``` r
 zone_detail_definitions %>% 
-  knitr::kable()
+  knitr::kable() 
 ```
 
-| name                         | digit\_endpoint  | definition                                                                   |
-| :--------------------------- | :--------------- | :--------------------------------------------------------------------------- |
-| specific\_to\_priority\_mail | 3, 5             | This zone designation applies to Priority Mail only.                         |
-| same\_ndc                    | 3, 5             | The origin and destination zips are in the same Network Distribution Center. |
-| has\_five\_digit\_exceptions | 3                | This 3 digit destination zip prefix appears at the \\                        |
-| beginning of certain 5 d     | igit destination | zips that correspond to a different zone.                                    |
-| local                        | 5                | Is this a local zone?                                                        |
-| full\_response               | 5                | Prose API response for these two 5-digit zips.                               |
+| name                         | digit\_endpoint | definition                                                                                                                            |
+| :--------------------------- | :-------------- | :------------------------------------------------------------------------------------------------------------------------------------ |
+| specific\_to\_priority\_mail | 3, 5            | This zone designation applies to Priority Mail only.                                                                                  |
+| same\_ndc                    | 3, 5            | The origin and destination zips are in the same Network Distribution Center.                                                          |
+| has\_five\_digit\_exceptions | 3               | This 3 digit destination zip prefix appears at the beginning of certain 5 digit destination zips that correspond to a different zone. |
+| local                        | 5               | Is this a local zone?                                                                                                                 |
+| full\_response               | 5               | Prose API response for these two 5-digit zips.                                                                                        |
 
 <br>
 

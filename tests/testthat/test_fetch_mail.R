@@ -56,13 +56,23 @@ testthat::test_that("fetch_mail_package()", {
 
   testthat::expect_error(
     fetch_mail_package("11238", "60647",
-       live_animals = 14)
+       shape = "rectangular",
+       shipping_date = 14
+    )
   )
 
   testthat::expect_error(
     fetch_mail_package("11238", "60647",
        shape = "nonrectangular",
-       shipping_time = 123)
+       shipping_time = 123
+    )
+  )
+
+  testthat::expect_error(
+    fetch_mail_package("11238", "60647",
+         shape = "nonrectangular",
+         live_animals = 123
+    )
   )
 
   testthat::expect_error(
