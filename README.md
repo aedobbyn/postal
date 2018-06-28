@@ -41,6 +41,8 @@ and boxes (the kind you pick up at the post office and wrestle with
 until they fold into a box shape) or packages, which vary by their
 weight and dimensions.
 
+Currently only destinations in the US are supported.
+
 ### Usage
 
 Specify a 5-digit origin zip and destination zip, along with the date
@@ -198,10 +200,9 @@ and destination. Or maybe between *all* origins and *all* destinations
 for some app you’re building.
 
 That doesn’t sound so bad, but there are `99999^2` or 9,999,800,001
-possible 5-digit origin-destination zip combinations in the US. Luckily,
-the USPS [Zone Calc](https://postcalc.usps.com/DomesticZoneChart/) tool
-narrows down that search space a bit by trimming zips to their first 3
-digits.
+possible 5-digit origin-destination zip combinations in the US. The USPS
+[Zone Calc](https://postcalc.usps.com/DomesticZoneChart/) tool narrows
+down that space a bit by trimming zips to their first 3 digits.
 
 ### Usage
 
@@ -486,7 +487,7 @@ asking for origin `"456"` and origin `"789"`:
 
 <br>
 
-#### Almost all of it
+#### Or some of it, for free
 
 The `zips_zones_sample` dataset included in this package contains a
 random sample of 1,000,000 rows of all the 3 digit origin-destination
