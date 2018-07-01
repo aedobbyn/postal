@@ -1,15 +1,18 @@
 testthat::context("Test utility functions")
 
 testthat::test_that("zips_zones_sample", {
-  testthat::expect_is(zips_zones_sample,
-                      "data.frame")
+  testthat::expect_is(
+    zips_zones_sample,
+    "data.frame"
+  )
 
-  testthat::expect_equal(nrow(zips_zones_sample),
-                         1000000)
+  testthat::expect_equal(
+    nrow(zips_zones_sample),
+    1000000
+  )
 })
 
 testthat::test_that("Safely getting data works", {
-
   good_url <- glue::glue("{three_digit_base_url}{'007'}")
 
   testthat::expect_length(get_data(good_url), 7)
@@ -123,9 +126,9 @@ testthat::test_that("Interpolation of zips in between ranges", {
 
   unsuccessful <-
     tibble::tribble(
-    ~"origin_zip", ~"dest_zip", ~"zone", ~"validity",
-    "123", NULL, "no_success", "no_success"
-  )
+      ~"origin_zip", ~"dest_zip", ~"zone", ~"validity",
+      "123", NULL, "no_success", "no_success"
+    )
 
   testthat::expect_equal(
     "no_success",
@@ -217,5 +220,4 @@ testthat::test_that("Extract date works", {
     extract_dates(past_date) %>% as.numeric(),
     lubridate::today() %>% as.numeric()
   )
-
 })

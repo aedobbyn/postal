@@ -29,13 +29,13 @@
 #' @export
 
 fetch_zones_three_digit <-
-      function(origin_zip = NULL,
-                 destination_zip = NULL,
-                 exact_destination = FALSE,
-                 as_range = FALSE,
-                 show_details = FALSE,
-                 n_tries = 3,
-                 verbose = FALSE, ...) {
+  function(origin_zip = NULL,
+             destination_zip = NULL,
+             exact_destination = FALSE,
+             as_range = FALSE,
+             show_details = FALSE,
+             n_tries = 3,
+             verbose = FALSE, ...) {
     if (length(origin_zip) < 0 | is.null(origin_zip) | is.na(origin_zip)) {
       stop("origin_zip cannot be missing.")
     }
@@ -50,6 +50,7 @@ fetch_zones_three_digit <-
                        be requested as {substr(origin_zip, 1, 3)}."))
     }
 
+    # Only send the first three digits
     origin_zip <-
       origin_zip %>%
       substr(1, 3)
@@ -65,9 +66,12 @@ fetch_zones_three_digit <-
     }
 
     out <-
-      get_zones(origin_zip = origin_zip,
-                destination_zip = NULL,
-                verbose = verbose, n_tries = n_tries)
+      get_zones_three_digit(
+        origin_zip = origin_zip,
+        destination_zip = NULL,
+        n_tries = n_tries,
+        verbose = verbose, ...
+      )
 
     if (as_range == FALSE) {
       out <-

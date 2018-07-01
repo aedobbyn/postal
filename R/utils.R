@@ -98,9 +98,9 @@ prep_zip <- function(zip, verbose = FALSE, ...) {
 
 
 get_data <- function(url) {
-  if (!curl::has_internet()) {  # nocov start
+  if (!curl::has_internet()) { # nocov start
     message("No internet connection detected.")
-  }                             # nocov end
+  } # nocov end
 
   url %>%
     jsonlite::fromJSON()
@@ -148,7 +148,7 @@ do_try_n_times <- function(url,
         local = NA,
         same_ndc = NA,
         full_response = NA
-    )
+      )
 
     if (show_details == FALSE) {
       no_success <-
@@ -183,7 +183,7 @@ clean_zones <- function(dat, origin_zip) {
     five_digit_zips <-
       dat$Zip5Digit
   } else {
-    five_digit_zips <- tibble::tibble()   # nocov
+    five_digit_zips <- tibble::tibble() # nocov
   }
 
   three_digit_zips <-
@@ -197,8 +197,8 @@ clean_zones <- function(dat, origin_zip) {
 
   out <- out %>%
     tidyr::separate(ZipCodes,
-                    into = c("dest_zip_start", "dest_zip_end"),
-                    sep = "---"
+      into = c("dest_zip_start", "dest_zip_end"),
+      sep = "---"
     ) %>%
     dplyr::rowwise() %>%
     dplyr::mutate(
@@ -240,15 +240,17 @@ clean_zones <- function(dat, origin_zip) {
 }
 
 
-get_zones <- function(origin_zip, destination_zip,
-                      verbose = FALSE, n_tries = 3, ...) {
+get_zones_three_digit <- function(origin_zip, destination_zip,
+                                  n_tries = 3, verbose = FALSE, ...) {
   if (verbose) {
     message(glue::glue("Grabbing origin ZIP {origin_zip}"))
   }
 
   this_url <- stringr::str_c(three_digit_base_url, origin_zip, collapse = "")
-  resp <- do_try_n_times(this_url, origin_zip = origin_zip,
-                         destination_zip = NA)
+  resp <- do_try_n_times(this_url,
+    origin_zip = origin_zip,
+    destination_zip = NA
+  )
 
   out <- resp$result
 
@@ -297,7 +299,8 @@ get_zones <- function(origin_zip, destination_zip,
 
 
 get_zones_five_digit <- function(origin_zip, destination_zip,
-                                 verbose = FALSE, n_tries = 3, ...) {
+                                 verbose = FALSE,
+                                 n_tries = 3, ...) {
   if (verbose) {
     message(glue::glue("Grabbing zone for origin zip \\
                        {origin_zip} and destination zip {destination_zip}"))
@@ -308,8 +311,10 @@ get_zones_five_digit <- function(origin_zip, destination_zip,
                origin={origin_zip}&\\
                destination={destination_zip}")
 
-  resp <- do_try_n_times(url, origin_zip = origin_zip,
-                         destination_zip = destination_zip)
+  resp <- do_try_n_times(url,
+    origin_zip = origin_zip,
+    destination_zip = destination_zip
+  )
 
   out <- resp$result
 
@@ -439,9 +444,11 @@ get_mail <- function(origin_zip = NULL,
   }
 
   shipping_date <- get_shipping_date(shipping_date,
-                                     verbose = verbose)
+    verbose = verbose
+  )
   shipping_time <- get_shipping_time(shipping_time,
-                                     verbose = verbose)
+    verbose = verbose
+  )
 
   shipping_date <-
     shipping_date %>%
@@ -630,9 +637,11 @@ fetch_mail <- function(origin_zip = NULL,
   }
 
   shipping_date <- get_shipping_date(shipping_date,
-                                     verbose = verbose)
+    verbose = verbose
+  )
   shipping_time <- get_shipping_time(shipping_time,
-                                     verbose = verbose)
+    verbose = verbose
+  )
 
   out <-
     out %>%

@@ -51,27 +51,28 @@ testthat::test_that("fetch_mail_package()", {
   testthat::expect_error(
     fetch_mail_package("11238", "60647",
       shape = "rectangular",
-      pounds = "foo")
-  )
-
-  testthat::expect_error(
-    fetch_mail_package("11238", "60647",
-       shape = "rectangular",
-       shipping_date = 14
+      pounds = "foo"
     )
   )
 
   testthat::expect_error(
     fetch_mail_package("11238", "60647",
-       shape = "nonrectangular",
-       shipping_time = 123
+      shape = "rectangular",
+      shipping_date = 14
     )
   )
 
   testthat::expect_error(
     fetch_mail_package("11238", "60647",
-         shape = "nonrectangular",
-         live_animals = 123
+      shape = "nonrectangular",
+      shipping_time = 123
+    )
+  )
+
+  testthat::expect_error(
+    fetch_mail_package("11238", "60647",
+      shape = "nonrectangular",
+      live_animals = 123
     )
   )
 
@@ -143,6 +144,11 @@ testthat::test_that("fetch_mail_package()", {
 testthat::test_that("fetch_mail_flat_rate()", {
   testthat::expect_error(
     fetch_mail_flat_rate()
+  )
+
+  testthat::expect_error(
+    fetch_mail_flat_rate(88506, "90210",
+                         type = "envelope")
   )
 
   testthat::expect_error(

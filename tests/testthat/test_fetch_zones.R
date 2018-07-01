@@ -85,8 +85,9 @@ testthat::test_that("Five digit fetch", {
 testthat::test_that("Priority Mail exceptions are noted", {
   has_priority_exceptions <-
     fetch_zones_five_digit("40360", "09756",
-                           show_details = TRUE,
-                           verbose = TRUE)
+      show_details = TRUE,
+      verbose = TRUE
+    )
 
   testthat::expect_equal(
     "3",
@@ -117,13 +118,13 @@ testthat::test_that("3 and 5 digit endpoints agree on zone", {
 dir.create(here::here("tmp"))
 
 some_zips <- fetch_all(sample(all_possible_origins, 2),
-                       write_to = here::here("tmp", "test_file.csv"))
+  write_to = here::here("tmp", "test_file.csv")
+)
 
 test_file <- readr::read_csv(here::here("tmp", "test_file.csv"))
 
 
 testthat::test_that("We can grab all origins", {
-
   testthat::expect_is(
     some_zips,
     "data.frame"
@@ -133,7 +134,6 @@ testthat::test_that("We can grab all origins", {
     test_file,
     "data.frame"
   )
-
 })
 
 # Clean up
@@ -144,6 +144,7 @@ unlink(here::here("tmp"), recursive = TRUE)
 testthat::expect_warning({
   dir.create(here::here("tmp"))
   fetch_all(sample(all_possible_origins, 2),
-            write_to = here::here("tmp", "test_file_notcsv.notacsv"))
+    write_to = here::here("tmp", "test_file_notcsv.notacsv")
+  )
   unlink(here::here("tmp"), recursive = TRUE)
 })
