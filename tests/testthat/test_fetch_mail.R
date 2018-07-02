@@ -105,6 +105,7 @@ testthat::test_that("fetch_mail_package()", {
     "data.frame"
   )
 
+
   testthat::expect_is(
     fetch_mail_package(
       origin_zip = "60647",
@@ -180,6 +181,16 @@ testthat::test_that("fetch_mail_flat_rate()", {
       origin_zip = "60647",
       destination_zip = "11238",
       type = "envelope"
+    ),
+    "data.frame"
+  )
+
+  testthat::expect_is(
+    fetch_mail_flat_rate(
+      origin_zip = "60647",
+      destination_zip = "11238",
+      type = "box",
+      hazardous_materials = TRUE
     ),
     "data.frame"
   )

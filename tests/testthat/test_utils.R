@@ -145,6 +145,11 @@ testthat::test_that("Interpolation of zips in between ranges", {
 
 testthat::test_that("Assorted other utils", {
   testthat::expect_equal(cap_word("foo"), "Foo")
+
+  testthat::expect_error(clean_mail(
+    resp = list(a = "foo",
+                PageError = "No Mail Services were found.")
+  ))
 })
 
 
