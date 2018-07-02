@@ -11,10 +11,10 @@
 #' @param hazardous_materials Boolean: does this contain any hazardous materials? See: \url{https://pe.usps.com/text/pub52/pub52c3_001.htm}
 #' @param pounds Number of pounds the package weighs.
 #' @param ounces Number of ounces the package weighs.
-#' @param length Length of the package. This is the longest dimension.
-#' @param height Height of the package.
-#' @param width Width of the package.
-#' @param girth Girth of the package, required if \code{shape} is "nonrectangular". This is the distance around the thickest part.
+#' @param length Length of the package in inches. This is the longest dimension.
+#' @param height Height of the package in inches.
+#' @param width Width of the package in inches.
+#' @param girth Girth of the package in inches, required if \code{shape} is "nonrectangular". This is the distance around the thickest part.
 #' @param shape Shape of the package: "rectangular" or "nonrectangular". "nonrectangular" reqires a non-null \code{girth} value.
 #' If \code{type} is box or envelope, \code{shape} will always be "rectangular".
 #' @param show_details Non-essential details of the response are hidden by default. Show them by setting this to TRUE.
@@ -75,12 +75,12 @@ fetch_mail <- function(origin_zip = NULL,
     shape <- "rectangular"
   } else if (type == "package") {
     type <- "Package"
-    if (length(shape) > 1 ||
+    if (length(shape) > 1 |
         !shape %in% c("rectangular", "nonrectangular")) {
       stop("If type is package, shape must be either rectangular or nonrectangular")
     }
     if (shape == "nonrectangular") {
-      if (is.null(girth) || girth == 0) {
+      if (is.null(girth) | girth == 0) {
         stop("If shape is nonrectangular, girth must be > 0.")
       }
     }

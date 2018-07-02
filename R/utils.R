@@ -380,12 +380,13 @@ get_shipping_date <- function(shipping_date,
 get_shipping_time <- function(shipping_time,
                               verbose = FALSE) {
   if (shipping_time == "now") {
+    hr <- lubridate::now() %>% lubridate::hour()
+    mn <- lubridate::now() %>% lubridate::minute()
+    if (nchar(mn) == 1) {
+      mn <- glue::glue("0{mn}")
+    }
     shipping_time <-
-      stringr::str_c(
-        lubridate::now() %>% lubridate::hour(),
-        ":",
-        lubridate::now() %>% lubridate::minute()
-      )
+      glue::glue("{hr}:{mn}")
 
     if (verbose) message(glue::glue("Using ship on time {shipping_time}."))
   }
@@ -431,10 +432,11 @@ get_mail <- function(origin_zip = NULL,
     pounds, ounces, length, width, height, girth
   )
 
-  if (any(purrr::map(num_args, is.numeric) == FALSE)) {
+  if (any(purrr::map(num_args, is.numeric) == FALSE) |
+      any(purrr::map(num_args, ~ .x < 0) == TRUE)) {
     not_num <- num_args[which(purrr::map(num_args, is.numeric) == FALSE)] %>%
       stringr::str_c(collapse = ", ")
-    stop(glue::glue("Argument {not_num} is not of type numeric."))
+    stop(glue::glue("Argument {not_num} is not of type numeric or is < 0."))
   }
 
   lgl_args <- list(
