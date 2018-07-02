@@ -72,13 +72,15 @@ The web interface should display the same results:
 
 and this is a good option if you want to display data in the way USPS does. If you want to compute on prices and dates, you can tidy the dataframe with `scrub_mail`. 
 
-This replaces `"Not available"`s with `NA`s, changes prices to numeric, splits delivery day into a date and time of day (we infer year by the current year), and computes the delivery duration in days.
+This replaces `"Not available"`s and empty strings with `NA`s, changes prices to numeric, splits delivery day into a date and time of day (we infer year by the current year and use the 24hr clock), and computes the delivery duration in days.
 
 ```{r}
 mail %>% 
   scrub_mail()
 ```
 
+
+#### More Options
 
 USPS also offers some more colorful options to handle all your shipping needs. 
 
