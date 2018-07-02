@@ -564,7 +564,7 @@ clean_mail <- function(resp, show_details = FALSE) {
 
 extract_dates <- function(d) {
   if (is.na(d) | d == "" | stringr::str_detect(d, "Days")) {
-    d <- NA
+    d <- ""
     return(d)
   }
 
@@ -583,7 +583,7 @@ extract_dates <- function(d) {
 
 extract_times <- function(t) {
   if (is.na(t) | t == "" | stringr::str_detect(t, "Days")) {
-    t <- NA_character_
+    t <- ""
     return(t)
   }
 
