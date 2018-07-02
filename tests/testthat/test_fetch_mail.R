@@ -81,6 +81,13 @@ testthat::test_that("fetch_mail()", {
 
   testthat::expect_error(
     fetch_mail("11238", "60647",
+               shape = "rectangular",
+               type = c("box", "envelope")
+    )
+  )
+
+  testthat::expect_error(
+    fetch_mail("11238", "60647",
       shape = "nonrectangular",
       live_animals = 123
     )

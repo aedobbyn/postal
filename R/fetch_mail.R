@@ -65,7 +65,9 @@ fetch_mail <- function(origin_zip = NULL,
                                  n_tries = 3,
                                  verbose = TRUE, ...) {
 
-  if (length(type) > 1) stop("type must be envelope, box, or package")
+  if (is.null(type) | length(type) > 1) {
+    stop("type must be envelope, box, or package")
+  }
 
   if (type == "envelope") {
     type <- "FlatRateEnvelope"
