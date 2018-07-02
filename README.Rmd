@@ -1,5 +1,7 @@
 ---
-output: github_document
+output:
+  md_document:
+    variant: gfm
 ---
 
 ```{r setup, include = FALSE}
@@ -57,7 +59,7 @@ library(usps)
 We'll ask for `type = "box"` and get back all the options for boxes along with their prices and dimensions. 
 
 ```{r}
-(mail <- fetch_mail_flat_rate(origin_zip = "11238", 
+(mail <- fetch_mail(origin_zip = "11238", 
                      destination_zip = "60647",
                      shipping_date = "2018-06-25",
                      shipping_time = "now", 
@@ -85,7 +87,7 @@ USPS also offers some more colorful options to handle all your shipping needs.
 So to answer the burning question...what if we wanted to ship live animals from Wyoming to Philly by ground at 2:30pm in a nonrectangular package?? When will it get there and how much will it cost?
 
 ```{r}
-fetch_mail_package(origin_zip = "88201", 
+fetch_mail(origin_zip = "88201", 
                    destination_zip = "19109", 
                    shipping_date = "today", 
                    shipping_time = "14:30", 
@@ -117,7 +119,7 @@ destinations <- c("98109", "94707", "bar", "04123")
 
 purrr::map2_dfr(
   origins, destinations,
-  fetch_mail_flat_rate,
+  fetch_mail,
   type = "box",
   n_tries = 3,
   verbose = FALSE
