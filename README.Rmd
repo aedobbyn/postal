@@ -57,12 +57,13 @@ library(usps)
 We'll ask for `type = "box"` and get back all the options for boxes along with their prices and dimensions. 
 
 ```{r}
-(mail <- fetch_mail(origin_zip = "11238", 
-                     destination_zip = "60647",
-                     shipping_date = "2018-06-25",
-                     shipping_time = "now", 
-                     type = "package",
-                     pounds = 15))
+(mail <- fetch_mail(origin_zip = "60647",
+         destination_zip = "11238",
+         shipping_date = "2018-07-02",
+         pounds = 15,
+         type = "package",
+         shape = "rectangular",
+         show_details = TRUE))
 ```
 
 The web interface should display the same results:

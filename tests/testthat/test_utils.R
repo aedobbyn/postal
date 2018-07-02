@@ -194,6 +194,12 @@ testthat::test_that("Scrubbing works", {
     "15:00"
   )
 
+  # For whatever reason, sometimes this is the response :/
+  testthat::expect_equal(
+    extract_dates("1 or 2 Days"),
+    ""
+  )
+
   scrubbed_mail <-
     some_mail %>%
     scrub_mail()

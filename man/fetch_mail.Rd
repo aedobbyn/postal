@@ -43,7 +43,8 @@ fetch_mail(origin_zip = NULL, destination_zip = NULL,
 
 \item{girth}{Girth of the package, required if \code{shape} is "nonrectangular". This is the distance around the thickest part.}
 
-\item{shape}{Shape of the package: "rectangular" or "nonrectangular". "nonrectangular" reqires a non-null \code{girth} value.}
+\item{shape}{Shape of the package: "rectangular" or "nonrectangular". "nonrectangular" reqires a non-null \code{girth} value.
+If \code{type} is box or envelope, \code{shape} will always be "rectangular".}
 
 \item{show_details}{Non-essential details of the response are hidden by default. Show them by setting this to TRUE.}
 
@@ -60,7 +61,7 @@ A tibble with information for different postage options, including price and box
 Get postage options for a package or flat-rate envelope/box
 }
 \details{
-Supply the required information about the package and receive a tibble. Displays the result of a query to the ["Postage Price Calculator"](https://postcalc.usps.com/Calculator/). For non-flat-rate packages, use \code{\link{fetch_mail_package}}.
+Supply the required information about the package and receive a tibble. Displays the result of a query to the ["Postage Price Calculator"](https://postcalc.usps.com/Calculator/).
 }
 \examples{
 \dontrun{
@@ -74,7 +75,8 @@ fetch_mail(origin_zip = "60647",
          destination_zip = "11238",
          pounds = 15,
          type = "package",
-         shape = "rectangular")
+         shape = "rectangular",
+         show_details = TRUE)
 }
 
 }
