@@ -54,7 +54,7 @@ Specify a 5-digit origin zip and destination zip, along with the date and time y
 library(usps)
 ```
 
-We'll ask for `type = "box"` and get back all the options for boxes along with their prices and dimensions. 
+We'll ask for `type = "package"` and get back all the shipping options along with their prices and dimensions. 
 
 ```{r}
 (mail <- fetch_mail(origin_zip = "60647",

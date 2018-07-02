@@ -185,12 +185,14 @@ testthat::test_that("Scrubbing works", {
   testthat::expect_is(reconstituted, "POSIXct")
 
   testthat::expect_equal(
-    extract_times("Tue, May 5 by 12:00 PM"),
+    extract_times("Tue, May 5 by 12:00 PM") %>%
+      as.character(),
     "12:00"
   )
 
   testthat::expect_equal(
-    extract_times("Tue, May 5 by 3:00 PM"),
+    extract_times("Tue, May 5 by 3:00 PM") %>%
+      as.character(),
     "15:00"
   )
 
