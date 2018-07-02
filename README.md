@@ -1,4 +1,3 @@
-
 # usps 📫
 
 [![Project Status: Active - The project has reached a stable, usable
@@ -56,14 +55,15 @@ We’ll ask for `type = "box"` and get back all the options for boxes
 along with their prices and dimensions.
 
 ``` r
-(mail <- fetch_mail_flat_rate(origin_zip = "11238", 
+(mail <- fetch_mail(origin_zip = "11238", 
                      destination_zip = "60647",
                      shipping_date = "2018-06-25",
                      shipping_time = "now", 
                      type = "box"))
-#> Using ship on time 11:42.
-#> Requesting https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&origin=11238&isOrigMil=False&destination=60647&isDestMil=False&shippingDate=2018%2F06%2F25&shippingTime=11%3A42&itemValue=&dayOldPoultry=False&groundTransportation=False&hazmat=False&liveAnimals=False&nonnegotiableDocument=False&mailShapeAndSize=FlatRateBox&pounds=0&ounces=0&length=0&height=0&width=0&girth=0&shape=Rectangular&nonmachinable=False&isEmbedded=False
-#> # A tibble: 6 x 7
+#> Using ship on time 12:39.
+#> Requesting https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&origin=11238&isOrigMil=False&destination=60647&isDestMil=False&shippingDate=2018%2F06%2F25&shippingTime=12%3A39&itemValue=&dayOldPoultry=False&groundTransportation=False&hazmat=False&liveAnimals=False&nonnegotiableDocument=False&mailShapeAndSize=FlatRateBox&pounds=0&ounces=0&length=0&height=0&width=0&girth=0&shape=Rectangular&nonmachinable=False&isEmbedded=False
+#> Using ship on time 12:39.
+#> # A tibble: 6 x 9
 #>   origin_zip dest_zip title     delivery_day retail_price click_n_ship_pr…
 #>   <chr>      <chr>    <chr>     <chr>        <chr>        <chr>           
 #> 1 11238      60647    Priority… Wed, Jun 27  $18.90       $18.90          
@@ -72,7 +72,8 @@ along with their prices and dimensions.
 #> 4 11238      60647    Priority… Wed, Jun 27  Not availab… $13.65          
 #> 5 11238      60647    Priority… Wed, Jun 27  $7.20        $7.20           
 #> 6 11238      60647    Priority… Wed, Jun 27  Not availab… $7.20           
-#> # ... with 1 more variable: dimensions <chr>
+#> # ... with 3 more variables: dimensions <chr>, shipping_date <chr>,
+#> #   shipping_time <chr>
 ```
 
 The web interface should display the same results:
@@ -114,7 +115,7 @@ from Wyoming to Philly by ground at 2:30pm in a nonrectangular package??
 When will it get there and how much will it cost?
 
 ``` r
-fetch_mail_package(origin_zip = "88201", 
+fetch_mail(origin_zip = "88201", 
                    destination_zip = "19109", 
                    shipping_date = "today", 
                    shipping_time = "14:30", 
@@ -128,11 +129,12 @@ fetch_mail_package(origin_zip = "88201",
                    girth = 7,
                    shape = "nonrectangular",
                    verbose = FALSE)
-#> # A tibble: 1 x 7
+#> # A tibble: 1 x 9
 #>   origin_zip dest_zip title     delivery_day retail_price click_n_ship_pr…
 #>   <chr>      <chr>    <chr>     <chr>        <chr>        <chr>           
-#> 1 88201      19109    USPS Ret… Mon, Jul 2   $42.24       Not available   
-#> # ... with 1 more variable: dimensions <chr>
+#> 1 88201      19109    USPS Ret… Mon, Jul 9   $42.24       Not available   
+#> # ... with 3 more variables: dimensions <chr>, shipping_date <chr>,
+#> #   shipping_time <chr>
 ```
 
 Finally, the important questions have been answered.
@@ -153,35 +155,40 @@ destinations <- c("98109", "94707", "bar", "04123")
 
 purrr::map2_dfr(
   origins, destinations,
-  fetch_mail_flat_rate,
+  fetch_mail,
   type = "box",
   n_tries = 3,
   verbose = FALSE
 )
+#> Warning in get_mail(origin_zip = origin_zip, destination_zip =
+#> destination_zip, : Zip codes supplied must be 5 digits.
 #> Error on request. Beginning try 2 of 3.
 #> Error on request. Beginning try 3 of 3.
 #> Unsuccessful grabbing data for the supplied arguments.
+#> Warning in get_mail(origin_zip = origin_zip, destination_zip =
+#> destination_zip, : Zip codes supplied must be 5 digits.
 #> Error on request. Beginning try 2 of 3.
 #> Error on request. Beginning try 3 of 3.
 #> Unsuccessful grabbing data for the supplied arguments.
-#> # A tibble: 14 x 7
+#> # A tibble: 14 x 9
 #>    origin_zip dest_zip title    delivery_day retail_price click_n_ship_pr…
 #>    <chr>      <chr>    <chr>    <chr>        <chr>        <chr>           
-#>  1 11238      98109    Priorit… Thu, Jun 28  $18.90       $18.90          
-#>  2 11238      98109    Priorit… Thu, Jun 28  Not availab… $18.90          
-#>  3 11238      98109    Priorit… Thu, Jun 28  $13.65       $13.65          
-#>  4 11238      98109    Priorit… Thu, Jun 28  Not availab… $13.65          
-#>  5 11238      98109    Priorit… Thu, Jun 28  $7.20        $7.20           
-#>  6 11238      98109    Priorit… Thu, Jun 28  Not availab… $7.20           
+#>  1 11238      98109    Priorit… Thu, Jul 5   $18.90       $18.90          
+#>  2 11238      98109    Priorit… Thu, Jul 5   Not availab… $18.90          
+#>  3 11238      98109    Priorit… Thu, Jul 5   $13.65       $13.65          
+#>  4 11238      98109    Priorit… Thu, Jul 5   Not availab… $13.65          
+#>  5 11238      98109    Priorit… Thu, Jul 5   $7.20        $7.20           
+#>  6 11238      98109    Priorit… Thu, Jul 5   Not availab… $7.20           
 #>  7 foo        94707    no_succ… no_success   no_success   no_success      
 #>  8 60647      bar      no_succ… no_success   no_success   no_success      
-#>  9 80222      04123    Priorit… Thu, Jun 28  $18.90       $18.90          
-#> 10 80222      04123    Priorit… Thu, Jun 28  Not availab… $18.90          
-#> 11 80222      04123    Priorit… Thu, Jun 28  $13.65       $13.65          
-#> 12 80222      04123    Priorit… Thu, Jun 28  Not availab… $13.65          
-#> 13 80222      04123    Priorit… Thu, Jun 28  $7.20        $7.20           
-#> 14 80222      04123    Priorit… Thu, Jun 28  Not availab… $7.20           
-#> # ... with 1 more variable: dimensions <chr>
+#>  9 80222      04123    Priorit… Thu, Jul 5   $18.90       $18.90          
+#> 10 80222      04123    Priorit… Thu, Jul 5   Not availab… $18.90          
+#> 11 80222      04123    Priorit… Thu, Jul 5   $13.65       $13.65          
+#> 12 80222      04123    Priorit… Thu, Jul 5   Not availab… $13.65          
+#> 13 80222      04123    Priorit… Thu, Jul 5   $7.20        $7.20           
+#> 14 80222      04123    Priorit… Thu, Jul 5   Not availab… $7.20           
+#> # ... with 3 more variables: dimensions <chr>, shipping_date <chr>,
+#> #   shipping_time <chr>
 ```
 
 -----
