@@ -96,7 +96,7 @@ testthat::test_that("Assignment of validity", {
   testthat::expect_message(fetch_zones_three_digit("1"), "Origin zip 001 is not in use.")
   testthat::expect_equal(
     "valid",
-    get_zones("112") %>%
+    get_zones_three_digit("112") %>%
       dplyr::pull(validity) %>%
       dplyr::first()
   )
@@ -115,14 +115,14 @@ testthat::test_that("Replacement of nulls", {
 testthat::test_that("Interpolation of zips in between ranges", {
   testthat::expect_equal(
     2422,
-    get_zones("123") %>%
+    get_zones_three_digit("123") %>%
       interpolate_zips() %>%
       nrow()
   )
 
   testthat::expect_equal(
     "invalid",
-    get_zones("001") %>%
+    get_zones_three_digit("001") %>%
       interpolate_zips() %>%
       dplyr::pull("validity")
   )
@@ -155,7 +155,7 @@ testthat::test_that("Assorted other utils", {
 
 testthat::test_that("Scrubbing works", {
   some_mail <-
-    fetch_mail_package(
+    fetch_mail(
       origin_zip = "60647",
       destination_zip = "11238",
       pounds = 15, shape = "rectangular"

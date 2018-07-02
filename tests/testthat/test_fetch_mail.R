@@ -33,72 +33,68 @@ testthat::test_that("postcalc returns something", {
 })
 
 
-testthat::test_that("fetch_mail_package()", {
+testthat::test_that("fetch_mail()", {
   testthat::expect_error(
-    fetch_mail_package()
+    fetch_mail()
   )
 
   testthat::expect_error(
-    fetch_mail_package("123", "456")
-  )
-
-  testthat::expect_error(
-    fetch_mail_package("11238", "60647",
+    fetch_mail("11238", "60647",
       shape = "neither"
     )
   )
 
   testthat::expect_error(
-    fetch_mail_package("11238", "60647",
+    fetch_mail("11238", "60647",
       shape = "rectangular",
       pounds = "foo"
     )
   )
 
   testthat::expect_error(
-    fetch_mail_package("11238", "60647",
+    fetch_mail("11238", "60647",
                        shape = "rectangular",
                        live_animals = "xyz"
     )
   )
 
   testthat::expect_error(
-    fetch_mail_package(11238, 60647,
+    fetch_mail(11238, 60647,
                        shape = "rectangular",
                        shipping_date = 14
     )
   )
 
   testthat::expect_error(
-    fetch_mail_package("11238", "60647",
+    fetch_mail("11238", "60647",
       shape = "rectangular",
       shipping_date = 14
     )
   )
 
   testthat::expect_error(
-    fetch_mail_package("11238", "60647",
+    fetch_mail("11238", "60647",
       shape = "nonrectangular",
       shipping_time = 123
     )
   )
 
   testthat::expect_error(
-    fetch_mail_package("11238", "60647",
+    fetch_mail("11238", "60647",
       shape = "nonrectangular",
       live_animals = 123
     )
   )
 
   testthat::expect_error(
-    fetch_mail_package("11238", "60647",
+    fetch_mail("11238", "60647",
       shape = "nonrectangular",
       girth = 0
     )
   )
 
   testthat::expect_is(
-    fetch_mail_package("11238", "60647",
+    fetch_mail("11238", "60647",
       shape = "rectangular",
       verbose = TRUE
     ),
@@ -107,7 +103,7 @@ testthat::test_that("fetch_mail_package()", {
 
 
   testthat::expect_is(
-    fetch_mail_package(
+    fetch_mail(
       origin_zip = "60647",
       destination_zip = "11238",
       shape = "nonrectangular",
@@ -123,7 +119,7 @@ testthat::test_that("fetch_mail_package()", {
   )
 
   testthat::expect_is(
-    fetch_mail_package(
+    fetch_mail(
       origin_zip = "60647",
       destination_zip = "11238",
       show_details = TRUE,
@@ -141,7 +137,7 @@ testthat::test_that("fetch_mail_package()", {
 
   much_mail_package <- purrr::map2_dfr(
     origins, destinations,
-    fetch_mail_package,
+    fetch_mail,
     shape = "rectangular",
     pounds = 8,
     length = 7,
@@ -156,28 +152,28 @@ testthat::test_that("fetch_mail_package()", {
 })
 
 
-testthat::test_that("fetch_mail_flat_rate()", {
+testthat::test_that("fetch_mail()", {
   testthat::expect_error(
-    fetch_mail_flat_rate()
+    fetch_mail()
   )
 
   testthat::expect_error(
-    fetch_mail_flat_rate(88506, "90210",
+    fetch_mail(88506, "90210",
                          type = "envelope")
   )
 
-  testthat::expect_error(
-    fetch_mail_flat_rate("123", "456")
+  testthat::expect_warning(
+    fetch_mail("123", "456")
   )
 
   testthat::expect_error(
-    fetch_mail_flat_rate("11238", "60647",
+    fetch_mail("11238", "60647",
       type = "neither"
     )
   )
 
   testthat::expect_is(
-    fetch_mail_flat_rate(
+    fetch_mail(
       origin_zip = "60647",
       destination_zip = "11238",
       type = "envelope"
@@ -186,7 +182,7 @@ testthat::test_that("fetch_mail_flat_rate()", {
   )
 
   testthat::expect_is(
-    fetch_mail_flat_rate(
+    fetch_mail(
       origin_zip = "60647",
       destination_zip = "11238",
       type = "box",
@@ -196,7 +192,7 @@ testthat::test_that("fetch_mail_flat_rate()", {
   )
 
   testthat::expect_is(
-    fetch_mail_flat_rate(
+    fetch_mail(
       origin_zip = "60647",
       destination_zip = "11238",
       type = "box",
@@ -206,12 +202,15 @@ testthat::test_that("fetch_mail_flat_rate()", {
   )
 
   testthat::expect_is(
-    fetch_mail_flat_rate(
-      origin_zip = "60647",
-      destination_zip = "11238",
-      type = "box",
-      live_animals = TRUE
-    ),
+    testthat::expect_message(
+      fetch_mail(
+        origin_zip = "60647",
+        destination_zip = "11238",
+        type = "package",
+        live_animals = TRUE,
+        pounds = 10,
+        ounces = 5
+      )),
     "data.frame"
   )
 
@@ -220,7 +219,7 @@ testthat::test_that("fetch_mail_flat_rate()", {
 
   much_mail_flat <- purrr::map2_dfr(
     origins, destinations,
-    fetch_mail_flat_rate,
+    fetch_mail,
     type = "box"
   )
 

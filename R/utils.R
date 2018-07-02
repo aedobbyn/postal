@@ -401,7 +401,7 @@ get_mail <- function(origin_zip = NULL,
                      live_animals = FALSE,
                      day_old_poultry = FALSE,
                      hazardous_materials = FALSE,
-                     type = c("box", "envelope"),
+                     type = c("box", "envelope", "package"),
                      pounds = 0,
                      ounces = 0,
                      length = 0,
@@ -411,6 +411,11 @@ get_mail <- function(origin_zip = NULL,
                      shape = c("rectangular", "nonrectangular"),
                      n_tries = 3,
                      verbose = TRUE, ...) {
+
+  if (nchar(origin_zip) != 5 | nchar(destination_zip) != 5) {
+    warning("Zip codes supplied must be 5 digits.")
+  }
+
   char_args <- list(
     origin_zip, destination_zip,
     shipping_date, shipping_time, type, shape
@@ -571,7 +576,7 @@ extract_dates <- function(d) {
 }
 
 
-fetch_mail <- function(origin_zip = NULL,
+process_mail <- function(origin_zip = NULL,
                        destination_zip = NULL,
                        shipping_date = "today",
                        shipping_time = "now",
@@ -579,7 +584,7 @@ fetch_mail <- function(origin_zip = NULL,
                        live_animals = FALSE,
                        day_old_poultry = FALSE,
                        hazardous_materials = FALSE,
-                       type = c("box", "envelope"),
+                       type = c("box", "envelope", "package"),
                        pounds = 0,
                        ounces = 0,
                        length = 0,
