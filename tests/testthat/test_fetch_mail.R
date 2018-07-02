@@ -57,6 +57,20 @@ testthat::test_that("fetch_mail_package()", {
 
   testthat::expect_error(
     fetch_mail_package("11238", "60647",
+                       shape = "rectangular",
+                       live_animals = "xyz"
+    )
+  )
+
+  testthat::expect_error(
+    fetch_mail_package(11238, 60647,
+                       shape = "rectangular",
+                       shipping_date = 14
+    )
+  )
+
+  testthat::expect_error(
+    fetch_mail_package("11238", "60647",
       shape = "rectangular",
       shipping_date = 14
     )
@@ -176,6 +190,16 @@ testthat::test_that("fetch_mail_flat_rate()", {
       destination_zip = "11238",
       type = "box",
       show_details = TRUE
+    ),
+    "data.frame"
+  )
+
+  testthat::expect_is(
+    fetch_mail_flat_rate(
+      origin_zip = "60647",
+      destination_zip = "11238",
+      type = "box",
+      live_animals = TRUE
     ),
     "data.frame"
   )

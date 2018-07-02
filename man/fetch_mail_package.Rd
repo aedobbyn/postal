@@ -23,9 +23,9 @@ fetch_mail_package(origin_zip = NULL, destination_zip = NULL,
 
 \item{ground_transportation_needed}{Does the package need to be transported by ground?}
 
-\item{live_animals}{Boolean: does this contain live animals?}
+\item{live_animals}{Boolean: does this contain live animals? See: \url{https://pe.usps.com/text/pub52/pub52c5_003.htm}}
 
-\item{day_old_poultry}{Boolean: does this contain day-old poultry?}
+\item{day_old_poultry}{Boolean: does this contain day-old poultry? See: \url{https://pe.usps.com/text/pub52/pub52c5_008.htm#ep184002}}
 
 \item{hazardous_materials}{Boolean: does this contain any hazardous materials? See: \url{https://pe.usps.com/text/pub52/pub52c3_001.htm}}
 

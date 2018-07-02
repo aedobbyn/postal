@@ -590,6 +590,7 @@ fetch_mail <- function(origin_zip = NULL,
                        n_tries = 3,
                        show_details = TRUE,
                        verbose = TRUE, ...) {
+
   resp <- get_mail(
     origin_zip = origin_zip,
     destination_zip = destination_zip,
@@ -610,6 +611,10 @@ fetch_mail <- function(origin_zip = NULL,
     n_tries = n_tries,
     verbose = verbose
   )
+
+  if (live_animals && verbose) {
+    cowsay::say("Woah Nelly!", by = "buffalo")
+  }
 
   if (!is.null(resp$error)) {
     no_success <-
@@ -661,11 +666,14 @@ fetch_mail <- function(origin_zip = NULL,
 }
 
 
-#' Forward pipe operator
+#' Pipe operator
+#'
+#' See \code{magrittr::\link[magrittr]{\%>\%}} for details.
 #'
 #' @name %>%
-#' @rdname forward_pipe
+#' @rdname pipe
 #' @keywords internal
 #' @export
 #' @importFrom magrittr %>%
 #' @usage lhs \%>\% rhs
+NULL

@@ -30,15 +30,18 @@ testthat::test_that("Safely getting data works", {
   ) %>%
     purrr::pluck("error"))
 
-  testthat::expect_error(get_zones("foo"))
+  testthat::expect_error(get_zones_three_digit("foo"))
 
   testthat::expect_error(get_zones_five_digit("bar"))
+
+  testthat::expect_message(get_zones_five_digit("90210", "23456",
+                           verbose = TRUE))
 })
 
 
 three_digit_base_url <- "foo"
 testthat::expect_error(
-  get_zones("bar")
+  get_zones_three_digit("bar")
 )
 
 three_digit_base_url <-

@@ -6,6 +6,9 @@
 #' @param shipping_time Time of day you plan to ship in 24-hour "HH:MM" format as character, or "now".
 #' @param type One of: "box", "envelope".
 #' @param ground_transportation_needed Does the package need to be transported by ground?
+#' @param live_animals Boolean: does this contain live animals? See: \url{https://pe.usps.com/text/pub52/pub52c5_003.htm}
+#' @param day_old_poultry Boolean: does this contain day-old poultry? See: \url{https://pe.usps.com/text/pub52/pub52c5_008.htm#ep184002}
+#' @param hazardous_materials Boolean: does this contain any hazardous materials? See: \url{https://pe.usps.com/text/pub52/pub52c3_001.htm}
 #' @param show_details Non-essential details of the response are hidden by default. Show them by setting this to TRUE.
 #' @param n_tries How many times to try the API if at first we don't succeed?
 #' @param verbose Should messages, (e.g. shipping date time be dispalyed if the defaults "today" and "now" are chosen) be messageed?
@@ -31,6 +34,9 @@ fetch_mail_flat_rate <- function(origin_zip = NULL,
                                  shipping_time = "now",
                                  type = c("envelope", "box"),
                                  ground_transportation_needed = FALSE,
+                                 live_animals = FALSE,
+                                 day_old_poultry = FALSE,
+                                 hazardous_materials = FALSE,
                                  show_details = FALSE,
                                  n_tries = 3,
                                  verbose = TRUE, ...) {
@@ -56,6 +62,9 @@ fetch_mail_flat_rate <- function(origin_zip = NULL,
       shipping_time = shipping_time,
       type = type,
       ground_transportation_needed = ground_transportation_needed,
+      live_animals = live_animals,
+      day_old_poultry = day_old_poultry,
+      hazardous_materials = hazardous_materials,
       pounds = pounds,
       ounces = ounces,
       length = length,

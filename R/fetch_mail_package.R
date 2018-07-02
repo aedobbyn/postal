@@ -7,8 +7,8 @@
 #' @param shipping_date Date you plan to ship the package on in "MM-DD-YYYY" format as character, or "today".
 #' @param shipping_time Time of day you plan to ship in 24-hour "HH:MM" format as character, or "now".
 #' @param ground_transportation_needed Does the package need to be transported by ground?
-#' @param live_animals Boolean: does this contain live animals?
-#' @param day_old_poultry Boolean: does this contain day-old poultry?
+#' @param live_animals Boolean: does this contain live animals? See: \url{https://pe.usps.com/text/pub52/pub52c5_003.htm}
+#' @param day_old_poultry Boolean: does this contain day-old poultry? See: \url{https://pe.usps.com/text/pub52/pub52c5_008.htm#ep184002}
 #' @param hazardous_materials Boolean: does this contain any hazardous materials? See: \url{https://pe.usps.com/text/pub52/pub52c3_001.htm}
 #' @param pounds Number of pounds the package weighs.
 #' @param ounces Number of ounces the package weighs.
@@ -64,10 +64,6 @@ fetch_mail_package <- function(
     if (is.null(girth) || girth == 0) {
       stop("If shape is nonrectangular girth must be non-null.")
     }
-  }
-
-  if (live_animals && verbose) {
-    cowsay::say("Woah Nelly!", by = "buffalo")
   }
 
   type <- "Package"

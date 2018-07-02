@@ -4,17 +4,17 @@
 \alias{fetch_zones_five_digit}
 \title{Fetch zones for a 5-digit origin origin-destination pair}
 \usage{
-fetch_zones_five_digit(origin_zip, destination_zip, n_tries = 3,
-  show_details = FALSE, verbose = FALSE, ...)
+fetch_zones_five_digit(origin_zip, destination_zip, show_details = FALSE,
+  n_tries = 3, verbose = FALSE, ...)
 }
 \arguments{
 \item{origin_zip}{A single origin zip as 5-digit character.}
 
 \item{destination_zip}{Required destination zip as 5-digit character.}
 
-\item{n_tries}{How many times to try the API if at first we don't succeed?}
-
 \item{show_details}{Extract extra stuff from the response?}
+
+\item{n_tries}{How many times to try the API if at first we don't succeed?}
 
 \item{verbose}{Message what's going on?}
 
