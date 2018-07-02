@@ -563,6 +563,11 @@ clean_mail <- function(resp, show_details = FALSE) {
 
 
 extract_dates <- function(d) {
+  if (is.na(d) | d == "" | stringr::str_detect(d, "Days")) {
+    d <- NA
+    return(d)
+  }
+
   d <- d %>%
     stringr::str_extract("[A-Za-z]+ [0-9]+") %>%
     stringr::str_c(glue::glue(", {lubridate::now() %>% lubridate::year()}")) %>%
@@ -577,8 +582,8 @@ extract_dates <- function(d) {
 
 
 extract_times <- function(t) {
-  if (is.na(t) | t == "") {
-    t <- NA
+  if (is.na(t) | t == "" | stringr::str_detect(t, "Days")) {
+    t <- NA_character_
     return(t)
   }
 

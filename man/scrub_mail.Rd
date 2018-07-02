@@ -7,7 +7,7 @@
 scrub_mail(tbl)
 }
 \arguments{
-\item{tbl}{A tibble; the result of a call to \code{\link{fetch_mail_flat_rate}} or \code{\link{fetch_mail_package}}.}
+\item{tbl}{A tibble; the result of a call to \code{\link{fetch_mail}}.}
 }
 \value{
 A tibble with the same number of rows the input. \code{delivery_day} becomes \code{delivery_date} and \code{delivery_by_time}, from which \code{delivery_duration} in days is calculated (\code{delivery_date - shipping_date}).

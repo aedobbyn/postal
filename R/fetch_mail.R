@@ -16,12 +16,13 @@
 #' @param width Width of the package.
 #' @param girth Girth of the package, required if \code{shape} is "nonrectangular". This is the distance around the thickest part.
 #' @param shape Shape of the package: "rectangular" or "nonrectangular". "nonrectangular" reqires a non-null \code{girth} value.
+#' If \code{type} is box or envelope, \code{shape} will always be "rectangular".
 #' @param show_details Non-essential details of the response are hidden by default. Show them by setting this to TRUE.
 #' @param n_tries How many times to try the API if at first we don't succeed?
 #' @param verbose Should messages, (e.g. shipping date time be dispalyed if the defaults "today" and "now" are chosen) be messageed?
 #' @param ... Other arguments.
 #'
-#' @details Supply the required information about the package and receive a tibble. Displays the result of a query to the ["Postage Price Calculator"](https://postcalc.usps.com/Calculator/). For non-flat-rate packages, use \code{\link{fetch_mail_package}}.
+#' @details Supply the required information about the package and receive a tibble. Displays the result of a query to the ["Postage Price Calculator"](https://postcalc.usps.com/Calculator/).
 #'
 #' @importFrom magrittr %>%
 #'
@@ -36,7 +37,8 @@
 #'          destination_zip = "11238",
 #'          pounds = 15,
 #'          type = "package",
-#'          shape = "rectangular")
+#'          shape = "rectangular",
+#'          show_details = TRUE)
 #' }
 #'
 #' @return A tibble with information for different postage options, including price and box/envelope dimensions.
@@ -67,7 +69,7 @@ fetch_mail <- function(origin_zip = NULL,
 
   if (type == "envelope") {
     type <- "FlatRateEnvelope"
-    shape <- ""
+    shape <- "rectangular"
   } else if (type == "box") {
     type <- "FlatRateBox"
     shape <- "rectangular"

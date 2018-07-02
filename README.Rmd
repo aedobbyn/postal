@@ -61,7 +61,8 @@ We'll ask for `type = "box"` and get back all the options for boxes along with t
                      destination_zip = "60647",
                      shipping_date = "2018-06-25",
                      shipping_time = "now", 
-                     type = "box"))
+                     type = "package",
+                     pounds = 15))
 ```
 
 The web interface should display the same results:
