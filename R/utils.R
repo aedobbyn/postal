@@ -576,6 +576,30 @@ extract_dates <- function(d) {
 }
 
 
+extract_times <- function(t) {
+  t <- t %>%
+    stringr::str_extract("by [A-Za-z0-9: ]+") %>%
+    stringr::str_replace_all("by ", "")
+
+  hr <- t %>%
+    stringr::str_extract("[0-9]+:") %>%
+    stringr::str_extract("[0-9]+")
+
+  mn <- t %>%
+    stringr::str_extract(":[0-9]+") %>%
+    stringr::str_extract("[0-9]+")
+
+  if (stringr::str_detect(t, "PM") &
+      hr != "12") {
+    hr <- hr %>% as.numeric() + 12
+  }
+
+  t <- glue::glue("{hr}:{mn}")
+
+  return(t)
+}
+
+
 process_mail <- function(origin_zip = NULL,
                        destination_zip = NULL,
                        shipping_date = "today",

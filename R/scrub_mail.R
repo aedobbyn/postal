@@ -43,8 +43,7 @@ scrub_mail <- function(tbl) {
         extract_dates(),
 
       delivery_by_time = delivery_day %>%
-        stringr::str_extract("by [A-Za-z0-9: ]+") %>%
-        stringr::str_replace_all("by ", ""),
+        extract_times(),
 
       delivery_duration = delivery_date - lubridate::as_date(shipping_date)
     ) %>%

@@ -174,6 +174,26 @@ testthat::test_that("Scrubbing works", {
 
   testthat::expect_is(sample_date, "Date")
 
+  sample_time <-
+    extract_times(sample_day)
+
+  reconstituted <-
+    glue::glue("{sample_date} {sample_time}:00 UTC") %>%
+    as.character() %>%
+    lubridate::ymd_hms()
+
+  testthat::expect_is(reconstituted, "POSIXct")
+
+  testthat::expect_equal(
+    extract_times("Tue, May 5 by 12:00 PM"),
+    "12:00"
+  )
+
+  testthat::expect_equal(
+    extract_times("Tue, May 5 by 3:00 PM"),
+    "15:00"
+  )
+
   scrubbed_mail <-
     some_mail %>%
     scrub_mail()
