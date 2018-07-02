@@ -1,6 +1,6 @@
 #' Clean the response from fetched mail
 #'
-#' @param tbl A tibble; the result of a call to \code{\link{fetch_mail_flat_rate}} or \code{\link{fetch_mail_package}}.
+#' @param tbl A tibble; the result of a call to \code{\link{fetch_mail}}.
 #'
 #' @details This scrubber converts "Not available"s to \code{NA}s, removes dollar signs from prices and converts them to numeric, and splits \code{delivery_day} into YYYY-MM-DD \code{delivery_date} and \code{delivery_by_time} (if present, the time of day by which the mail should arrive).
 #'

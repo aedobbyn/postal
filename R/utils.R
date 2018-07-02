@@ -577,9 +577,18 @@ extract_dates <- function(d) {
 
 
 extract_times <- function(t) {
+  if (is.na(t) | t == "") {
+    t <- NA
+    return(t)
+  }
+
   t <- t %>%
     stringr::str_extract("by [A-Za-z0-9: ]+") %>%
     stringr::str_replace_all("by ", "")
+
+  if (is.na(t)) {
+    return(t)
+  }
 
   hr <- t %>%
     stringr::str_extract("[0-9]+:") %>%
@@ -591,7 +600,8 @@ extract_times <- function(t) {
 
   if (stringr::str_detect(t, "PM") &
       hr != "12") {
-    hr <- hr %>% as.numeric() + 12
+    hr <- (hr %>% as.numeric() + 12) %>%
+      as.character()
   }
 
   t <- glue::glue("{hr}:{mn}")

@@ -207,7 +207,8 @@ testthat::test_that("Scrubbing works", {
     which(scrubbed_mail$delivery_date == sample_date)[1]
 
   # Time shouldn't be NA because we had a "by" in the delivery_date
-  testthat::expect_true(
+  # Should be converted into 24hr
+  testthat::expect_false(
     stringr::str_detect(scrubbed_mail$delivery_by_time[sample_date_row], "M")
   )
 })
