@@ -6,7 +6,7 @@
 \usage{
 fetch_zones(origin_zip = NULL, destination_zip = NULL,
   exact_destination = FALSE, as_range = FALSE, show_details = FALSE,
-  n_tries = 3, verbose = FALSE, ...)
+  n_tries = 3, verbose = FALSE)
 }
 \arguments{
 \item{origin_zip}{A single origin zip as character. If > 3 digits and contains leading zeros, make sure to supply as character.}

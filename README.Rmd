@@ -54,12 +54,13 @@ Specify a 5-digit origin zip and destination zip, along with the date and time y
 library(usps)
 ```
 
-We'll ask for `type = "package"` and get back all the shipping options along with their prices and dimensions. 
+We'll send something from Portland, Maine to Portland, Oregon and ask for `type = "package"`. This gives us all the shipping options along with their prices and dimensions. 
 
 ```{r}
-(mail <- fetch_mail(origin_zip = "60647",
-         destination_zip = "11238",
-         shipping_date = "2018-07-02",
+(mail <- fetch_mail(origin_zip = "04101",
+         destination_zip = "97211",
+         shipping_date = "2018-07-04",
+         shipping_time = "now",
          pounds = 15,
          type = "package",
          shape = "rectangular",
@@ -76,7 +77,7 @@ and this is a good option if you want to display data in the way USPS does. If y
 
 This replaces `"Not available"`s and empty strings with `NA`s, changes prices to numeric, splits delivery day into a date and time of day (we infer year by the current year and use the 24hr clock), and computes the delivery duration in days.
 
-```{r}
+```{r, warning=FALSE}
 mail %>% 
   scrub_mail()
 ```
@@ -95,12 +96,12 @@ fetch_mail(origin_zip = "88201",
                    shipping_time = "14:30", 
                    live_animals = TRUE,
                    ground_transportation_needed = TRUE,
-                   pounds = 15,
-                   ounces = 0,
-                   length = 15,
+                   pounds = 42,
+                   ounces = 3,
+                   length = 12,
                    width = 10,
-                   height = 5,
-                   girth = 7,
+                   height = 7,
+                   girth = 5,
                    shape = "nonrectangular",
                    verbose = FALSE)
 ```

@@ -5,13 +5,16 @@
 #' @param origin_zip A single origin zip as 5-digit character.
 #' @param destination_zip Required destination zip as 5-digit character.
 #' @param show_details Extract extra stuff from the response?
+#' Specifically: \code{specific_to_priority_mail}, \code{local}, \code{same_ndc}, and \code{full_response}.
+#' Get more info with \code{\link{zone_detail_definitions}}.
 #' @param n_tries How many times to try the API if at first we don't succeed?
 #' @param verbose Message what's going on?
-#' @param ... Other arguments
 #'
-#' @details Displays the result of a query to the ["Get Zone for ZIP Code Pair"](https://postcalc.usps.com/DomesticZoneChart/) tab.
+#' @details Displays the result of a query to the \href{https://postcalc.usps.com/DomesticZoneChart/}{"Get Zone for ZIP Code Pair"} tab.
 #'
-#' If you want all destinations for a given origin, use \code{\link{fetch_zones_three_digit}} with the first 3 digits of the origin; there you don't need to supply a destination.
+#' If you want all destinations for a given origin, use \link{\code{fetch_zones_three_digit}} with the first 3 digits of the origin; there you don't need to supply a destination.
+#'
+#' @seealso fetch_zones_three_digit
 #'
 #' @importFrom magrittr %>%
 #'
@@ -31,7 +34,7 @@
 fetch_zones_five_digit <- function(origin_zip, destination_zip,
                                    show_details = FALSE,
                                    n_tries = 3,
-                                   verbose = FALSE, ...) {
+                                   verbose = FALSE) {
   origin_zip <-
     origin_zip %>%
     prep_zip(verbose = verbose)

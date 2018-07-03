@@ -10,7 +10,7 @@ fetch_mail(origin_zip = NULL, destination_zip = NULL,
   day_old_poultry = FALSE, hazardous_materials = FALSE, pounds = 0,
   ounces = 0, length = 0, height = 0, width = 0, girth = 0,
   shape = "rectangular", show_details = FALSE, n_tries = 3,
-  verbose = TRUE, ...)
+  verbose = TRUE)
 }
 \arguments{
 \item{origin_zip}{5-digit origin zip code.}
@@ -35,13 +35,13 @@ fetch_mail(origin_zip = NULL, destination_zip = NULL,
 
 \item{ounces}{Number of ounces the package weighs.}
 
-\item{length}{Length of the package. This is the longest dimension.}
+\item{length}{Length of the package in inches. This is the longest dimension.}
 
-\item{height}{Height of the package.}
+\item{height}{Height of the package in inches.}
 
-\item{width}{Width of the package.}
+\item{width}{Width of the package in inches.}
 
-\item{girth}{Girth of the package, required if \code{shape} is "nonrectangular". This is the distance around the thickest part.}
+\item{girth}{Girth of the package in inches, required if \code{shape} is "nonrectangular". This is the distance around the thickest part.}
 
 \item{shape}{Shape of the package: "rectangular" or "nonrectangular". "nonrectangular" reqires a non-null \code{girth} value.
 If \code{type} is box or envelope, \code{shape} will always be "rectangular".}
@@ -51,8 +51,6 @@ If \code{type} is box or envelope, \code{shape} will always be "rectangular".}
 \item{n_tries}{How many times to try the API if at first we don't succeed?}
 
 \item{verbose}{Should messages, (e.g. shipping date time be dispalyed if the defaults "today" and "now" are chosen) be messageed?}
-
-\item{...}{Other arguments.}
 }
 \value{
 A tibble with information for different postage options, including price and box/envelope dimensions.
@@ -79,4 +77,7 @@ fetch_mail(origin_zip = "60647",
          show_details = TRUE)
 }
 
+}
+\seealso{
+scrub_mail
 }

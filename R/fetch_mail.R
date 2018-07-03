@@ -20,9 +20,10 @@
 #' @param show_details Non-essential details of the response are hidden by default. Show them by setting this to TRUE.
 #' @param n_tries How many times to try the API if at first we don't succeed?
 #' @param verbose Should messages, (e.g. shipping date time be dispalyed if the defaults "today" and "now" are chosen) be messageed?
-#' @param ... Other arguments.
 #'
 #' @details Supply the required information about the package and receive a tibble. Displays the result of a query to the ["Postage Price Calculator"](https://postcalc.usps.com/Calculator/).
+#'
+#' @seealso scrub_mail
 #'
 #' @importFrom magrittr %>%
 #'
@@ -63,7 +64,7 @@ fetch_mail <- function(origin_zip = NULL,
                                  shape = "rectangular",
                                  show_details = FALSE,
                                  n_tries = 3,
-                                 verbose = TRUE, ...) {
+                                 verbose = TRUE) {
 
   if (is.null(type) | length(type) > 1) {
     stop("type must be envelope, box, or package")

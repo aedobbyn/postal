@@ -31,7 +31,7 @@ zone_detail_definitions <-
   )
 
 
-prepend_zeros <- function(x, verbose = FALSE, ...) {
+prepend_zeros <- function(x, verbose = FALSE) {
   if (nchar(x) == 1) {
     y <- stringr::str_c("00", x, collapse = "")
     if (verbose) message(glue::glue("Making {x} into {y}"))
@@ -70,7 +70,7 @@ replace_x <- function(x, replacement = NA_character_) {
 }
 
 
-prep_zip <- function(zip, verbose = FALSE, ...) {
+prep_zip <- function(zip, verbose = FALSE) {
   if (!is.character(zip)) {
     stop(glue::glue("Invalid zip {zip}; must be of type character."))
   }
@@ -241,7 +241,7 @@ clean_zones <- function(dat, origin_zip) {
 
 
 get_zones_three_digit <- function(origin_zip, destination_zip,
-                                  n_tries = 3, verbose = FALSE, ...) {
+                                  n_tries = 3, verbose = FALSE) {
   if (verbose) {
     message(glue::glue("Grabbing origin ZIP {origin_zip}"))
   }
@@ -300,7 +300,7 @@ get_zones_three_digit <- function(origin_zip, destination_zip,
 
 get_zones_five_digit <- function(origin_zip, destination_zip,
                                  verbose = FALSE,
-                                 n_tries = 3, ...) {
+                                 n_tries = 3) {
   if (verbose) {
     message(glue::glue("Grabbing zone for origin zip \\
                        {origin_zip} and destination zip {destination_zip}"))
@@ -411,7 +411,7 @@ get_mail <- function(origin_zip = NULL,
                      girth = 0,
                      shape = c("rectangular", "nonrectangular"),
                      n_tries = 3,
-                     verbose = TRUE, ...) {
+                     verbose = TRUE) {
 
   if (nchar(origin_zip) != 5 | nchar(destination_zip) != 5) {
     warning("Zip codes supplied must be 5 digits.")
@@ -635,7 +635,7 @@ process_mail <- function(origin_zip = NULL,
                        shape = c("rectangular", "nonrectangular"),
                        n_tries = 3,
                        show_details = TRUE,
-                       verbose = TRUE, ...) {
+                       verbose = TRUE) {
 
   resp <- get_mail(
     origin_zip = origin_zip,

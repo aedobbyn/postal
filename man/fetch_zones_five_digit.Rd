@@ -5,20 +5,20 @@
 \title{Fetch zones for a 5-digit origin origin-destination pair}
 \usage{
 fetch_zones_five_digit(origin_zip, destination_zip, show_details = FALSE,
-  n_tries = 3, verbose = FALSE, ...)
+  n_tries = 3, verbose = FALSE)
 }
 \arguments{
 \item{origin_zip}{A single origin zip as 5-digit character.}
 
 \item{destination_zip}{Required destination zip as 5-digit character.}
 
-\item{show_details}{Extract extra stuff from the response?}
+\item{show_details}{Extract extra stuff from the response?
+Specifically: \code{specific_to_priority_mail}, \code{local}, \code{same_ndc}, and \code{full_response}.
+Get more info with \code{\link{zone_detail_definitions}}.}
 
 \item{n_tries}{How many times to try the API if at first we don't succeed?}
 
 \item{verbose}{Message what's going on?}
-
-\item{...}{Other arguments}
 }
 \value{
 A tibble with origin zip and destination zips (in ranges or unspooled) and the USPS zones the origin-destination pair corresponds to.
@@ -27,9 +27,9 @@ A tibble with origin zip and destination zips (in ranges or unspooled) and the U
 For a given 5-digit origin and destination zip code pair, display the zone number and full response.
 }
 \details{
-Displays the result of a query to the ["Get Zone for ZIP Code Pair"](https://postcalc.usps.com/DomesticZoneChart/) tab.
+Displays the result of a query to the \href{https://postcalc.usps.com/DomesticZoneChart/}{"Get Zone for ZIP Code Pair"} tab.
 
-If you want all destinations for a given origin, use \code{\link{fetch_zones_three_digit}} with the first 3 digits of the origin; there you don't need to supply a destination.
+If you want all destinations for a given origin, use \link{\code{fetch_zones_three_digit}} with the first 3 digits of the origin; there you don't need to supply a destination.
 }
 \examples{
 \dontrun{
@@ -42,4 +42,7 @@ purrr::map2_dfr(c("11238", "60647", "80205"),
       fetch_zones_five_digit)
 }
 
+}
+\seealso{
+fetch_zones_three_digit
 }
