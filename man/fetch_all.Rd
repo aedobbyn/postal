@@ -29,7 +29,7 @@ A tibble with origin zip and destination zips (in ranges or unspooled) and the U
 Grab all the 3-digit origin-destination pairs.
 }
 \details{
-For all the 3-digit origin zip codes, grab all destination zips and their corresponding zones. This is equivalent to running \code{\link{fetch_zones_three_digit}} for all possible 3 digit origin zips.
+For all the 3-digit origin zip codes, grab all destination zips and their corresponding zones. This is equivalent to running \code{fetch_zones_three_digit} for all possible 3 digit origin zips.
 
 If this fails partway through, origins that could not be retrieved get a "no_success" value in their \code{dest_zip} and \code{zone} columns but we continue trying to grab results for all supplied \code{origins}.
 }
@@ -42,4 +42,7 @@ fetch_all(show_details = TRUE, verbose = TRUE,
     write_to = glue::glue(here::here("data", "{Sys.Date()}_zip_zones.csv")))
 }
 
+}
+\seealso{
+\link{fetch_zones_three_digit}
 }

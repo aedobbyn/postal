@@ -31,7 +31,6 @@
 #'
 #'
 #' @seealso scrub_mail
-#'
 #' @importFrom magrittr %>%
 #'
 #' @examples \dontrun{
