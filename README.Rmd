@@ -130,6 +130,17 @@ purrr::map2_dfr(
 ```
 
 
+Similarly, if a response is received but no mail services are found, a dataframe with missing values is returned.
+
+```{r}
+fetch_mail(origin_zip = "04101",
+         destination_zip = "97211",
+         shipping_date = "3018-07-04",  # way in the future!
+         type = "package",
+         show_details = TRUE)
+```
+
+This approach makes takes care of much of the try-catching you might have to implement, with the aim of making it easier to request a lot of data at minimal risk of a showstopping error.
 
 ***
 

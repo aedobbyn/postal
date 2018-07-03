@@ -49,7 +49,7 @@
 #'          shape = "rectangular",
 #'          show_details = TRUE)
 #'
-#' origins <- c("90210", "foobar", "59001")  # Contains an invalid zip
+#' origins <- c("90210", "foobar", "59001")  # Contains an invalid zip, which will get a "no_success" row
 #' destinations <- c("68003", "94707", "23285")
 #'
 #' purrr::map2_dfr(
@@ -58,7 +58,12 @@
 #'   type = "package"
 #' )
 #'
-#'
+#' # A syntactically fine request, but no results are returned
+#' fetch_mail(origin_zip = "04101",
+#'     destination_zip = "97211",
+#'     shipping_date = "3018-07-04",  # way in the future!
+#'     type = "package",
+#'     show_details = TRUE)
 #'
 #' }
 #'

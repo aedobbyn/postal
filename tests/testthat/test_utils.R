@@ -146,10 +146,18 @@ testthat::test_that("Interpolation of zips in between ranges", {
 testthat::test_that("Assorted other utils", {
   testthat::expect_equal(cap_word("foo"), "Foo")
 
-  testthat::expect_error(clean_mail(
-    resp = list(a = "foo",
-                PageError = "No Mail Services were found.")
-  ))
+  testthat::expect_is(clean_mail(
+    resp =
+        tibble::tibble(
+          origin_zip = "12345",
+          dest_zip = "67890",
+          title = NA_character_,
+          delivery_day = NA_character_,
+          retail_price = NA_character_,
+          click_n_ship_price = NA_character_,
+          dimensions = NA_character_,
+          delivery_option = NA_character_
+        )), "data.frame")
 })
 
 

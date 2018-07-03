@@ -4,7 +4,7 @@
 \name{usps}
 \alias{usps}
 \alias{usps-package}
-\title{Fetch mails and zones from USPS}
+\title{Fetch mail information and zones from USPS}
 \description{
 Calculate shipping rates and times for packages and get the USPS zones corresponding to 3-digit and 5-digit zip code pairs.
 }
@@ -15,8 +15,7 @@ Contributors:
 }
 
 To get postage information, use \code{fetch_mail}.
+To get zones, use \code{\link{get_zone_three_digit}} or \code{\link{get_zone_five_digit}}.
 
-To get zones, use \code{\link{get_zone_three_digit}} or \code{\link{get_zone_five_digit}}
-
-say('hello world!')
+The zones vignette can be found with \code{browseVignettes(package = "usps")}.
 }

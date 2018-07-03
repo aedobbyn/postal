@@ -130,7 +130,7 @@ try_n_times <- function(url, n_tries = 3, ...) {
 }
 
 
-do_try_n_times <- function(url,
+try_n_times_zone <- function(url,
                            origin_zip,
                            destination_zip,
                            n_tries = 3,
@@ -247,7 +247,7 @@ get_zones_three_digit <- function(origin_zip, destination_zip,
   }
 
   this_url <- stringr::str_c(three_digit_base_url, origin_zip, collapse = "")
-  resp <- do_try_n_times(this_url,
+  resp <- try_n_times_zone(this_url,
     origin_zip = origin_zip,
     destination_zip = NA
   )
@@ -311,7 +311,7 @@ get_zones_five_digit <- function(origin_zip, destination_zip,
                origin={origin_zip}&\\
                destination={destination_zip}")
 
-  resp <- do_try_n_times(url,
+  resp <- try_n_times_zone(url,
     origin_zip = origin_zip,
     destination_zip = destination_zip
   )
@@ -516,9 +516,26 @@ get_mail <- function(origin_zip = NULL,
 
   resp <- try_n_times(url, n_tries = n_tries)
 
-  if (resp$result$PageError == "No Mail Services were found.") {
+  if (!is.null(resp$error)) {
+    message(glue::glue("Unsuccessful grabbing data for the supplied arguments."))
+    no_success <-
+      tibble::tibble(
+        origin_zip = origin_zip,
+        dest_zip = destination_zip,
+        title = "no_success",
+        delivery_day = "no_success",
+        retail_price = "no_success",
+        click_n_ship_price = "no_success",
+        dimensions = "no_success",
+        delivery_option = "no_success"
+      )
+
+    resp$Page$MailServices <- no_success
+    resp$PageError <- "no_success"
+
+  } else if (resp$result$PageError == "No Mail Services were found.") {
     message("No Mail Services were found for this request. Try modifying the argument inputs.")
-    resp$result <-
+    resp$Page$MailServices <-
       tibble::tibble(
         origin_zip = origin_zip,
         dest_zip = destination_zip,
@@ -537,8 +554,8 @@ get_mail <- function(origin_zip = NULL,
 
 clean_mail <- function(resp, show_details = FALSE) {
 
-  if (all(is.na(resp$title))) {
-    out <- resp
+  if (resp$PageError != "") {
+    out <- resp$Page$MailServices
   } else {
     nested <-
       resp$Page$MailServices %>%
@@ -678,30 +695,7 @@ process_mail <- function(origin_zip = NULL,
     cowsay::say("Woah Nelly!", by = "buffalo")
   }
 
-  if (!is.null(resp$error)) {
-    no_success <-
-      tibble::tibble(
-        origin_zip = origin_zip,
-        dest_zip = destination_zip,
-        title = "no_success",
-        delivery_day = "no_success",
-        retail_price = "no_success",
-        click_n_ship_price = "no_success",
-        dimensions = "no_success",
-        delivery_option = "no_success"
-      )
-
-    if (show_details == FALSE) {
-      no_success <-
-        no_success %>%
-        dplyr::select(-delivery_option)
-    }
-
-    message(glue::glue("Unsuccessful grabbing data for the supplied arguments."))
-    return(no_success)
-  } else {
-    out <- resp$result
-  }
+  out <- resp$result
 
   shipping_date <- get_shipping_date(shipping_date,
     verbose = verbose

@@ -49,4 +49,6 @@ fetch_zones_three_digit("123", "456", show_details = TRUE)
 }
 \seealso{
 fetch_zones_five_digit
+
+fetch_zones_all
 }
