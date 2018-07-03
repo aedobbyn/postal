@@ -14,8 +14,7 @@
 #'
 #' @details Displays the result of a query what's shown on the \href{https://postcalc.usps.com/DomesticZoneChart/}{"Get Zone Chart"} tab of the USPS Zone Calc website. If you just want to supply two 5-digit zips and get a single zone back, use \code{fetch_zones_five_digit}.
 #'
-#' @seealso \code{\link{fetch_zones_five_digit}}
-#' @seealso \code{\link{fetch_zones_all}}
+#' @seealso \code{\link{fetch_zones_five_digit}}, \link{fetch_zones_all}}
 #' @importFrom magrittr %>%
 #'
 #' @examples \dontrun{
@@ -35,7 +34,7 @@
 #'
 #' }
 #'
-#' @return A tibble with origin zip and destination zips (in ranges or unspooled depending on \cod{as_range}) and the USPS zones the origin-destination pair corresponds to. If \code{show_details} is TRUE, other columns are shown.
+#' @return A tibble with origin zip and destination zips (in ranges or unspooled depending on \code{as_range}) and the USPS zones the origin-destination pair corresponds to. If \code{show_details} is TRUE, other columns are shown.
 #' @export
 
 fetch_zones_three_digit <-
