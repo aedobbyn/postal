@@ -70,7 +70,7 @@ We'll send something from Portland, Maine to Portland, Oregon and ask for `type 
 The web interface should display the same results:
 
 <p align="center">
-  <img src="./man/figures/bk_to_chi.jpg" alt="post_calc" width="70%">
+  <img src="./man/figures/portland_to_portland.jpg" alt="post_calc" width="70%">
 </p>
 
 and this is a good option if you want to display data in the way USPS does. If you want to compute on prices and dates, you can tidy the dataframe with `scrub_mail`. 

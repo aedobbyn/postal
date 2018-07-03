@@ -386,7 +386,8 @@ get_shipping_time <- function(shipping_time,
       mn <- glue::glue("0{mn}")
     }
     shipping_time <-
-      glue::glue("{hr}:{mn}")
+      glue::glue("{hr}:{mn}") %>%
+      as.character()
 
     if (verbose) message(glue::glue("Using ship on time {shipping_time}."))
   }
