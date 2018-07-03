@@ -53,8 +53,6 @@ allowed). Other specifics are optionals.
 library(usps)
 ```
 
-### Usage
-
 USPS also offers many colorful options to handle all your shipping
 needs, which are included in the arguments to `fetch_mail`.
 
@@ -64,7 +62,7 @@ from Wyoming to Philly by ground at 2:30pm in a nonrectangular package??
 ``` r
 fluffy <- fetch_mail(origin_zip = "88201", 
                    destination_zip = "19109", 
-                   shipping_date = "today", 
+                   shipping_date = "2018-07-02", 
                    shipping_time = "14:30", 
                    live_animals = TRUE,
                    ground_transportation_needed = TRUE,
@@ -92,7 +90,9 @@ fluffy %>%
 
 Finally, the important questions have been answered.
 
-### General case
+<br>
+
+#### General case
 
 For a more usual case, we’ll send a 15lb package from Portland, Maine to
 Portland, Oregon. The response shows all shipping options along with
@@ -101,21 +101,22 @@ their prices, dimensions, and delivery dates.
 ``` r
 (mail <- fetch_mail(origin_zip = "04101",
          destination_zip = "97211",
-         shipping_date = "2018-07-04",
+         shipping_date = "today",
          shipping_time = "now",
          pounds = 15,
          type = "package",
          shape = "rectangular",
          show_details = TRUE)) %>% 
   dplyr::slice(1:3)
-#> Using ship on time 15:17.
-#> Requesting https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&origin=04101&isOrigMil=False&destination=97211&isDestMil=False&shippingDate=2018%2F07%2F04&shippingTime=15%3A17&itemValue=&dayOldPoultry=False&groundTransportation=False&hazmat=False&liveAnimals=False&nonnegotiableDocument=False&mailShapeAndSize=Package&pounds=15&ounces=0&length=0&height=0&width=0&girth=0&shape=Rectangular&nonmachinable=False&isEmbedded=False
+#> Using ship on date 2018-07-03.
+#> Using ship on time 15:27.
+#> Requesting https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&origin=04101&isOrigMil=False&destination=97211&isDestMil=False&shippingDate=2018%2F07%2F03&shippingTime=15%3A27&itemValue=&dayOldPoultry=False&groundTransportation=False&hazmat=False&liveAnimals=False&nonnegotiableDocument=False&mailShapeAndSize=Package&pounds=15&ounces=0&length=0&height=0&width=0&girth=0&shape=Rectangular&nonmachinable=False&isEmbedded=False
 #> # A tibble: 3 x 10
 #>   origin_zip dest_zip title    delivery_day  retail_price click_n_ship_pr…
 #>   <chr>      <chr>    <chr>    <chr>         <chr>        <chr>           
-#> 1 04101      97211    Priorit… Fri, Jul 6 b… $114.50      $114.50         
-#> 2 04101      97211    Priorit… Fri, Jul 6 b… $114.50      $114.50         
-#> 3 04101      97211    Priorit… Fri, Jul 6 b… $119.50      $119.50         
+#> 1 04101      97211    Priorit… Thu, Jul 5 b… $114.50      $114.50         
+#> 2 04101      97211    Priorit… Thu, Jul 5 b… $114.50      $114.50         
+#> 3 04101      97211    Priorit… Fri, Jul 6    $50.80       $50.80          
 #> # ... with 4 more variables: dimensions <chr>, delivery_option <chr>,
 #> #   shipping_date <chr>, shipping_time <chr>
 
@@ -124,11 +125,11 @@ mail %>%
   knitr::kable()
 ```
 
-| origin\_zip | dest\_zip | title                        | delivery\_day          | retail\_price | click\_n\_ship\_price | dimensions | delivery\_option     | shipping\_date | shipping\_time |
-| :---------- | :-------- | :--------------------------- | :--------------------- | :------------ | :-------------------- | :--------- | :------------------- | :------------- | :------------- |
-| 04101       | 97211     | Priority Mail Express 2-Day™ | Fri, Jul 6 by 3:00 PM  | $114.50       | $114.50               |            | Normal Delivery Time | 2018-07-04     | 15:17          |
-| 04101       | 97211     | Priority Mail Express 2-Day™ | Fri, Jul 6 by 10:30 AM | $114.50       | $114.50               |            | Hold For Pickup      | 2018-07-04     | 15:17          |
-| 04101       | 97211     | Priority Mail Express 2-Day™ | Fri, Jul 6 by 10:30 AM | $119.50       | $119.50               |            | 10:30 AM Delivery    | 2018-07-04     | 15:17          |
+| origin\_zip | dest\_zip | title                        | delivery\_day         | retail\_price | click\_n\_ship\_price | dimensions | delivery\_option     | shipping\_date | shipping\_time |
+| :---------- | :-------- | :--------------------------- | :-------------------- | :------------ | :-------------------- | :--------- | :------------------- | :------------- | :------------- |
+| 04101       | 97211     | Priority Mail Express 2-Day™ | Thu, Jul 5 by 3:00 PM | $114.50       | $114.50               |            | Normal Delivery Time | 2018-07-03     | 15:27          |
+| 04101       | 97211     | Priority Mail Express 2-Day™ | Thu, Jul 5 by 3:00 PM | $114.50       | $114.50               |            | Hold For Pickup      | 2018-07-03     | 15:27          |
+| 04101       | 97211     | Priority Mail 2-Day™         | Fri, Jul 6            | $50.80        | $50.80                |            | Normal Delivery Time | 2018-07-03     | 15:27          |
 
 The web interface should display the same
 results:
@@ -151,17 +152,24 @@ computes the delivery duration in days.
 ``` r
 mail %>% 
   scrub_mail() %>% 
-  dplyr::slice(1:3) 
+  dplyr::slice(1:3) %>% 
+  dplyr::select(
+    delivery_date, delivery_by_time,
+    delivery_duration, retail_price, 
+    click_n_ship_price, dplyr::everything()
+  )
 #> # A tibble: 3 x 12
-#>   origin_zip dest_zip title                 delivery_date delivery_by_time
-#>   <chr>      <chr>    <chr>                 <date>        <chr>           
-#> 1 04101      97211    Priority Mail Expres… 2018-07-06    15:00           
-#> 2 04101      97211    Priority Mail Expres… 2018-07-06    10:30           
-#> 3 04101      97211    Priority Mail Expres… 2018-07-06    10:30           
-#> # ... with 7 more variables: delivery_duration <time>, retail_price <dbl>,
-#> #   click_n_ship_price <dbl>, dimensions <chr>, delivery_option <chr>,
+#>   delivery_date delivery_by_time delivery_duration retail_price
+#>   <date>        <chr>            <time>                   <dbl>
+#> 1 2018-07-05    15:00            2                        114. 
+#> 2 2018-07-05    15:00            2                        114. 
+#> 3 2018-07-06    <NA>             3                         50.8
+#> # ... with 8 more variables: click_n_ship_price <dbl>, origin_zip <chr>,
+#> #   dest_zip <chr>, title <chr>, dimensions <chr>, delivery_option <chr>,
 #> #   shipping_date <chr>, shipping_time <chr>
 ```
+
+<br>
 
 #### Multiple inputs and error handling
 

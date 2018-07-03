@@ -54,10 +54,6 @@ Specify a 5-digit origin zip and destination zip, along with the date and time y
 library(usps)
 ```
 
-
-
-### Usage
-
 USPS also offers many colorful options to handle all your shipping needs, which are included in the arguments to `fetch_mail`.
 
 So to answer the burning question...what if we wanted to ship live animals from Wyoming to Philly by ground at 2:30pm in a nonrectangular package?? 
@@ -65,7 +61,7 @@ So to answer the burning question...what if we wanted to ship live animals from 
 ```{r}
 fluffy <- fetch_mail(origin_zip = "88201", 
                    destination_zip = "19109", 
-                   shipping_date = "today", 
+                   shipping_date = "2018-07-02", 
                    shipping_time = "14:30", 
                    live_animals = TRUE,
                    ground_transportation_needed = TRUE,
@@ -92,14 +88,16 @@ fluffy %>%
 
 Finally, the important questions have been answered.
 
-### General case
+<br>
+
+#### General case
 
 For a more usual case, we'll send a 15lb package from Portland, Maine to Portland, Oregon. The response shows all shipping options along with their prices, dimensions, and delivery dates. 
 
 ```{r}
 (mail <- fetch_mail(origin_zip = "04101",
          destination_zip = "97211",
-         shipping_date = "2018-07-04",
+         shipping_date = "today",
          shipping_time = "now",
          pounds = 15,
          type = "package",
@@ -125,10 +123,15 @@ The web interface should display the same results:
 ```{r, warning=FALSE}
 mail %>% 
   scrub_mail() %>% 
-  dplyr::slice(1:3) 
+  dplyr::slice(1:3) %>% 
+  dplyr::select(
+    delivery_date, delivery_by_time,
+    delivery_duration, retail_price, 
+    click_n_ship_price, dplyr::everything()
+  )
 ```
 
-
+<br>
 
 #### Multiple inputs and error handling
 
