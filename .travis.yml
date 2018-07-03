@@ -14,7 +14,7 @@ r_github_packages:
 after_success:
   - Rscript -e 'covr::codecov()'
 
-warnings_are_errors: true
+warnings_are_errors: false
 
 notifications:
   email:
