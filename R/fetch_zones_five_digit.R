@@ -6,15 +6,15 @@
 #' @param destination_zip Required destination zip as 5-digit character.
 #' @param show_details Extract extra stuff from the response?
 #' Specifically: \code{specific_to_priority_mail}, \code{local}, \code{same_ndc}, and \code{full_response}.
-#' Get more info with \code{\link{zone_detail_definitions}}.
+#' Get more info with \code{zone_detail_definitions}.
 #' @param n_tries How many times to try the API if at first we don't succeed?
 #' @param verbose Message what's going on?
 #'
 #' @details Displays the result of a query to the \href{https://postcalc.usps.com/DomesticZoneChart/}{"Get Zone for ZIP Code Pair"} tab.
 #'
-#' If you want all destinations for a given origin, use \link{\code{fetch_zones_three_digit}} with the first 3 digits of the origin; there you don't need to supply a destination.
+#' If you want all destinations for a given origin, use \code{fetch_zones_three_digit} with the first 3 digits of the origin; there you don't need to supply a destination.
 #'
-#' @seealso fetch_zones_three_digit
+#' @seealso \link{fetch_zones_three_digit}
 #'
 #' @importFrom magrittr %>%
 #'

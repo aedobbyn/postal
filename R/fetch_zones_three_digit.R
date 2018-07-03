@@ -157,7 +157,7 @@ fetch_zones_three_digit <-
 #' @param n_tries How many times to try getting an origin if we're unsuccessful the first time?
 #' @param verbose Message what's going on?
 #'
-#' @details Displays the result of a query to the ["Get Zone Chart"](https://postcalc.usps.com/DomesticZoneChart/) tab. If you just want to supply two 5-digit zips and get a single zone back, use \code{\link{fetch_zones_five_digit}}.
+#' @details Displays the result of a query to the ["Get Zone Chart"](https://postcalc.usps.com/DomesticZoneChart/) tab. If you just want to supply two 5-digit zips and get a single zone back, use \code{fetch_zones_five_digit}.
 #'
 #' @importFrom magrittr %>%
 #'

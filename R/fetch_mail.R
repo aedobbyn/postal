@@ -23,7 +23,7 @@
 #'
 #' @details Supply the required information about the package and receive a tibble. Displays the result of a query to the  \href{https://postcalc.usps.com/Calculator/}{"Postage Price Calculator"} in dataframe format.
 #'
-#' The result can be further cleaned and stardardized by piping the result to \link{\code{scrub_mail}}.
+#' The result can be further cleaned and stardardized by piping the result to \code{scrub_mail}.
 #'
 #' The API is tried \code{n_tries} times until a tibble is returned with \code{no_success} in columns that could not be returned. This indicates either that the connection was interrupted during the request or that one or more of the arguments supplied were malformed.
 #'
