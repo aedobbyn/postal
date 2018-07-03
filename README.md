@@ -6,6 +6,8 @@ state and is being actively
 developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
 [![Travis build
 status](https://travis-ci.org/aedobbyn/usps.svg?branch=master)](https://travis-ci.org/aedobbyn/usps)
+[![AppVeyor Build
+Status](https://ci.appveyor.com/api/projects/status/github/aedobbyn/usps?branch=master&svg=true)](https://ci.appveyor.com/project/aedobbyn/usps)
 [![Coverage
 status](https://codecov.io/gh/aedobbyn/usps/branch/master/graph/badge.svg)](https://codecov.io/github/aedobbyn/usps?branch=master)
 
