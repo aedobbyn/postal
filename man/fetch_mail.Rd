@@ -2,7 +2,7 @@
 % Please edit documentation in R/fetch_mail.R
 \name{fetch_mail}
 \alias{fetch_mail}
-\title{Get postage options for a package or flat-rate envelope/box}
+\title{Fetch postage details}
 \usage{
 fetch_mail(origin_zip = NULL, destination_zip = NULL,
   shipping_date = "today", shipping_time = "now", type = "package",
@@ -13,55 +13,57 @@ fetch_mail(origin_zip = NULL, destination_zip = NULL,
   verbose = TRUE)
 }
 \arguments{
-\item{origin_zip}{5-digit origin zip code.}
+\item{origin_zip}{(character) A single 5-digit origin zip code.}
 
-\item{destination_zip}{5-digit destination zip code.}
+\item{destination_zip}{(character) A single 5-digit destination zip code.}
 
-\item{shipping_date}{Date you plan to ship the package on in "MM-DD-YYYY" format as character, or "today".}
+\item{shipping_date}{(character) Date you plan to ship the package on in "MM-DD-YYYY" format as character, or "today".}
 
-\item{shipping_time}{Time of day you plan to ship in 24-hour "HH:MM" format as character, or "now".}
+\item{shipping_time}{(character) Time of day you plan to ship in 24-hour "HH:MM" format as character, or "now".}
 
-\item{type}{One of: "box", "envelope", "package". The types "box" and "envelope" can be supplied for flat-rate boxes and envelopes.}
+\item{type}{(character) One of: "box", "envelope", "package". The types "box" and "envelope" refer to flat-rate boxes and envelopes.}
 
-\item{ground_transportation_needed}{Does the package need to be transported by ground?}
+\item{ground_transportation_needed}{(boolean) does the package need to be transported by ground?}
 
-\item{live_animals}{Boolean: does this contain live animals? See: \url{https://pe.usps.com/text/pub52/pub52c5_003.htm}}
+\item{live_animals}{(boolean) Does this contain live animals? See \url{https://pe.usps.com/text/pub52/pub52c5_003.htm} for more details.}
 
-\item{day_old_poultry}{Boolean: does this contain day-old poultry? See: \url{https://pe.usps.com/text/pub52/pub52c5_008.htm#ep184002}}
+\item{day_old_poultry}{(boolean) Does this contain day-old poultry? See \url{https://pe.usps.com/text/pub52/pub52c5_008.htm#ep184002} for more details.}
 
-\item{hazardous_materials}{Boolean: does this contain any hazardous materials? See: \url{https://pe.usps.com/text/pub52/pub52c3_001.htm}}
+\item{hazardous_materials}{(boolean) Does this contain any hazardous materials? See \url{https://pe.usps.com/text/pub52/pub52c3_001.htm} for more details.}
 
-\item{pounds}{Number of pounds the package weighs.}
+\item{pounds}{(numeric) Number of pounds the package weighs.}
 
-\item{ounces}{Number of ounces the package weighs.}
+\item{ounces}{(numeric) Number of ounces the package weighs.}
 
-\item{length}{Length of the package in inches. This is the longest dimension.}
+\item{length}{(numeric) Length of the package in inches. This is the longest dimension.}
 
-\item{height}{Height of the package in inches.}
+\item{height}{(numeric) Height of the package in inches.}
 
-\item{width}{Width of the package in inches.}
+\item{width}{(numeric) Width of the package in inches.}
 
-\item{girth}{Girth of the package in inches, required if \code{shape} is "nonrectangular". This is the distance around the thickest part.}
+\item{girth}{(numeric) Girth of the package in inches. Required if \code{shape} is "nonrectangular". This is the distance around the thickest part.}
 
-\item{shape}{Shape of the package: "rectangular" or "nonrectangular". "nonrectangular" reqires a non-null \code{girth} value.
+\item{shape}{(character) Shape of the package: "rectangular" or "nonrectangular". "nonrectangular" reqires a non-null \code{girth} value.
 If \code{type} is box or envelope, \code{shape} will always be "rectangular".}
 
-\item{show_details}{Non-essential details of the response are hidden by default. Show them by setting this to TRUE.}
+\item{show_details}{(boolean) Non-essential details of the response are hidden by default. Show them by setting this to TRUE.}
 
-\item{n_tries}{How many times to try the API if at first we don't succeed?}
+\item{n_tries}{(numeric) How many times to try the API if at first we don't succeed.}
 
-\item{verbose}{Should messages, (e.g. shipping date time be dispalyed if the defaults "today" and "now" are chosen) be messageed?}
+\item{verbose}{(boolean) Should information like the shipping date time be dispalyed if the defaults "today" and "now" are chosen be messageed?}
 }
 \value{
 A tibble with information for different postage options, including price and box/envelope dimensions.
 }
 \description{
-Get postage options for a package or flat-rate envelope/box
+Get postage options for a flat-rate envelope, flat-rate box, or package.
 }
 \details{
-Supply the required information about the package and receive a tibble. Displays the result of a query to the  \href{https://postcalc.usps.com/Calculator/}{"Postage Price Calculator"} in dataframe format.
+Supply the required information about the package and receive a tibble. Displays the result of a query to the  \href{https://postcalc.usps.com/Calculator/}{"Postage Price Calculator"} in dataframe format. The inputs \code{origin_zip}, \code{destination_zip}, \code{shipping_date}, and \code{shipping_time} are included in the result.
 
 The result can be further cleaned and stardardized by piping the result to \code{scrub_mail}.
+
+Multiple origins, destinations, and other options can be supplied and mapped together using, e.g. \code{purrr::pmap}.
 
 The API is tried \code{n_tries} times until a tibble is returned with \code{no_success} in columns that could not be returned. This indicates either that the connection was interrupted during the request or that one or more of the arguments supplied were malformed.
 
@@ -83,7 +85,7 @@ fetch_mail(origin_zip = "68003",
          shape = "rectangular",
          show_details = TRUE)
 
-# Contains an invalid zip, which will get a "no_success" row
+# Contains an invalid zip ("foobar"), which will get a "no_success" row
 origins <- c("90210", "foobar", "59001")
 destinations <- c("68003", "94707", "23285")
 
@@ -104,5 +106,5 @@ fetch_mail(origin_zip = "04101",
 
 }
 \seealso{
-scrub_mail
+\link{scrub_mail}
 }

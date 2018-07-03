@@ -8,26 +8,26 @@ fetch_zones_five_digit(origin_zip, destination_zip, show_details = FALSE,
   n_tries = 3, verbose = FALSE)
 }
 \arguments{
-\item{origin_zip}{A single origin zip as 5-digit character.}
+\item{origin_zip}{(character) A single origin zip as 5-digit character.}
 
-\item{destination_zip}{Required destination zip as 5-digit character.}
+\item{destination_zip}{(character) Required destination zip as 5-digit character.}
 
-\item{show_details}{Extract extra stuff from the response?
+\item{show_details}{(boolean) Extract extra stuff from the response?
 Specifically: \code{specific_to_priority_mail}, \code{local}, \code{same_ndc}, and \code{full_response}.
 Get more info with \code{zone_detail_definitions}.}
 
-\item{n_tries}{How many times to try the API if at first we don't succeed?}
+\item{n_tries}{(numeric) Number times to try the API if at first we don't succeed.}
 
-\item{verbose}{Message what's going on?}
+\item{verbose}{(boolean) Message what's going on?}
 }
 \value{
-A tibble with origin zip and destination zips (in ranges or unspooled) and the USPS zones the origin-destination pair corresponds to.
+A tibble with origin zip, destination zip and the USPS zone that origin-destination pair corresponds to. If \code{show_details} is TRUE, other columns are shown.
 }
 \description{
 For a given 5-digit origin and destination zip code pair, display the zone number and full response.
 }
 \details{
-Displays the result of a query to the \href{https://postcalc.usps.com/DomesticZoneChart/}{"Get Zone for ZIP Code Pair"} tab.
+Displays the result of a query to the \href{https://postcalc.usps.com/DomesticZoneChart/}{"Get Zone for ZIP Code Pair"} tab of the USPS Zone Calc website.
 
 If you want all destinations for a given origin, use \code{fetch_zones_three_digit} with the first 3 digits of the origin; there you don't need to supply a destination.
 }
@@ -35,8 +35,10 @@ If you want all destinations for a given origin, use \code{fetch_zones_three_dig
 \dontrun{
 fetch_zones_five_digit("90210", "20500")
 
-fetch_zones_five_digit("40360", "09756", show_details = TRUE)
+fetch_zones_five_digit("40360", "09756",
+                       show_details = TRUE)
 
+# Supply multiple origins and destinations
 purrr::map2_dfr(c("11238", "60647", "80205"),
                 c("98109", "02210", "94707"),
       fetch_zones_five_digit)

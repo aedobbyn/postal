@@ -2,3 +2,4 @@ base
 magrittr
 usps
 bindrcpp
+dplyr

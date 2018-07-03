@@ -36,118 +36,33 @@ devtools::install_github("aedobbyn/usps")
 
 ## Postage Price Calculator
 
-There are two potage calculation functions: one for flat-rate envelopes
-and boxes (the kind you pick up at the post office and wrestle with
-until they fold into a box shape) or packages, which vary by their
-weight and dimensions.
+The single postage calculation function, `fetch_mail`, works for
+flat-rate envelopes and boxes (the kind you pick up at the post office
+and wrestle with until they fold into a box shape) as well as for
+packages, which vary by their weight and dimensions.
 
 Currently only destinations in the US are supported.
 
 ### Usage
 
 Specify a 5-digit origin zip and destination zip, along with the date
-and time you’re going to be shipping (`"today"` and `"now` are allowed).
+and time you’re going to be shipping (`"today"` and `"now"` are
+allowed). Other specifics are optionals.
 
 ``` r
 library(usps)
 ```
 
-We’ll send something from Portland, Maine to Portland, Oregon and ask
-for `type = "package"`. This gives us all the shipping options along
-with their prices and dimensions.
+### Usage
 
-``` r
-(mail <- fetch_mail(origin_zip = "04101",
-         destination_zip = "97211",
-         shipping_date = "2018-07-04",
-         shipping_time = "now",
-         pounds = 15,
-         type = "package",
-         shape = "rectangular",
-         show_details = TRUE))
-#> Using ship on time 12:37.
-#> Requesting https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&origin=04101&isOrigMil=False&destination=97211&isDestMil=False&shippingDate=2018%2F07%2F04&shippingTime=12%3A37&itemValue=&dayOldPoultry=False&groundTransportation=False&hazmat=False&liveAnimals=False&nonnegotiableDocument=False&mailShapeAndSize=Package&pounds=15&ounces=0&length=0&height=0&width=0&girth=0&shape=Rectangular&nonmachinable=False&isEmbedded=False
-#> # A tibble: 17 x 10
-#>    origin_zip dest_zip title    delivery_day retail_price click_n_ship_pr…
-#>    <chr>      <chr>    <chr>    <chr>        <chr>        <chr>           
-#>  1 04101      97211    Priorit… Fri, Jul 6 … $114.50      $114.50         
-#>  2 04101      97211    Priorit… Fri, Jul 6 … $114.50      $114.50         
-#>  3 04101      97211    Priorit… Fri, Jul 6 … $119.50      $119.50         
-#>  4 04101      97211    Priorit… Sat, Jul 7   $50.80       $50.80          
-#>  5 04101      97211    Priorit… Sat, Jul 7   Not availab… $50.80          
-#>  6 04101      97211    Priorit… Sat, Jul 7   $18.90       $18.90          
-#>  7 04101      97211    Priorit… Sat, Jul 7   Not availab… $18.90          
-#>  8 04101      97211    Priorit… Sat, Jul 7   $13.65       $13.65          
-#>  9 04101      97211    Priorit… Sat, Jul 7   Not availab… $13.65          
-#> 10 04101      97211    Priorit… Sat, Jul 7   $7.20        $7.20           
-#> 11 04101      97211    Priorit… Sat, Jul 7   Not availab… $7.20           
-#> 12 04101      97211    Priorit… Sat, Jul 7   Not availab… $10.80          
-#> 13 04101      97211    Priorit… Sat, Jul 7   Not availab… $10.80          
-#> 14 04101      97211    Priorit… Sat, Jul 7   Not availab… $21.03          
-#> 15 04101      97211    Priorit… Sat, Jul 7   Not availab… $21.03          
-#> 16 04101      97211    USPS Re… Thu, Jul 12  $47.79       Not available   
-#> 17 04101      97211    Media M… Thu, Jul 12  $9.80        Not available   
-#> # ... with 4 more variables: dimensions <chr>, delivery_option <chr>,
-#> #   shipping_date <chr>, shipping_time <S3: glue>
-```
-
-The web interface should display the same
-results:
-
-<p align="center">
-
-<img src="./man/figures/portland_to_portland.jpg" alt="post_calc" width="70%">
-
-</p>
-
-and this is a good option if you want to display data in the way USPS
-does. If you want to compute on prices and dates, you can tidy the
-dataframe with `scrub_mail`.
-
-This replaces `"Not available"`s and empty strings with `NA`s, changes
-prices to numeric, splits delivery day into a date and time of day (we
-infer year by the current year and use the 24hr clock), and computes the
-delivery duration in days.
-
-``` r
-mail %>% 
-  scrub_mail()
-#> # A tibble: 17 x 12
-#>    origin_zip dest_zip title                delivery_date delivery_by_time
-#>    <chr>      <chr>    <chr>                <date>        <chr>           
-#>  1 04101      97211    Priority Mail Expre… 2018-07-06    15:00           
-#>  2 04101      97211    Priority Mail Expre… 2018-07-06    10:30           
-#>  3 04101      97211    Priority Mail Expre… 2018-07-06    10:30           
-#>  4 04101      97211    Priority Mail 2-Day™ 2018-07-07    <NA>            
-#>  5 04101      97211    Priority Mail 2-Day™ 2018-07-07    <NA>            
-#>  6 04101      97211    Priority Mail 2-Day… 2018-07-07    <NA>            
-#>  7 04101      97211    Priority Mail 2-Day… 2018-07-07    <NA>            
-#>  8 04101      97211    Priority Mail 2-Day… 2018-07-07    <NA>            
-#>  9 04101      97211    Priority Mail 2-Day… 2018-07-07    <NA>            
-#> 10 04101      97211    Priority Mail 2-Day… 2018-07-07    <NA>            
-#> 11 04101      97211    Priority Mail 2-Day… 2018-07-07    <NA>            
-#> 12 04101      97211    Priority Mail 2-Day… 2018-07-07    <NA>            
-#> 13 04101      97211    Priority Mail 2-Day… 2018-07-07    <NA>            
-#> 14 04101      97211    Priority Mail 2-Day… 2018-07-07    <NA>            
-#> 15 04101      97211    Priority Mail 2-Day… 2018-07-07    <NA>            
-#> 16 04101      97211    USPS Retail Ground®  2018-07-12    <NA>            
-#> 17 04101      97211    Media Mail®          2018-07-12    <NA>            
-#> # ... with 7 more variables: delivery_duration <time>, retail_price <dbl>,
-#> #   click_n_ship_price <dbl>, dimensions <chr>, delivery_option <chr>,
-#> #   shipping_date <chr>, shipping_time <chr>
-```
-
-#### More Options
-
-USPS also offers some more colorful options to handle all your shipping
-needs.
+USPS also offers many colorful options to handle all your shipping
+needs, which are included in the arguments to `fetch_mail`.
 
 So to answer the burning question…what if we wanted to ship live animals
 from Wyoming to Philly by ground at 2:30pm in a nonrectangular package??
-When will it get there and how much will it cost?
 
 ``` r
-fetch_mail(origin_zip = "88201", 
+fluffy <- fetch_mail(origin_zip = "88201", 
                    destination_zip = "19109", 
                    shipping_date = "today", 
                    shipping_time = "14:30", 
@@ -161,20 +76,100 @@ fetch_mail(origin_zip = "88201",
                    girth = 5,
                    shape = "nonrectangular",
                    verbose = FALSE)
-#> # A tibble: 1 x 9
-#>   origin_zip dest_zip title     delivery_day retail_price click_n_ship_pr…
-#>   <chr>      <chr>    <chr>     <chr>        <chr>        <chr>           
-#> 1 88201      19109    USPS Ret… Mon, Jul 9   $83.61       Not available   
-#> # ... with 3 more variables: dimensions <chr>, shipping_date <chr>,
-#> #   shipping_time <chr>
+```
+
+When will it get there and how much will it cost?
+
+``` r
+fluffy %>% 
+  dplyr::pull(delivery_day)
+#> [1] "Mon, Jul 9"
+
+fluffy %>% 
+  dplyr::pull(retail_price)
+#> [1] "$83.61"
 ```
 
 Finally, the important questions have been answered.
 
+### General case
+
+For a more usual case, we’ll send a 15lb package from Portland, Maine to
+Portland, Oregon. The response shows all shipping options along with
+their prices, dimensions, and delivery dates.
+
+``` r
+(mail <- fetch_mail(origin_zip = "04101",
+         destination_zip = "97211",
+         shipping_date = "2018-07-04",
+         shipping_time = "now",
+         pounds = 15,
+         type = "package",
+         shape = "rectangular",
+         show_details = TRUE)) %>% 
+  dplyr::slice(1:3)
+#> Using ship on time 15:17.
+#> Requesting https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&origin=04101&isOrigMil=False&destination=97211&isDestMil=False&shippingDate=2018%2F07%2F04&shippingTime=15%3A17&itemValue=&dayOldPoultry=False&groundTransportation=False&hazmat=False&liveAnimals=False&nonnegotiableDocument=False&mailShapeAndSize=Package&pounds=15&ounces=0&length=0&height=0&width=0&girth=0&shape=Rectangular&nonmachinable=False&isEmbedded=False
+#> # A tibble: 3 x 10
+#>   origin_zip dest_zip title    delivery_day  retail_price click_n_ship_pr…
+#>   <chr>      <chr>    <chr>    <chr>         <chr>        <chr>           
+#> 1 04101      97211    Priorit… Fri, Jul 6 b… $114.50      $114.50         
+#> 2 04101      97211    Priorit… Fri, Jul 6 b… $114.50      $114.50         
+#> 3 04101      97211    Priorit… Fri, Jul 6 b… $119.50      $119.50         
+#> # ... with 4 more variables: dimensions <chr>, delivery_option <chr>,
+#> #   shipping_date <chr>, shipping_time <chr>
+
+mail %>% 
+  dplyr::slice(1:3) %>% 
+  knitr::kable()
+```
+
+| origin\_zip | dest\_zip | title                        | delivery\_day          | retail\_price | click\_n\_ship\_price | dimensions | delivery\_option     | shipping\_date | shipping\_time |
+| :---------- | :-------- | :--------------------------- | :--------------------- | :------------ | :-------------------- | :--------- | :------------------- | :------------- | :------------- |
+| 04101       | 97211     | Priority Mail Express 2-Day™ | Fri, Jul 6 by 3:00 PM  | $114.50       | $114.50               |            | Normal Delivery Time | 2018-07-04     | 15:17          |
+| 04101       | 97211     | Priority Mail Express 2-Day™ | Fri, Jul 6 by 10:30 AM | $114.50       | $114.50               |            | Hold For Pickup      | 2018-07-04     | 15:17          |
+| 04101       | 97211     | Priority Mail Express 2-Day™ | Fri, Jul 6 by 10:30 AM | $119.50       | $119.50               |            | 10:30 AM Delivery    | 2018-07-04     | 15:17          |
+
+The web interface should display the same
+results:
+
+<p align="center">
+
+<img src="./man/figures/portland_to_portland.jpg" alt="post_calc" width="70%">
+
+</p>
+
+`fetch_mail` is a good option if you want to display data in the way
+USPS does. If you want to compute on prices and dates, you can tidy the
+dataframe by sending it into `scrub_mail`.
+
+`scrub_mail` replaces `"Not available"`s and empty strings with `NA`s,
+changes prices to numeric, splits delivery day into a date and time of
+day (we infer year by the current year and use the 24hr clock), and
+computes the delivery duration in days.
+
+``` r
+mail %>% 
+  scrub_mail() %>% 
+  dplyr::slice(1:3) 
+#> # A tibble: 3 x 12
+#>   origin_zip dest_zip title                 delivery_date delivery_by_time
+#>   <chr>      <chr>    <chr>                 <date>        <chr>           
+#> 1 04101      97211    Priority Mail Expres… 2018-07-06    15:00           
+#> 2 04101      97211    Priority Mail Expres… 2018-07-06    10:30           
+#> 3 04101      97211    Priority Mail Expres… 2018-07-06    10:30           
+#> # ... with 7 more variables: delivery_duration <time>, retail_price <dbl>,
+#> #   click_n_ship_price <dbl>, dimensions <chr>, delivery_option <chr>,
+#> #   shipping_date <chr>, shipping_time <chr>
+```
+
 #### Multiple inputs and error handling
 
 These functions work on a single origin and single destination, but
-multiple can be mapped into a tidy dataframe.
+multiple can be mapped into a tidy dataframe. Important parts of the
+request (`origin_zip`, `destination_zip`, `shipping_date`, and
+`shipping_time`) are included in the result, making it easier to
+distinguish different inputs from one another.
 
 By default we try the API 3 times before giving up. You can modify that
 by changing `n_tries`. If after `n_tries` we still have an error (here,
@@ -232,8 +227,8 @@ fetch_mail(origin_zip = "04101",
          shipping_date = "3018-07-04",  # way in the future!
          type = "package",
          show_details = TRUE)
-#> Using ship on time 12:37.
-#> Requesting https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&origin=04101&isOrigMil=False&destination=97211&isDestMil=False&shippingDate=3018%2F07%2F04&shippingTime=12%3A37&itemValue=&dayOldPoultry=False&groundTransportation=False&hazmat=False&liveAnimals=False&nonnegotiableDocument=False&mailShapeAndSize=Package&pounds=0&ounces=0&length=0&height=0&width=0&girth=0&shape=Rectangular&nonmachinable=False&isEmbedded=False
+#> Using ship on time 14:49.
+#> Requesting https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&origin=04101&isOrigMil=False&destination=97211&isDestMil=False&shippingDate=3018%2F07%2F04&shippingTime=14%3A49&itemValue=&dayOldPoultry=False&groundTransportation=False&hazmat=False&liveAnimals=False&nonnegotiableDocument=False&mailShapeAndSize=Package&pounds=0&ounces=0&length=0&height=0&width=0&girth=0&shape=Rectangular&nonmachinable=False&isEmbedded=False
 #> No Mail Services were found for this request. Try modifying the argument inputs.
 #> # A tibble: 1 x 10
 #>   origin_zip dest_zip title delivery_day retail_price click_n_ship_price
@@ -245,7 +240,7 @@ fetch_mail(origin_zip = "04101",
 
 This approach makes takes care of much of the try-catching you might
 have to implement, with the aim of making it easier to request a lot of
-data at minimal risk of a showstopping error.
+data in one go.
 
 -----
 
@@ -253,7 +248,7 @@ data at minimal risk of a showstopping error.
 
 ## Zones
 
-A **zone** is a [representation of
+Zones\! A **zone** is a [representation of
 distance](https://ribbs.usps.gov/zone_charts/documents/tech_guides/ZoneChartExceptionsWebinar.pdf)
 between the origin and the destination zip codes. Zones are used in
 determining postage rates and delivery times.

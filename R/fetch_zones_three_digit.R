@@ -1,18 +1,18 @@
-#' Fetch zones for a 3-digit origin zip or an origin-destination pair
+#' Get 3 digit zones
 #'
-#' For a given 3-digit origin zip code, grab all destination zips and their corresponding zones.
+#' For a given 3-digit origin zip code, grab all destination zips and their corresponding zones. If a destination is supplied, the result is filtered to that origin-destination pair.
 #'
-#' @param origin_zip A single origin zip as character. If > 3 digits and contains leading zeros, make sure to supply as character.
-#' @param destination_zip Optional destination zip. If not included, returns all possible destinations for the origin provided. If > 3 digits and contains leading zeros, make sure to supply as character.
-#' @param exact_destination If \code{destination_zip} is supplied, should the result be filtered to the full destination zip, or its first 3 digits?
-#' @param as_range Do you want zones corresponding to a range of destination zips or a full listing of them?
-#' @param show_details Should columns with more details be retained?
+#' @param origin_zip (character) A single origin zip. If > 3 characters are supplied, the first 3 are used. If fewer, leading 0s are prepended. (E.g., "7" becomes "007".)
+#' @param destination_zip (character) Optional destination zip. Can be 3 or 5 characters. If not included, returns all possible destinations for the origin provided.
+#' @param exact_destination (boolean) If \code{destination_zip} is supplied and is 5 digits, should the result be filtered to the full destination zip, or its first 3 digits?
+#' @param as_range (boolean) Should zones be shown with one row per zone (the default) or as one row per range of zips they apply to?
+#' @param show_details (boolean) Should columns with more details be retained?
 #' Specifically: \code{specific_to_priority_mail}, \code{same_ndc}, and \code{has_five_digit_exceptions}.
 #' Get more info with \code{zone_detail_definitions}.
-#' @param n_tries How many times to try getting data if we're unsuccessful the first time?
-#' @param verbose Message what's going on?
+#' @param n_tries (numeric) How many times to try getting data if we're unsuccessful the first time.
+#' @param verbose (boolean) Message what's going on?
 #'
-#' @details Displays the result of a query to the \href{https://postcalc.usps.com/DomesticZoneChart/}{"Get Zone Chart"} tab. If you just want to supply two 5-digit zips and get a single zone back, use \code{fetch_zones_five_digit}.
+#' @details Displays the result of a query what's shown on the \href{https://postcalc.usps.com/DomesticZoneChart/}{"Get Zone Chart"} tab of the USPS Zone Calc website. If you just want to supply two 5-digit zips and get a single zone back, use \code{fetch_zones_five_digit}.
 #'
 #' @seealso \code{\link{fetch_zones_five_digit}}
 #' @seealso \code{\link{fetch_zones_all}}
@@ -20,15 +20,22 @@
 #'
 #' @examples \dontrun{
 #'
+#' # All destination zips are returned for this origin
 #' a_zip <- fetch_zones_three_digit("123")
 #' nrow(a_zip)
 #'
+#' # Only the zone corresponding to this origin and this destination are returned
 #' fetch_zones_three_digit("123", "456", show_details = TRUE)
 #'
-#' (double_oh_seven <- fetch_zones_three_digit("007", as_range = TRUE))
+#' fetch_zones_three_digit("007", as_range = TRUE)
+#'
+#' # Get multiple zips
+#' c("897", "786") %>%
+#'   purrr::map_df(fetch_zones_three_digit)
+#'
 #' }
 #'
-#' @return A tibble with origin zip and destination zips (in ranges or unspooled) and the USPS zones the origin-destination pair corresponds to.
+#' @return A tibble with origin zip and destination zips (in ranges or unspooled depending on \cod{as_range}) and the USPS zones the origin-destination pair corresponds to. If \code{show_details} is TRUE, other columns are shown.
 #' @export
 
 fetch_zones_three_digit <-

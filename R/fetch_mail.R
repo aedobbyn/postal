@@ -1,36 +1,40 @@
-#' Get postage options for a package or flat-rate envelope/box
+#' Fetch postage details
 #'
-#' @param origin_zip 5-digit origin zip code.
-#' @param destination_zip 5-digit destination zip code.
-#' @param shipping_date Date you plan to ship the package on in "MM-DD-YYYY" format as character, or "today".
-#' @param shipping_time Time of day you plan to ship in 24-hour "HH:MM" format as character, or "now".
-#' @param type One of: "box", "envelope", "package". The types "box" and "envelope" can be supplied for flat-rate boxes and envelopes.
-#' @param ground_transportation_needed Does the package need to be transported by ground?
-#' @param live_animals Boolean: does this contain live animals? See: \url{https://pe.usps.com/text/pub52/pub52c5_003.htm}
-#' @param day_old_poultry Boolean: does this contain day-old poultry? See: \url{https://pe.usps.com/text/pub52/pub52c5_008.htm#ep184002}
-#' @param hazardous_materials Boolean: does this contain any hazardous materials? See: \url{https://pe.usps.com/text/pub52/pub52c3_001.htm}
-#' @param pounds Number of pounds the package weighs.
-#' @param ounces Number of ounces the package weighs.
-#' @param length Length of the package in inches. This is the longest dimension.
-#' @param height Height of the package in inches.
-#' @param width Width of the package in inches.
-#' @param girth Girth of the package in inches, required if \code{shape} is "nonrectangular". This is the distance around the thickest part.
-#' @param shape Shape of the package: "rectangular" or "nonrectangular". "nonrectangular" reqires a non-null \code{girth} value.
+#' Get postage options for a flat-rate envelope, flat-rate box, or package.
+#'
+#' @param origin_zip (character) A single 5-digit origin zip code.
+#' @param destination_zip (character) A single 5-digit destination zip code.
+#' @param shipping_date (character) Date you plan to ship the package on in "MM-DD-YYYY" format as character, or "today".
+#' @param shipping_time (character) Time of day you plan to ship in 24-hour "HH:MM" format as character, or "now".
+#' @param type (character) One of: "box", "envelope", "package". The types "box" and "envelope" refer to flat-rate boxes and envelopes.
+#' @param ground_transportation_needed (boolean) does the package need to be transported by ground?
+#' @param live_animals (boolean) Does this contain live animals? See \url{https://pe.usps.com/text/pub52/pub52c5_003.htm} for more details.
+#' @param day_old_poultry (boolean) Does this contain day-old poultry? See \url{https://pe.usps.com/text/pub52/pub52c5_008.htm#ep184002} for more details.
+#' @param hazardous_materials (boolean) Does this contain any hazardous materials? See \url{https://pe.usps.com/text/pub52/pub52c3_001.htm} for more details.
+#' @param pounds (numeric) Number of pounds the package weighs.
+#' @param ounces (numeric) Number of ounces the package weighs.
+#' @param length (numeric) Length of the package in inches. This is the longest dimension.
+#' @param height (numeric) Height of the package in inches.
+#' @param width (numeric) Width of the package in inches.
+#' @param girth (numeric) Girth of the package in inches. Required if \code{shape} is "nonrectangular". This is the distance around the thickest part.
+#' @param shape (character) Shape of the package: "rectangular" or "nonrectangular". "nonrectangular" reqires a non-null \code{girth} value.
 #' If \code{type} is box or envelope, \code{shape} will always be "rectangular".
-#' @param show_details Non-essential details of the response are hidden by default. Show them by setting this to TRUE.
-#' @param n_tries How many times to try the API if at first we don't succeed?
-#' @param verbose Should messages, (e.g. shipping date time be dispalyed if the defaults "today" and "now" are chosen) be messageed?
+#' @param show_details (boolean) Non-essential details of the response are hidden by default. Show them by setting this to TRUE.
+#' @param n_tries (numeric) How many times to try the API if at first we don't succeed.
+#' @param verbose (boolean) Should information like the shipping date time be dispalyed if the defaults "today" and "now" are chosen be messageed?
 #'
-#' @details Supply the required information about the package and receive a tibble. Displays the result of a query to the  \href{https://postcalc.usps.com/Calculator/}{"Postage Price Calculator"} in dataframe format.
+#' @details Supply the required information about the package and receive a tibble. Displays the result of a query to the  \href{https://postcalc.usps.com/Calculator/}{"Postage Price Calculator"} in dataframe format. The inputs \code{origin_zip}, \code{destination_zip}, \code{shipping_date}, and \code{shipping_time} are included in the result.
 #'
 #' The result can be further cleaned and stardardized by piping the result to \code{scrub_mail}.
+#'
+#' Multiple origins, destinations, and other options can be supplied and mapped together using, e.g. \code{purrr::pmap}.
 #'
 #' The API is tried \code{n_tries} times until a tibble is returned with \code{no_success} in columns that could not be returned. This indicates either that the connection was interrupted during the request or that one or more of the arguments supplied were malformed.
 #'
 #' If a response is successfully recieved but there are no shipping options, the columns are filled with \code{NA}s.
 #'
 #'
-#' @seealso scrub_mail
+#' @seealso \link{scrub_mail}
 #' @importFrom magrittr %>%
 #'
 #' @examples \dontrun{
@@ -48,7 +52,7 @@
 #'          shape = "rectangular",
 #'          show_details = TRUE)
 #'
-#' # Contains an invalid zip, which will get a "no_success" row
+#' # Contains an invalid zip ("foobar"), which will get a "no_success" row
 #' origins <- c("90210", "foobar", "59001")
 #' destinations <- c("68003", "94707", "23285")
 #'
