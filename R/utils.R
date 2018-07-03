@@ -516,36 +516,52 @@ get_mail <- function(origin_zip = NULL,
 
   resp <- try_n_times(url, n_tries = n_tries)
 
+  if (resp$result$PageError == "No Mail Services were found.") {
+    message("No Mail Services were found for this request. Try modifying the argument inputs.")
+    resp$result <-
+      tibble::tibble(
+        origin_zip = origin_zip,
+        dest_zip = destination_zip,
+        title = NA_character_,
+        delivery_day = NA_character_,
+        retail_price = NA_character_,
+        click_n_ship_price = NA_character_,
+        dimensions = NA_character_,
+        delivery_option = NA_character_
+      )
+  }
+
   return(resp)
 }
 
 
 clean_mail <- function(resp, show_details = FALSE) {
-  if (resp$PageError == "No Mail Services were found.") {
-    stop("No Mail Services were found for this request. Try modifying the argument inputs.")
+
+  if (all(is.na(resp$title))) {
+    out <- resp
+  } else {
+    nested <-
+      resp$Page$MailServices %>%
+      tibble::as_tibble()
+
+    unnested <-
+      nested %>%
+      purrr::map_df(replace_x) %>%
+      tidyr::unnest(DeliveryOptions)
+
+    out <-
+      unnested %>%
+      janitor::clean_names() %>%
+      dplyr::rename(
+        delivery_option = name,
+        click_n_ship_price = cn_s_price
+      ) %>%
+      dplyr::select(
+        title, delivery_day, retail_price,
+        click_n_ship_price, delivery_option,
+        dimensions, postage_service_id
+      )
   }
-
-  nested <-
-    resp$Page$MailServices %>%
-    tibble::as_tibble()
-
-  unnested <-
-    nested %>%
-    purrr::map_df(replace_x) %>%
-    tidyr::unnest(DeliveryOptions)
-
-  out <-
-    unnested %>%
-    janitor::clean_names() %>%
-    dplyr::rename(
-      delivery_option = name,
-      click_n_ship_price = cn_s_price
-    ) %>%
-    dplyr::select(
-      title, delivery_day, retail_price,
-      click_n_ship_price, delivery_option,
-      dimensions, postage_service_id
-    )
 
   if (show_details == FALSE) {
     out <-
