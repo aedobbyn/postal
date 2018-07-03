@@ -26,7 +26,7 @@ Get more info with \code{zone_detail_definitions}.}
 \item{verbose}{(boolean) Message what's going on?}
 }
 \value{
-A tibble with origin zip and destination zips (in ranges or unspooled depending on \cod{as_range}) and the USPS zones the origin-destination pair corresponds to. If \code{show_details} is TRUE, other columns are shown.
+A tibble with origin zip and destination zips (in ranges or unspooled depending on \code{as_range}) and the USPS zones the origin-destination pair corresponds to. If \code{show_details} is TRUE, other columns are shown.
 }
 \description{
 For a given 3-digit origin zip code, grab all destination zips and their corresponding zones. If a destination is supplied, the result is filtered to that origin-destination pair.
@@ -52,9 +52,4 @@ c("897", "786") \%>\%
 
 }
 
-}
-\seealso{
-\code{\link{fetch_zones_five_digit}}
-
-\code{\link{fetch_zones_all}}
 }
