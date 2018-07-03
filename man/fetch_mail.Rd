@@ -61,6 +61,8 @@ Get postage options for a flat-rate envelope, flat-rate box, or package.
 \details{
 Supply the required information about the package and receive a tibble. Displays the result of a query to the  \href{https://postcalc.usps.com/Calculator/}{"Postage Price Calculator"} in dataframe format. The inputs \code{origin_zip}, \code{destination_zip}, \code{shipping_date}, and \code{shipping_time} are included in the result.
 
+If \code{type} is "envelope" or "box", the response is the same regardless of measurements (\code{pounds}, \code{ounces}, \code{height}, \code{width}, \code{girth} and \code{shape}) applied. These only vary outcomes for "package"s.
+
 The result can be further cleaned and stardardized by piping the result to \code{scrub_mail}.
 
 Multiple origins, destinations, and other options can be supplied and mapped together using, e.g. \code{purrr::pmap}.

@@ -30,9 +30,10 @@ testthat::test_that("postcalc returns something", {
 
   bad_lst <- jsonlite::fromJSON(bad_req)
 
-  testthat::expect_equal(bad_lst$PageError,
-                         "No Mail Services were found.")
-
+  testthat::expect_equal(
+    bad_lst$PageError,
+    "No Mail Services were found."
+  )
 })
 
 
@@ -56,15 +57,15 @@ testthat::test_that("fetch_mail()", {
 
   testthat::expect_error(
     fetch_mail("11238", "60647",
-                       shape = "rectangular",
-                       live_animals = "xyz"
+      shape = "rectangular",
+      live_animals = "xyz"
     )
   )
 
   testthat::expect_error(
     fetch_mail(11238, 60647,
-                       shape = "rectangular",
-                       shipping_date = 14
+      shape = "rectangular",
+      shipping_date = 14
     )
   )
 
@@ -84,8 +85,8 @@ testthat::test_that("fetch_mail()", {
 
   testthat::expect_error(
     fetch_mail("11238", "60647",
-               shape = "rectangular",
-               type = c("box", "envelope")
+      shape = "rectangular",
+      type = c("box", "envelope")
     )
   )
 
@@ -169,7 +170,8 @@ testthat::test_that("fetch_mail()", {
 
   testthat::expect_error(
     fetch_mail(88506, "90210",
-                         type = "envelope")
+      type = "envelope"
+    )
   )
 
   testthat::expect_warning(
@@ -241,7 +243,8 @@ testthat::test_that("fetch_mail()", {
         live_animals = TRUE,
         pounds = 10,
         ounces = 5
-      )),
+      )
+    ),
     "data.frame"
   )
 

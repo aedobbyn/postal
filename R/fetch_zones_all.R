@@ -33,10 +33,8 @@ fetch_all <- function(origins = all_possible_origins,
                       as_range = FALSE,
                       show_details = FALSE,
                       verbose = TRUE) {
-
   fetch_and_sleep <- function(origin, sleep_time = 1,
                                 verbose = TRUE) {
-
     this <- fetch_zones_three_digit(
       origin,
       as_range = as_range,

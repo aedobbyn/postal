@@ -35,7 +35,8 @@ testthat::test_that("Safely getting data works", {
   testthat::expect_error(get_zones_five_digit("bar"))
 
   testthat::expect_message(get_zones_five_digit("90210", "23456",
-                           verbose = TRUE))
+    verbose = TRUE
+  ))
 })
 
 

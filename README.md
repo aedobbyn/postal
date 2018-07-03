@@ -53,11 +53,10 @@ allowed). Other specifics are optionals.
 library(usps)
 ```
 
-USPS also offers many colorful options to handle all your shipping
-needs, which are included in the arguments to `fetch_mail`.
-
-So to answer the burning question…what if we wanted to ship live animals
-from Wyoming to Philly by ground at 2:30pm in a nonrectangular package??
+USPS offers many colorful options to handle all your shipping needs,
+which are included in the arguments to `fetch_mail`. So to answer the
+burning question…what if we wanted to ship live animals from Wyoming to
+Philly by ground on July 2 at 2:30pm in a nonrectangular package??
 
 ``` r
 fluffy <- fetch_mail(origin_zip = "88201", 
@@ -268,7 +267,9 @@ for some app you’re building.
 That doesn’t sound so bad, but there are `99999^2` or 9,999,800,001
 possible 5-digit origin-destination zip combinations in the US. The USPS
 [Zone Calc](https://postcalc.usps.com/DomesticZoneChart/) tool narrows
-down that space a bit by trimming zips to their first 3 digits.
+down that space a bit by trimming zips to their first 3 digits. Every 5
+digit zip’s information is defined by its 3-digit prefix, except for
+5-digit exceptions, which are noted.
 
 ### Usage
 
