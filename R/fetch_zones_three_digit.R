@@ -8,15 +8,14 @@
 #' @param as_range Do you want zones corresponding to a range of destination zips or a full listing of them?
 #' @param show_details Should columns with more details be retained?
 #' Specifically: \code{specific_to_priority_mail}, \code{same_ndc}, and \code{has_five_digit_exceptions}.
-#' Get more info with \code{\link{zone_detail_definitions}}.
+#' Get more info with \code{zone_detail_definitions}.
 #' @param n_tries How many times to try getting data if we're unsuccessful the first time?
 #' @param verbose Message what's going on?
 #'
-#' @details Displays the result of a query to the \href{https://postcalc.usps.com/DomesticZoneChart/}{"Get Zone Chart"} tab. If you just want to supply two 5-digit zips and get a single zone back, use \code{\link{fetch_zones_five_digit}}.
+#' @details Displays the result of a query to the \href{https://postcalc.usps.com/DomesticZoneChart/}{"Get Zone Chart"} tab. If you just want to supply two 5-digit zips and get a single zone back, use \code{fetch_zones_five_digit}.
 #'
-#' @seealso fetch_zones_five_digit
-#' @seealso fetch_zones_all
-#' @aliases fetch_zones
+#' @seealso \code{\link{fetch_zones_five_digit}}
+#' @seealso \code{\link{fetch_zones_all}}
 #' @importFrom magrittr %>%
 #'
 #' @examples \dontrun{
@@ -74,7 +73,7 @@ fetch_zones_three_digit <-
         origin_zip = origin_zip,
         destination_zip = NULL,
         n_tries = n_tries,
-        verbose = verbose, ...
+        verbose = verbose
       )
 
     if (as_range == FALSE) {
@@ -157,7 +156,6 @@ fetch_zones_three_digit <-
 #' @param show_details Should columns with more details be retained?
 #' @param n_tries How many times to try getting an origin if we're unsuccessful the first time?
 #' @param verbose Message what's going on?
-#' @param ... Other arguments
 #'
 #' @details Displays the result of a query to the ["Get Zone Chart"](https://postcalc.usps.com/DomesticZoneChart/) tab. If you just want to supply two 5-digit zips and get a single zone back, use \code{\link{fetch_zones_five_digit}}.
 #'

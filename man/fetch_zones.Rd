@@ -22,8 +22,6 @@ fetch_zones(origin_zip = NULL, destination_zip = NULL,
 \item{n_tries}{How many times to try getting an origin if we're unsuccessful the first time?}
 
 \item{verbose}{Message what's going on?}
-
-\item{...}{Other arguments}
 }
 \value{
 A tibble with origin zip and destination zips (in ranges or unspooled) and the USPS zones the origin-destination pair corresponds to.

@@ -191,6 +191,27 @@ testthat::test_that("fetch_mail()", {
     "data.frame"
   )
 
+  # Date too far in the future -> PageError
+  testthat::expect_equal(
+    fetch_mail(
+      origin_zip = "60647",
+      destination_zip = "11238",
+      type = "envelope",
+      shipping_date = "3019-08-25"
+    ) %>% dplyr::pull(retail_price), NA_character_
+  )
+
+  # Bad request
+  testthat::expect_equal(
+    fetch_mail(
+      origin_zip = "foo",
+      destination_zip = "11238",
+      type = "envelope",
+      shipping_date = "3019-08-25",
+      n_tries = 1
+    ) %>% dplyr::pull(retail_price), "no_success"
+  )
+
   testthat::expect_is(
     fetch_mail(
       origin_zip = "60647",

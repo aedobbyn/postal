@@ -2,7 +2,6 @@
 % Please edit documentation in R/fetch_zones_three_digit.R
 \name{fetch_zones_three_digit}
 \alias{fetch_zones_three_digit}
-\alias{fetch_zones}
 \title{Fetch zones for a 3-digit origin zip or an origin-destination pair}
 \usage{
 fetch_zones_three_digit(origin_zip = NULL, destination_zip = NULL,
@@ -20,7 +19,7 @@ fetch_zones_three_digit(origin_zip = NULL, destination_zip = NULL,
 
 \item{show_details}{Should columns with more details be retained?
 Specifically: \code{specific_to_priority_mail}, \code{same_ndc}, and \code{has_five_digit_exceptions}.
-Get more info with \code{\link{zone_detail_definitions}}.}
+Get more info with \code{zone_detail_definitions}.}
 
 \item{n_tries}{How many times to try getting data if we're unsuccessful the first time?}
 
@@ -33,7 +32,7 @@ A tibble with origin zip and destination zips (in ranges or unspooled) and the U
 For a given 3-digit origin zip code, grab all destination zips and their corresponding zones.
 }
 \details{
-Displays the result of a query to the \href{https://postcalc.usps.com/DomesticZoneChart/}{"Get Zone Chart"} tab. If you just want to supply two 5-digit zips and get a single zone back, use \code{\link{fetch_zones_five_digit}}.
+Displays the result of a query to the \href{https://postcalc.usps.com/DomesticZoneChart/}{"Get Zone Chart"} tab. If you just want to supply two 5-digit zips and get a single zone back, use \code{fetch_zones_five_digit}.
 }
 \examples{
 \dontrun{
@@ -48,7 +47,7 @@ fetch_zones_three_digit("123", "456", show_details = TRUE)
 
 }
 \seealso{
-fetch_zones_five_digit
+\code{\link{fetch_zones_five_digit}}
 
-fetch_zones_all
+\code{\link{fetch_zones_all}}
 }

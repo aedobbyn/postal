@@ -5,8 +5,7 @@
 \title{Grab all the 3-digit origin-destination pairs.}
 \usage{
 fetch_all(origins = all_possible_origins, write_to = NULL, sleep_time = 1,
-  n_tries = 3, as_range = FALSE, show_details = FALSE, verbose = TRUE,
-  ...)
+  n_tries = 3, as_range = FALSE, show_details = FALSE, verbose = TRUE)
 }
 \arguments{
 \item{origins}{A vector of origin zips. Defaults to all possible origin zips from 000 to 999.}
@@ -22,8 +21,6 @@ fetch_all(origins = all_possible_origins, write_to = NULL, sleep_time = 1,
 \item{show_details}{Should columns with more details be retained?}
 
 \item{verbose}{Message what's going on?}
-
-\item{...}{Other arguments}
 }
 \value{
 A tibble with origin zip and destination zips (in ranges or unspooled) and the USPS zones the origin-destination pair corresponds to.

@@ -49,7 +49,8 @@
 #'          shape = "rectangular",
 #'          show_details = TRUE)
 #'
-#' origins <- c("90210", "foobar", "59001")  # Contains an invalid zip, which will get a "no_success" row
+#' # Contains an invalid zip, which will get a "no_success" row
+#' origins <- c("90210", "foobar", "59001")
 #' destinations <- c("68003", "94707", "23285")
 #'
 #' purrr::map2_dfr(
