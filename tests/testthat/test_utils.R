@@ -80,13 +80,13 @@ testthat::test_that("Trying n times", {
 
   testthat::expect_equal(
     "no_success",
-    do_try_n_times("foo", "123", "456") %>%
+    try_n_times_zone("foo", "123", "456") %>%
       purrr::pluck("zone")
   )
 
   testthat::expect_equal(
     "no_success",
-    do_try_n_times("foo", "12345", "45678") %>%
+    try_n_times_zone("foo", "12345", "45678") %>%
       purrr::pluck("zone")
   )
 })

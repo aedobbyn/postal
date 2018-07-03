@@ -394,208 +394,6 @@ get_shipping_time <- function(shipping_time,
 }
 
 
-get_mail <- function(origin_zip = NULL,
-                     destination_zip = NULL,
-                     shipping_date = "today",
-                     shipping_time = "now",
-                     ground_transportation_needed = TRUE,
-                     live_animals = FALSE,
-                     day_old_poultry = FALSE,
-                     hazardous_materials = FALSE,
-                     type = c("box", "envelope", "package"),
-                     pounds = 0,
-                     ounces = 0,
-                     length = 0,
-                     height = 0,
-                     width = 0,
-                     girth = 0,
-                     shape = c("rectangular", "nonrectangular"),
-                     n_tries = 3,
-                     verbose = TRUE) {
-
-  if (nchar(origin_zip) != 5 | nchar(destination_zip) != 5) {
-    warning("Zip codes supplied must be 5 digits.")
-  }
-
-  char_args <- list(
-    origin_zip, destination_zip,
-    shipping_date, shipping_time, type, shape
-  )
-
-  if (any(purrr::map(char_args, is.character) == FALSE)) {
-    not_char <- char_args[which(purrr::map(char_args, is.character) == FALSE)] %>%
-      stringr::str_c(collapse = ", ")
-    stop(glue::glue("Argument {not_char} is not of type character."))
-  }
-
-  num_args <- list(
-    pounds, ounces, length, width, height, girth
-  )
-
-  if (any(purrr::map(num_args, is.numeric) == FALSE) |
-      any(purrr::map(num_args, ~ .x < 0) == TRUE)) {
-    not_num <- num_args[which(purrr::map(num_args, is.numeric) == FALSE)] %>%
-      stringr::str_c(collapse = ", ")
-    stop(glue::glue("Argument {not_num} is not of type numeric or is < 0."))
-  }
-
-  lgl_args <- list(
-    ground_transportation_needed, live_animals,
-    day_old_poultry, hazardous_materials
-  )
-
-  if (any(purrr::map(lgl_args, is.logical) == FALSE)) {
-    not_lgl <- lgl_args[which(purrr::map(lgl_args, is.logical) == FALSE)] %>%
-      stringr::str_c(collapse = ", ")
-    stop(glue::glue("Argument {not_lgl} is not of type logical."))
-  }
-
-  shipping_date <- get_shipping_date(shipping_date,
-    verbose = verbose
-  )
-  shipping_time <- get_shipping_time(shipping_time,
-    verbose = verbose
-  )
-
-  shipping_date <-
-    shipping_date %>%
-    stringr::str_replace_all("-", "%2F")
-
-  shipping_time <-
-    shipping_time %>%
-    stringr::str_replace_all(":", "%3A")
-
-  ground_transportation_needed <-
-    ground_transportation_needed %>%
-    tolower() %>%
-    cap_word()
-
-  live_animals <-
-    live_animals %>%
-    tolower() %>%
-    cap_word()
-
-  day_old_poultry <-
-    day_old_poultry %>%
-    tolower() %>%
-    cap_word()
-
-  hazardous_materials <-
-    hazardous_materials %>%
-    tolower() %>%
-    cap_word()
-
-  shape <-
-    shape %>%
-    tolower() %>%
-    cap_word()
-
-  url <- glue::glue("https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&\\
-                    origin={origin_zip}&\\
-                    isOrigMil=False&\\
-                    destination={destination_zip}&\\
-                    isDestMil=False&\\
-                    shippingDate={shipping_date}&\\
-                    shippingTime={shipping_time}&\\
-                    itemValue=&\\
-                    dayOldPoultry={day_old_poultry}&\\
-                    groundTransportation={ground_transportation_needed}&\\
-                    hazmat={hazardous_materials}&\\
-                    liveAnimals={live_animals}&\\
-                    nonnegotiableDocument=False&\\
-                    mailShapeAndSize={type}&\\
-                    pounds={pounds}&\\
-                    ounces={ounces}&\\
-                    length={length}&\\
-                    height={height}&\\
-                    width={width}&\\
-                    girth={girth}&\\
-                    shape={shape}\\
-                    &nonmachinable=False&isEmbedded=False")
-  if (verbose) message(glue::glue("Requesting {url}"))
-
-  resp <- try_n_times(url, n_tries = n_tries)
-
-  if (!is.null(resp$error)) {
-    message(glue::glue("Unsuccessful grabbing data for the supplied arguments."))
-    no_success <-
-      tibble::tibble(
-        origin_zip = origin_zip,
-        dest_zip = destination_zip,
-        title = "no_success",
-        delivery_day = "no_success",
-        retail_price = "no_success",
-        click_n_ship_price = "no_success",
-        dimensions = "no_success",
-        delivery_option = "no_success"
-      )
-
-    resp$Page$MailServices <- no_success
-    resp$PageError <- "no_success"
-
-  } else if (resp$result$PageError == "No Mail Services were found.") {
-    message("No Mail Services were found for this request. Try modifying the argument inputs.")
-    resp$Page$MailServices <-
-      tibble::tibble(
-        origin_zip = origin_zip,
-        dest_zip = destination_zip,
-        title = NA_character_,
-        delivery_day = NA_character_,
-        retail_price = NA_character_,
-        click_n_ship_price = NA_character_,
-        dimensions = NA_character_,
-        delivery_option = NA_character_
-      )
-  }
-
-  return(resp)
-}
-
-
-clean_mail <- function(resp, show_details = FALSE) {
-
-  if (resp$PageError != "") {
-    out <- resp$Page$MailServices
-  } else {
-    nested <-
-      resp$Page$MailServices %>%
-      tibble::as_tibble()
-
-    unnested <-
-      nested %>%
-      purrr::map_df(replace_x) %>%
-      tidyr::unnest(DeliveryOptions)
-
-    out <-
-      unnested %>%
-      janitor::clean_names() %>%
-      dplyr::rename(
-        delivery_option = name,
-        click_n_ship_price = cn_s_price
-      ) %>%
-      dplyr::select(
-        title, delivery_day, retail_price,
-        click_n_ship_price, delivery_option,
-        dimensions, postage_service_id
-      )
-  }
-
-  if (show_details == FALSE) {
-    out <-
-      out %>%
-      dplyr::select(title, delivery_day, retail_price, click_n_ship_price, dimensions)
-  } else if (show_details == TRUE) {
-    out <-
-      out %>%
-      dplyr::select(
-        title, delivery_day, retail_price, click_n_ship_price, dimensions,
-        delivery_option
-      )
-  }
-
-  return(out)
-}
-
 
 extract_dates <- function(d) {
   if (is.na(d) | d == "" | stringr::str_detect(d, "Days")) {
@@ -651,51 +449,61 @@ extract_times <- function(t) {
 
 
 process_mail <- function(origin_zip = NULL,
-                       destination_zip = NULL,
-                       shipping_date = "today",
-                       shipping_time = "now",
-                       ground_transportation_needed = TRUE,
-                       live_animals = FALSE,
-                       day_old_poultry = FALSE,
-                       hazardous_materials = FALSE,
-                       type = c("box", "envelope", "package"),
-                       pounds = 0,
-                       ounces = 0,
-                       length = 0,
-                       height = 0,
-                       width = 0,
-                       girth = 0,
-                       shape = c("rectangular", "nonrectangular"),
-                       n_tries = 3,
-                       show_details = TRUE,
-                       verbose = TRUE) {
+                     destination_zip = NULL,
+                     shipping_date = "today",
+                     shipping_time = "now",
+                     ground_transportation_needed = TRUE,
+                     live_animals = FALSE,
+                     day_old_poultry = FALSE,
+                     hazardous_materials = FALSE,
+                     type = c("box", "envelope", "package"),
+                     pounds = 0,
+                     ounces = 0,
+                     length = 0,
+                     height = 0,
+                     width = 0,
+                     girth = 0,
+                     shape = c("rectangular", "nonrectangular"),
+                     show_details = FALSE,
+                     n_tries = 3,
+                     verbose = TRUE) {
 
-  resp <- get_mail(
-    origin_zip = origin_zip,
-    destination_zip = destination_zip,
-    shipping_date = shipping_date,
-    shipping_time = shipping_time,
-    type = type,
-    ground_transportation_needed = ground_transportation_needed,
-    live_animals = live_animals,
-    day_old_poultry = day_old_poultry,
-    hazardous_materials = hazardous_materials,
-    pounds = pounds,
-    ounces = ounces,
-    length = length,
-    height = height,
-    width = width,
-    girth = girth,
-    shape = shape,
-    n_tries = n_tries,
-    verbose = verbose
-  )
-
-  if (live_animals && verbose) {
-    cowsay::say("Woah Nelly!", by = "buffalo")
+  if (nchar(origin_zip) != 5 | nchar(destination_zip) != 5) {
+    warning("Zip codes supplied must be 5 digits.")
   }
 
-  out <- resp$result
+  char_args <- list(
+    origin_zip, destination_zip,
+    shipping_date, shipping_time, type, shape
+  )
+
+  if (any(purrr::map(char_args, is.character) == FALSE)) {
+    not_char <- char_args[which(purrr::map(char_args, is.character) == FALSE)] %>%
+      stringr::str_c(collapse = ", ")
+    stop(glue::glue("Argument {not_char} is not of type character."))
+  }
+
+  num_args <- list(
+    pounds, ounces, length, width, height, girth
+  )
+
+  if (any(purrr::map(num_args, is.numeric) == FALSE) |
+      any(purrr::map(num_args, ~ .x < 0) == TRUE)) {
+    not_num <- num_args[which(purrr::map(num_args, is.numeric) == FALSE)] %>%
+      stringr::str_c(collapse = ", ")
+    stop(glue::glue("Argument {not_num} is not of type numeric or is < 0."))
+  }
+
+  lgl_args <- list(
+    ground_transportation_needed, live_animals,
+    day_old_poultry, hazardous_materials
+  )
+
+  if (any(purrr::map(lgl_args, is.logical) == FALSE)) {
+    not_lgl <- lgl_args[which(purrr::map(lgl_args, is.logical) == FALSE)] %>%
+      stringr::str_c(collapse = ", ")
+    stop(glue::glue("Argument {not_lgl} is not of type logical."))
+  }
 
   shipping_date <- get_shipping_date(shipping_date,
     verbose = verbose
@@ -704,9 +512,148 @@ process_mail <- function(origin_zip = NULL,
     verbose = verbose
   )
 
+  shipping_date_api <-
+    shipping_date %>%
+    stringr::str_replace_all("-", "%2F")
+
+  shipping_time_api <-
+    shipping_time %>%
+    stringr::str_replace_all(":", "%3A")
+
+  ground_transportation_needed <-
+    ground_transportation_needed %>%
+    tolower() %>%
+    cap_word()
+
+  live_animals <-
+    live_animals %>%
+    tolower() %>%
+    cap_word()
+
+  day_old_poultry <-
+    day_old_poultry %>%
+    tolower() %>%
+    cap_word()
+
+  hazardous_materials <-
+    hazardous_materials %>%
+    tolower() %>%
+    cap_word()
+
+  shape <-
+    shape %>%
+    tolower() %>%
+    cap_word()
+
+  url <- glue::glue("https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&\\
+                    origin={origin_zip}&\\
+                    isOrigMil=False&\\
+                    destination={destination_zip}&\\
+                    isDestMil=False&\\
+                    shippingDate={shipping_date_api}&\\
+                    shippingTime={shipping_time_api}&\\
+                    itemValue=&\\
+                    dayOldPoultry={day_old_poultry}&\\
+                    groundTransportation={ground_transportation_needed}&\\
+                    hazmat={hazardous_materials}&\\
+                    liveAnimals={live_animals}&\\
+                    nonnegotiableDocument=False&\\
+                    mailShapeAndSize={type}&\\
+                    pounds={pounds}&\\
+                    ounces={ounces}&\\
+                    length={length}&\\
+                    height={height}&\\
+                    width={width}&\\
+                    girth={girth}&\\
+                    shape={shape}\\
+                    &nonmachinable=False&isEmbedded=False")
+  if (verbose) message(glue::glue("Requesting {url}"))
+
+  resp <- try_n_times(url, n_tries = n_tries)
+
+  # Error in the request
+  if (!is.null(resp$error)) {
+    message(glue::glue("Unsuccessful grabbing data for the supplied arguments."))
+    out <-
+      tibble::tibble(
+        origin_zip = origin_zip,
+        dest_zip = destination_zip,
+        title = "no_success",
+        delivery_day = "no_success",
+        retail_price = "no_success",
+        click_n_ship_price = "no_success",
+        dimensions = "no_success",
+        delivery_option = "no_success"
+      )
+
+    # We successfully got a response, and it was that there were no services
+  } else if (resp$result$PageError == "No Mail Services were found.") {
+    message("No Mail Services were found for this request. Try modifying the argument inputs.")
+    out <-
+      tibble::tibble(
+        origin_zip = origin_zip,
+        dest_zip = destination_zip,
+        title = NA_character_,
+        delivery_day = NA_character_,
+        retail_price = NA_character_,
+        click_n_ship_price = NA_character_,
+        dimensions = NA_character_,
+        delivery_option = NA_character_
+      )
+
+    # We got a good response
+  } else {
+    resp <- resp$result
+
+    nested <-
+      resp$Page$MailServices %>%
+      tibble::as_tibble()
+
+    unnested <-
+      nested %>%
+      purrr::map_df(replace_x) %>%
+      tidyr::unnest(DeliveryOptions)
+
+    out <-
+      unnested %>%
+      janitor::clean_names() %>%
+      dplyr::rename(
+        delivery_option = name,
+        click_n_ship_price = cn_s_price
+      ) %>%
+      dplyr::select(
+        title, delivery_day, retail_price,
+        click_n_ship_price, delivery_option,
+        dimensions, postage_service_id
+      )
+  }
+
+  if (live_animals == TRUE & verbose == TRUE) {
+    cowsay::say("Woah Nelly!", by = "buffalo")
+  }
+
+  shipping_date <- get_shipping_date(shipping_date,
+    verbose = verbose
+  )
+  shipping_time <- get_shipping_time(shipping_time,
+    verbose = verbose
+  )
+
+  if (show_details == FALSE) {
+    out <-
+      out %>%
+      dplyr::select(title, delivery_day, retail_price, click_n_ship_price, dimensions)
+  } else if (show_details == TRUE) {
+    out <-
+      out %>%
+      dplyr::select(
+        title, delivery_day, retail_price, click_n_ship_price, dimensions,
+        delivery_option
+      )
+  }
+
   out <-
     out %>%
-    clean_mail(show_details = show_details) %>%
     dplyr::mutate(
       origin_zip = origin_zip,
       dest_zip = destination_zip,

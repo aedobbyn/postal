@@ -26,11 +26,6 @@ testthat::test_that("postcalc returns something", {
       ncol()
   )
 
-  testthat::expect_is(
-    lst %>% clean_mail(),
-    "data.frame"
-  )
-
   bad_req <- "https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&origin=60647&isOrigMil=False&destination=11238&isDestMil=False&shippingDate=6%2F22%2F3018+12%3A00%3A00+AM&shippingTime=14%3A29&itemValue=&dayOldPoultry=False&groundTransportation=False&hazmat=False&liveAnimals=False&nonnegotiableDocument=False&mailShapeAndSize=Package&pounds=15&ounces=0&length=0&height=0&width=0&girth=0&shape=Rectangular&nonmachinable=False&isEmbedded=False"
 
   bad_lst <- jsonlite::fromJSON(bad_req)

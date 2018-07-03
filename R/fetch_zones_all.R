@@ -7,7 +7,6 @@
 #' @param as_range Do you want zones corresponding to a range of destination zips or a full listing of them?
 #' @param show_details Should columns with more details be retained?
 #' @param verbose Message what's going on?
-#' @param ... Other arguments
 #'
 #' @details For all the 3-digit origin zip codes, grab all destination zips and their corresponding zones. This is equivalent to running \code{\link{fetch_zones_three_digit}} for all possible 3 digit origin zips.
 #'
@@ -32,13 +31,16 @@ fetch_all <- function(origins = all_possible_origins,
                       n_tries = 3,
                       as_range = FALSE,
                       show_details = FALSE,
-                      verbose = TRUE, ...) {
+                      verbose = TRUE) {
+
   fetch_and_sleep <- function(origin, sleep_time = 1,
-                                verbose = TRUE, ...) {
-    this <- fetch_zones_three_digit(origin,
+                                verbose = TRUE) {
+
+    this <- fetch_zones_three_digit(
+      origin,
       as_range = as_range,
       show_details = show_details,
-      verbose = verbose, ...
+      verbose = verbose
     )
 
     this_sleep <- sleep_time + stats::runif(1)
