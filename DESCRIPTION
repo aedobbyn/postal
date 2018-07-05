@@ -1,10 +1,10 @@
 Package: usps
 Type: Package
-Title: USPS
+Title: United States Postal Service API Interface
 Version: 0.1.0
 Author: Amanda Dobbyn <amanda.e.dobbyn@gmail.com>
 Maintainer: Amanda Dobbyn <amanda.e.dobbyn@gmail.com>
-Description: Interface to the United States Postal Service [Zone Calc API](https://postcalc.usps.com/DomesticZoneChart/).
+Description: Interface to the United States Postal Service Zone Calc API
 Depends: R (>= 2.10)
 License: MIT + file LICENSE
 Encoding: UTF-8
@@ -27,7 +27,6 @@ Imports:
 Suggests: 
     covr,
     cowsay,
-    emo,
     ggplot2,
     here,
     knitr,

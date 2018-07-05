@@ -132,7 +132,7 @@ filtered <-
 
 Remember -- always confusingly, to me, longitude is on the x and latitude is on the y (!)
 
-The map should look fragmented as our `zip_zones` data only covers a quarter of the possible origin-destination pairs. Still, the pattern is clear: zones increase as your destination gets farther away `r emo::ji("tada")`
+The map should look fragmented as our `zip_zones` data only covers a quarter of the possible origin-destination pairs. Still, the pattern is clear: zones increase as your destination gets farther away.
 
 ```{r zone_map, eval=TRUE, warning=FALSE}
 ggplot() +
