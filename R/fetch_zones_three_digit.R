@@ -14,7 +14,7 @@
 #'
 #' @details Displays the result of a query what's shown on the \href{https://postcalc.usps.com/DomesticZoneChart/}{"Get Zone Chart"} tab of the USPS Zone Calc website. If you just want to supply two 5-digit zips and get a single zone back, use \code{fetch_zones_five_digit}.
 #'
-#' @seealso \code{\link{fetch_zones_five_digit}}, \code{\link{fetch_zones_all}}
+#' @seealso \code{\link{fetch_zones_five_digit}}
 #' @importFrom magrittr %>%
 #'
 #' @examples \dontrun{
