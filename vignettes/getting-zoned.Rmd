@@ -104,15 +104,7 @@ So we'll want to take our `zips_lat_long` mapping and use that to attach latitud
 ```
 
 
-We could use the `ggmap` package to get a map of the US like
-
-```{r, eval=FALSE}
-get_googlemap("us", zoom = 4)
-# or
-get_map("us", zoom = 4, maptype = "toner-lite")
-```
-
-but to go simpler, we'll use `ggplot2`'s built-in `map_data` function.
+We could use the `ggmap` package to get a map of the US like `get_googlemap("us", zoom = 4)` but to go simpler, we'll use `ggplot2`'s built-in `map_data` function.
 
 ```{r us_map}
 us <- 

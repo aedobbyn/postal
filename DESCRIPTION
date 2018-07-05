@@ -27,7 +27,7 @@ Imports:
 Suggests: 
     covr,
     cowsay,
-    ggmap,
+    emo,
     ggplot2,
     here,
     knitr,
