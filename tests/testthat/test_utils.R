@@ -94,7 +94,10 @@ testthat::test_that("Trying n times", {
 
 
 testthat::test_that("Assignment of validity", {
-  testthat::expect_message(fetch_zones_three_digit("1"), "Origin zip 001 is not in use.")
+  testthat::expect_message(
+    fetch_zones_three_digit("1"),
+    "Origin zip 001 is not in use.")
+
   testthat::expect_equal(
     "valid",
     get_zones_three_digit("112") %>%
@@ -187,6 +190,11 @@ testthat::test_that("Scrubbing works", {
   )
 
   testthat::expect_equal(
+    extract_times(NA),
+    ""
+  )
+
+  testthat::expect_equal(
     extract_times("Tue, May 5 by 3:00 PM") %>%
       as.character(),
     "15:00"
@@ -238,7 +246,7 @@ testthat::test_that("Extract date works", {
   )
 
   past_month <-
-    months(lubridate::today() - 365)
+    months(lubridate::today() - 30)
 
   past_date <-
     glue::glue("Fri, {past_month} 20")

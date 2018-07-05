@@ -109,7 +109,8 @@ fetch_mail <- function(origin_zip = NULL,
   } else if (type == "package") {
     if (length(shape) > 1 |
       !shape %in% c("rectangular", "nonrectangular")) {
-      stop("If type is package, shape must be either rectangular or nonrectangular")
+      stop("If type is package, \\
+           shape must be either rectangular or nonrectangular")
     }
     if (shape == "nonrectangular") {
       if (is.null(girth) | girth == 0) {
@@ -131,7 +132,8 @@ fetch_mail <- function(origin_zip = NULL,
   )
 
   if (any(purrr::map(char_args, is.character) == FALSE)) {
-    not_char <- char_args[which(purrr::map(char_args, is.character) == FALSE)] %>%
+    not_char <-
+      char_args[which(purrr::map(char_args, is.character) == FALSE)] %>%
       stringr::str_c(collapse = ", ")
     stop(glue::glue("Argument {not_char} is not of type character."))
   }
@@ -165,6 +167,10 @@ fetch_mail <- function(origin_zip = NULL,
   shipping_time <- get_shipping_time(shipping_time,
                                      verbose = verbose
   )
+
+  if (live_animals == TRUE && verbose == TRUE) {
+    cowsay::say("Woah Nelly!", by = "buffalo")
+  }
 
   shipping_date_api <-
     shipping_date %>%
@@ -282,10 +288,6 @@ fetch_mail <- function(origin_zip = NULL,
       )
   }
 
-  if (live_animals == TRUE & verbose == TRUE) {
-    cowsay::say("Woah Nelly!", by = "buffalo")
-  }
-
   shipping_date <- get_shipping_date(shipping_date,
                                      verbose = verbose
   )
@@ -296,7 +298,8 @@ fetch_mail <- function(origin_zip = NULL,
   if (show_details == FALSE) {
     out <-
       out %>%
-      dplyr::select(title, delivery_day, retail_price, click_n_ship_price, dimensions)
+      dplyr::select(title, delivery_day,
+                    retail_price, click_n_ship_price, dimensions)
   } else if (show_details == TRUE) {
     out <-
       out %>%

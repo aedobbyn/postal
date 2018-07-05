@@ -229,7 +229,8 @@ clean_zones <- function(dat, origin_zip) {
     dplyr::mutate(
       origin_zip = origin_zip
     ) %>%
-    dplyr::distinct(origin_zip, dest_zip_start, dest_zip_end, zone, .keep_all = TRUE) %>%
+    dplyr::distinct(origin_zip, dest_zip_start,
+                    dest_zip_end, zone, .keep_all = TRUE) %>%
     dplyr::select(origin_zip, dplyr::everything()) %>%
     dplyr::arrange(dest_zip_start, dest_zip_end)
 

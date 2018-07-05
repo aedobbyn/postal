@@ -96,7 +96,9 @@ fetch_zones_five_digit <- function(origin_zip, destination_zip,
           FALSE, TRUE
         ),
       ) %>%
-      dplyr::select(origin_zip, dest_zip, zone, specific_to_priority_mail, local, same_ndc, full_response)
+      dplyr::select(origin_zip, dest_zip, zone,
+                    specific_to_priority_mail, local,
+                    same_ndc, full_response)
   } else {
     out <- out %>%
       dplyr::select(origin_zip, dest_zip, zone)
