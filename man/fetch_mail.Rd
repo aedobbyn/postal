@@ -43,14 +43,14 @@ fetch_mail(origin_zip = NULL, destination_zip = NULL,
 
 \item{girth}{(numeric) Girth of the package in inches. Required if \code{shape} is "nonrectangular". This is the distance around the thickest part.}
 
-\item{shape}{(character) Shape of the package: "rectangular" or "nonrectangular". "nonrectangular" reqires a non-null \code{girth} value.
+\item{shape}{(character) Shape of the package: "rectangular" or "nonrectangular". "nonrectangular" requires a non-null \code{girth} value.
 If \code{type} is box or envelope, \code{shape} will always be "rectangular".}
 
 \item{show_details}{(boolean) Non-essential details of the response are hidden by default. Show them by setting this to TRUE.}
 
 \item{n_tries}{(numeric) How many times to try the API if at first we don't succeed.}
 
-\item{verbose}{(boolean) Should information like the shipping date time be dispalyed if the defaults "today" and "now" are chosen be messageed?}
+\item{verbose}{(boolean) Should information like the shipping date time be displayed if the defaults "today" and "now" are chosen be messaged?}
 }
 \value{
 A tibble with information for different postage options, including price and box/envelope dimensions.
@@ -63,13 +63,13 @@ Supply the required information about the package and receive a tibble. Displays
 
 If \code{type} is "envelope" or "box", the response is the same regardless of measurements (\code{pounds}, \code{ounces}, \code{height}, \code{width}, \code{girth} and \code{shape}) applied. These only vary outcomes for "package"s.
 
-The result can be further cleaned and stardardized by piping the result to \code{scrub_mail}.
+The result can be further cleaned and standardized by piping the result to \code{scrub_mail}.
 
 Multiple origins, destinations, and other options can be supplied and mapped together using, e.g. \code{purrr::pmap}.
 
 The API is tried \code{n_tries} times until a tibble is returned with \code{no_success} in columns that could not be returned. This indicates either that the connection was interrupted during the request or that one or more of the arguments supplied were malformed.
 
-If a response is successfully recieved but there are no shipping options, the columns are filled with \code{NA}s.
+If a response is successfully received but there are no shipping options, the columns are filled with \code{NA}s.
 }
 \examples{
 \dontrun{
