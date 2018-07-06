@@ -108,7 +108,7 @@ We could use the `ggmap` package to get a map of the US like `get_googlemap("us"
 
 ```{r us_map}
 us <- 
-  map_data("state") %>%
+  ggplot2::map_data("state") %>%
   as_tibble() 
 ```
 
