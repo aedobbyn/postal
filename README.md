@@ -4,23 +4,23 @@ output: github_document
 
 
 
-# usps 📫
+# postal 📫
 
 [![Project Status: Active - The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
-[![Travis build status](https://travis-ci.org/aedobbyn/usps.svg?branch=master)](https://travis-ci.org/aedobbyn/usps)
-[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/aedobbyn/usps?branch=master&svg=true)](https://ci.appveyor.com/project/aedobbyn/usps)
-[![Coverage status](https://codecov.io/gh/aedobbyn/usps/branch/master/graph/badge.svg)](https://codecov.io/github/aedobbyn/usps?branch=master)
+[![Travis build status](https://travis-ci.org/aedobbyn/postal.svg?branch=master)](https://travis-ci.org/aedobbyn/postal)
+[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/aedobbyn/postal?branch=master&svg=true)](https://ci.appveyor.com/project/aedobbyn/postal)
+[![Coverage status](https://codecov.io/gh/aedobbyn/postal/branch/master/graph/badge.svg)](https://codecov.io/github/aedobbyn/postal?branch=master)
 
 Want an estimate of the price of sending a package somewhere via the US Postal Service? Need to get the USPS shipping zone between two zip codes? 
 
-Well, this is a 📦 for your 📦s. `usps` provides a tidy interface to the USPS domestic [zone calc](https://postcalc.usps.com/DomesticZoneChart/) and [post calc](https://postcalc.usps.com/Calculator/) APIs. 
+Well, this is a 📦 for your 📦s. `postal` provides a tidy interface to the USPS domestic [zone calc](https://postcalc.postal.com/DomesticZoneChart/) and [post calc](https://postcalc.postal.com/Calculator/) APIs. 
 
 ### Installation 
 
 
 ```r
 # install.packages("devtools")
-devtools::install_github("aedobbyn/usps")
+devtools::install_github("aedobbyn/postal")
 ```
 
 
@@ -45,7 +45,7 @@ Specify a 5-digit origin zip and destination zip, along with the date and time y
 
 
 ```r
-library(usps)
+library(postal)
 ```
 
 USPS offers many colorful options to handle all your shipping needs, which are included in the arguments to `fetch_mail`. So to answer the burning question...what if we wanted to ship live animals from Wyoming to Philly by ground on July 2 at 2:30pm in a nonrectangular package?? 
@@ -102,14 +102,13 @@ For a more usual case, we'll send a 15lb package from Portland, Maine to Portlan
          show_details = TRUE)) %>% 
   dplyr::slice(1:3)
 #> Using ship on date 2018-07-05.
-#> Using ship on time 10:26.
-#> Requesting https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&origin=04101&isOrigMil=False&destination=97211&isDestMil=False&shippingDate=2018%2F07%2F05&shippingTime=10%3A26&itemValue=&dayOldPoultry=False&groundTransportation=False&hazmat=False&liveAnimals=False&nonnegotiableDocument=False&mailShapeAndSize=Package&pounds=15&ounces=0&length=0&height=0&width=0&girth=0&shape=Rectangular&nonmachinable=False&isEmbedded=False
+#> Using ship on time 21:53.
 #> # A tibble: 3 x 10
 #>   origin_zip dest_zip title    delivery_day  retail_price click_n_ship_pr…
 #>   <chr>      <chr>    <chr>    <chr>         <chr>        <chr>           
-#> 1 04101      97211    Priorit… Fri, Jul 6 b… $114.50      $114.50         
-#> 2 04101      97211    Priorit… Fri, Jul 6 b… $114.50      $114.50         
-#> 3 04101      97211    Priorit… Fri, Jul 6 b… $119.50      $119.50         
+#> 1 04101      97211    Priorit… Sat, Jul 7 b… $114.50      $114.50         
+#> 2 04101      97211    Priorit… Sat, Jul 7 b… $114.50      $114.50         
+#> 3 04101      97211    Priorit… Sat, Jul 7 b… $119.50      $119.50         
 #> # ... with 4 more variables: dimensions <chr>, delivery_option <chr>,
 #> #   shipping_date <chr>, shipping_time <chr>
 
@@ -122,9 +121,9 @@ mail %>%
 
 |origin_zip |dest_zip |title                        |delivery_day           |retail_price |click_n_ship_price |dimensions |delivery_option      |shipping_date |shipping_time |
 |:----------|:--------|:----------------------------|:----------------------|:------------|:------------------|:----------|:--------------------|:-------------|:-------------|
-|04101      |97211    |Priority Mail Express 1-Day™ |Fri, Jul 6 by 3:00 PM  |$114.50      |$114.50            |           |Normal Delivery Time |2018-07-05    |10:26         |
-|04101      |97211    |Priority Mail Express 1-Day™ |Fri, Jul 6 by 10:30 AM |$114.50      |$114.50            |           |Hold For Pickup      |2018-07-05    |10:26         |
-|04101      |97211    |Priority Mail Express 1-Day™ |Fri, Jul 6 by 10:30 AM |$119.50      |$119.50            |           |10:30 AM Delivery    |2018-07-05    |10:26         |
+|04101      |97211    |Priority Mail Express 2-Day™ |Sat, Jul 7 by 3:00 PM  |$114.50      |$114.50            |           |Normal Delivery Time |2018-07-05    |21:53         |
+|04101      |97211    |Priority Mail Express 2-Day™ |Sat, Jul 7 by 10:30 AM |$114.50      |$114.50            |           |Hold For Pickup      |2018-07-05    |21:53         |
+|04101      |97211    |Priority Mail Express 2-Day™ |Sat, Jul 7 by 10:30 AM |$119.50      |$119.50            |           |10:30 AM Delivery    |2018-07-05    |21:53         |
 
 The web interface should display the same results:
 
@@ -149,9 +148,9 @@ mail %>%
 #> # A tibble: 3 x 12
 #>   delivery_date delivery_by_time delivery_duration retail_price
 #>   <date>        <chr>            <time>                   <dbl>
-#> 1 2018-07-06    15:00            1                         114.
-#> 2 2018-07-06    10:30            1                         114.
-#> 3 2018-07-06    10:30            1                         120.
+#> 1 2018-07-07    15:00            2                         114.
+#> 2 2018-07-07    10:30            2                         114.
+#> 3 2018-07-07    10:30            2                         120.
 #> # ... with 8 more variables: click_n_ship_price <dbl>, origin_zip <chr>,
 #> #   dest_zip <chr>, title <chr>, dimensions <chr>, delivery_option <chr>,
 #> #   shipping_date <chr>, shipping_time <chr>
@@ -188,20 +187,20 @@ purrr::map2_dfr(
 #> # A tibble: 14 x 9
 #>    origin_zip dest_zip title    delivery_day retail_price click_n_ship_pr…
 #>    <chr>      <chr>    <chr>    <chr>        <chr>        <chr>           
-#>  1 11238      98109    Priorit… Sat, Jul 7   $18.90       $18.90          
-#>  2 11238      98109    Priorit… Sat, Jul 7   Not availab… $18.90          
-#>  3 11238      98109    Priorit… Sat, Jul 7   $13.65       $13.65          
-#>  4 11238      98109    Priorit… Sat, Jul 7   Not availab… $13.65          
-#>  5 11238      98109    Priorit… Sat, Jul 7   $7.20        $7.20           
-#>  6 11238      98109    Priorit… Sat, Jul 7   Not availab… $7.20           
+#>  1 11238      98109    Priorit… Mon, Jul 9   $18.90       $18.90          
+#>  2 11238      98109    Priorit… Sun, Jul 8   Not availab… $18.90          
+#>  3 11238      98109    Priorit… Mon, Jul 9   $13.65       $13.65          
+#>  4 11238      98109    Priorit… Sun, Jul 8   Not availab… $13.65          
+#>  5 11238      98109    Priorit… Mon, Jul 9   $7.20        $7.20           
+#>  6 11238      98109    Priorit… Sun, Jul 8   Not availab… $7.20           
 #>  7 foo        94707    no_succ… no_success   no_success   no_success      
 #>  8 60647      bar      no_succ… no_success   no_success   no_success      
-#>  9 80222      04123    Priorit… Sat, Jul 7   $18.90       $18.90          
-#> 10 80222      04123    Priorit… Sat, Jul 7   Not availab… $18.90          
-#> 11 80222      04123    Priorit… Sat, Jul 7   $13.65       $13.65          
-#> 12 80222      04123    Priorit… Sat, Jul 7   Not availab… $13.65          
-#> 13 80222      04123    Priorit… Sat, Jul 7   $7.20        $7.20           
-#> 14 80222      04123    Priorit… Sat, Jul 7   Not availab… $7.20           
+#>  9 80222      04123    Priorit… Mon, Jul 9   $18.90       $18.90          
+#> 10 80222      04123    Priorit… Mon, Jul 9   Not availab… $18.90          
+#> 11 80222      04123    Priorit… Mon, Jul 9   $13.65       $13.65          
+#> 12 80222      04123    Priorit… Mon, Jul 9   Not availab… $13.65          
+#> 13 80222      04123    Priorit… Mon, Jul 9   $7.20        $7.20           
+#> 14 80222      04123    Priorit… Mon, Jul 9   Not availab… $7.20           
 #> # ... with 3 more variables: dimensions <chr>, shipping_date <chr>,
 #> #   shipping_time <chr>
 ```
@@ -216,8 +215,7 @@ fetch_mail(origin_zip = "04101",
          shipping_date = "3018-07-04",  # way in the future!
          type = "package",
          show_details = TRUE)
-#> Using ship on time 10:27.
-#> Requesting https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&origin=04101&isOrigMil=False&destination=97211&isDestMil=False&shippingDate=3018%2F07%2F04&shippingTime=10%3A27&itemValue=&dayOldPoultry=False&groundTransportation=False&hazmat=False&liveAnimals=False&nonnegotiableDocument=False&mailShapeAndSize=Package&pounds=0&ounces=0&length=0&height=0&width=0&girth=0&shape=Rectangular&nonmachinable=False&isEmbedded=False
+#> Using ship on time 21:54.
 #> No Mail Services were found for this request. Try modifying the argument inputs.
 #> # A tibble: 1 x 10
 #>   origin_zip dest_zip title delivery_day retail_price click_n_ship_price
@@ -312,7 +310,7 @@ origin_zips %>%
 ```
 
 
-Similarly, map over both origin and destination zips and end up at a dataframe. `verbose` gives you a play-by-play if you want it. (More on auto-prepending leading 0s to input zips in the [On Digits](https://github.com/aedobbyn/usps#on-digits) section below.)
+Similarly, map over both origin and destination zips and end up at a dataframe. `verbose` gives you a play-by-play if you want it. (More on auto-prepending leading 0s to input zips in the [On Digits](https://github.com/aedobbyn/postal#on-digits) section below.)
 
 
 ```r
@@ -474,7 +472,7 @@ fetch_zones_five_digit("31415", "92653")
 #> 1 31415      92653    8
 ```
 
-Details given when `show_details = TRUE` in `fetch_zones_five_digit` are slightly different than they are for `fetch_zones_three_digit` (see [Details](https://github.com/aedobbyn/usps#details)).
+Details given when `show_details = TRUE` in `fetch_zones_five_digit` are slightly different than they are for `fetch_zones_three_digit` (see [Details](https://github.com/aedobbyn/postal#details)).
 
 <br>
 
@@ -548,11 +546,11 @@ zips_zones_sample
 ```
 
 
-The sample is about a quarter of the total number of rows between all origin prefixes and all destination prefixes, plus the 5 digit exceptions (~4m rows). See it put to use in the [vignette](https://github.com/aedobbyn/usps/blob/dev/vignettes/getting-zoned.Rmd).
+The sample is about a quarter of the total number of rows between all origin prefixes and all destination prefixes, plus the 5 digit exceptions (~4m rows). See it put to use in the [vignette](https://github.com/aedobbyn/postal/blob/dev/vignettes/getting-zoned.Rmd).
 
 <br>
 
-That's it! [Bug reports](https://github.com/aedobbyn/usps/issues) and PRs welcome! 📬
+That's it! [Bug reports](https://github.com/aedobbyn/postal/issues) and PRs welcome! 📬
 
 <p align="center">
   <img src="https://media.giphy.com/media/2fTYDdciZFEKZJgY7g/giphy.gif" alt="catch_mailman">

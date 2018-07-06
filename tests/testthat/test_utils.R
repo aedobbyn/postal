@@ -96,7 +96,8 @@ testthat::test_that("Trying n times", {
 testthat::test_that("Assignment of validity", {
   testthat::expect_message(
     fetch_zones_three_digit("1"),
-    "Origin zip 001 is not in use.")
+    "Origin zip 001 is not in use."
+  )
 
   testthat::expect_equal(
     "valid",

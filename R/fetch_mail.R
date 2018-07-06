@@ -143,7 +143,7 @@ fetch_mail <- function(origin_zip = NULL,
   )
 
   if (any(purrr::map(num_args, is.numeric) == FALSE) |
-      any(purrr::map(num_args, ~.x < 0) == TRUE)) {
+    any(purrr::map(num_args, ~.x < 0) == TRUE)) {
     not_num <- num_args[which(purrr::map(num_args, is.numeric) == FALSE)] %>%
       stringr::str_c(collapse = ", ")
     stop(glue::glue("Argument {not_num} is not of type numeric or is < 0."))
@@ -162,10 +162,10 @@ fetch_mail <- function(origin_zip = NULL,
   }
 
   shipping_date <- get_shipping_date(shipping_date,
-                                     verbose = verbose
+    verbose = verbose
   )
   shipping_time <- get_shipping_time(shipping_time,
-                                     verbose = verbose
+    verbose = verbose
   )
 
   if (live_animals == TRUE && verbose == TRUE) {
@@ -227,7 +227,6 @@ fetch_mail <- function(origin_zip = NULL,
                     girth={girth}&\\
                     shape={shape}\\
                     &nonmachinable=False&isEmbedded=False")
-  if (verbose) message(glue::glue("Requesting {url}"))
 
   resp <- try_n_times(url, n_tries = n_tries)
 
@@ -289,17 +288,19 @@ fetch_mail <- function(origin_zip = NULL,
   }
 
   shipping_date <- get_shipping_date(shipping_date,
-                                     verbose = verbose
+    verbose = verbose
   )
   shipping_time <- get_shipping_time(shipping_time,
-                                     verbose = verbose
+    verbose = verbose
   )
 
   if (show_details == FALSE) {
     out <-
       out %>%
-      dplyr::select(title, delivery_day,
-                    retail_price, click_n_ship_price, dimensions)
+      dplyr::select(
+        title, delivery_day,
+        retail_price, click_n_ship_price, dimensions
+      )
   } else if (show_details == TRUE) {
     out <-
       out %>%
