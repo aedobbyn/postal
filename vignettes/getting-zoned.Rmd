@@ -17,6 +17,7 @@ knitr::opts_chunk$set(
 
 ```{r load_pkgs, message=FALSE}
 library(ggplot2)
+library(maps)
 library(glue)
 library(dplyr)
 library(tidyr)
