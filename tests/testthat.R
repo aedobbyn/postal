@@ -1,4 +1,4 @@
 library(testthat)
-library(usps)
+library(postal)
 
-test_check("usps")
+test_check("postal")
