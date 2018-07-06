@@ -20,24 +20,24 @@ library(ggplot2)
 library(glue)
 library(dplyr)
 library(tidyr)
-library(usps)
+library(postal)
 library(zipcode)
 ```
 
-The `usps::zips_zones_sample` dataset provides a quarter of the ~4 million 3-digit origin-destination pairs. (If you want allll of them, you can run `fetch_all` and put on a pot of coffee.) 
+The `postal::zips_zones_sample` dataset provides a quarter of the ~4 million 3-digit origin-destination pairs. (If you want allll of them, you can run `fetch_all` and put on a pot of coffee.) 
 
 What if we wanted to use that to plot how zones increase as the destination gets farther from the origin?
 
-We'll need a measure of latitude and longitude for that. Luckily, data from the [`zipcode`](https://github.com/cran/zipcode) package relates every zip codes to its latitude and longitude. We can that along with  the *partial* data in `usps::zips_zones_sample` to match up zips to latitudes and longitudes.
+We'll need a measure of latitude and longitude for that. Luckily, data from the [`zipcode`](https://github.com/cran/zipcode) package relates every zip codes to its latitude and longitude. We can that along with  the *partial* data in `postal::zips_zones_sample` to match up zips to latitudes and longitudes.
 
-Let's load in the randomly sampled `usps` package data. 
+Let's load in the randomly sampled `postal` package data. 
 
 ```{r}
 data(zips_zones_sample)
 zips_zones_sample
 ```
 
-Later we'll `select` away all the other details and focus just on `origin_zip`, `dest_zip`, and `zone`. As we know, the `usps::zip_zones` data displays all origin zips as 3 digit prefixes and most destination zips as 3 digits as well.
+Later we'll `select` away all the other details and focus just on `origin_zip`, `dest_zip`, and `zone`. As we know, the `postal::zip_zones` data displays all origin zips as 3 digit prefixes and most destination zips as 3 digits as well.
 
 However, the `zipcode::zipcode` data displays zips in the usual way, as 5 digit. 
 

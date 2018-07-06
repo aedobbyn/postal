@@ -11,8 +11,8 @@
 #' To get postage information, use \code{fetch_mail}.
 #' To get zones, use \code{get_zone_three_digit} or \code{get_zone_five_digit}.
 #'
-#' The zones vignette can be found with \code{browseVignettes(package = "usps")}.
+#' The zones vignette can be found with \code{browseVignettes(package = "postal")}.
 
-#' @name usps
+#' @name postal
 #' @docType package
 NULL

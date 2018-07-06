@@ -12,22 +12,22 @@ knitr::opts_chunk$set(
 )
 ```
 
-# usps `r emo::ji("mailbox")`
+# postal `r emo::ji("mailbox")`
 
 [![Project Status: Active - The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
-[![Travis build status](https://travis-ci.org/aedobbyn/usps.svg?branch=master)](https://travis-ci.org/aedobbyn/usps)
-[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/aedobbyn/usps?branch=master&svg=true)](https://ci.appveyor.com/project/aedobbyn/usps)
-[![Coverage status](https://codecov.io/gh/aedobbyn/usps/branch/master/graph/badge.svg)](https://codecov.io/github/aedobbyn/usps?branch=master)
+[![Travis build status](https://travis-ci.org/aedobbyn/postal.svg?branch=master)](https://travis-ci.org/aedobbyn/postal)
+[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/aedobbyn/postal?branch=master&svg=true)](https://ci.appveyor.com/project/aedobbyn/postal)
+[![Coverage status](https://codecov.io/gh/aedobbyn/postal/branch/master/graph/badge.svg)](https://codecov.io/github/aedobbyn/postal?branch=master)
 
 Want an estimate of the price of sending a package somewhere via the US Postal Service? Need to get the USPS shipping zone between two zip codes? 
 
-Well, this is a `r emo::ji("package")` for your `r emo::ji("package")`s. `usps` provides a tidy interface to the USPS domestic [zone calc](https://postcalc.usps.com/DomesticZoneChart/) and [post calc](https://postcalc.usps.com/Calculator/) APIs. 
+Well, this is a `r emo::ji("package")` for your `r emo::ji("package")`s. `postal` provides a tidy interface to the USPS domestic [zone calc](https://postcalc.postal.com/DomesticZoneChart/) and [post calc](https://postcalc.postal.com/Calculator/) APIs. 
 
 ### Installation 
 
 ```{r, eval=FALSE}
 # install.packages("devtools")
-devtools::install_github("aedobbyn/usps")
+devtools::install_github("aedobbyn/postal")
 ```
 
 
@@ -51,7 +51,7 @@ Currently only destinations in the US are supported.
 Specify a 5-digit origin zip and destination zip, along with the date and time you're going to be shipping (`"today"` and `"now"` are allowed). Other specifics are optionals. 
 
 ```{r}
-library(usps)
+library(postal)
 ```
 
 USPS offers many colorful options to handle all your shipping needs, which are included in the arguments to `fetch_mail`. So to answer the burning question...what if we wanted to ship live animals from Wyoming to Philly by ground on July 2 at 2:30pm in a nonrectangular package?? 
@@ -210,7 +210,7 @@ origin_zips %>%
 ```
 
 
-Similarly, map over both origin and destination zips and end up at a dataframe. `verbose` gives you a play-by-play if you want it. (More on auto-prepending leading 0s to input zips in the [On Digits](https://github.com/aedobbyn/usps#on-digits) section below.)
+Similarly, map over both origin and destination zips and end up at a dataframe. `verbose` gives you a play-by-play if you want it. (More on auto-prepending leading 0s to input zips in the [On Digits](https://github.com/aedobbyn/postal#on-digits) section below.)
 
 ```{r}
 dest_zips <- c("867", "53", "09")
@@ -306,7 +306,7 @@ But if you just want to use the equivalent of the ["Get Zone for ZIP Code Pair"]
 fetch_zones_five_digit("31415", "92653")
 ```
 
-Details given when `show_details = TRUE` in `fetch_zones_five_digit` are slightly different than they are for `fetch_zones_three_digit` (see [Details](https://github.com/aedobbyn/usps#details)).
+Details given when `show_details = TRUE` in `fetch_zones_five_digit` are slightly different than they are for `fetch_zones_three_digit` (see [Details](https://github.com/aedobbyn/postal#details)).
 
 <br>
 
@@ -362,11 +362,11 @@ zips_zones_sample
 ```
 
 
-The sample is about a quarter of the total number of rows between all origin prefixes and all destination prefixes, plus the 5 digit exceptions (~4m rows). See it put to use in the [vignette](https://github.com/aedobbyn/usps/blob/dev/vignettes/getting-zoned.Rmd).
+The sample is about a quarter of the total number of rows between all origin prefixes and all destination prefixes, plus the 5 digit exceptions (~4m rows). See it put to use in the [vignette](https://github.com/aedobbyn/postal/blob/dev/vignettes/getting-zoned.Rmd).
 
 <br>
 
-That's it! [Bug reports](https://github.com/aedobbyn/usps/issues) and PRs welcome! `r emo::ji("mailbox_with_mail")`
+That's it! [Bug reports](https://github.com/aedobbyn/postal/issues) and PRs welcome! `r emo::ji("mailbox_with_mail")`
 
 <p align="center">
   <img src="https://media.giphy.com/media/2fTYDdciZFEKZJgY7g/giphy.gif" alt="catch_mailman">

@@ -9,5 +9,5 @@ This is a first-time submission.
 0 errors | 0 warnings | 0 note
 
 ## Downstream dependencies
-I have also run R CMD check on downstream dependencies of usps.
+I have also run R CMD check on downstream dependencies of postal.
 All packages that I could install passed.
