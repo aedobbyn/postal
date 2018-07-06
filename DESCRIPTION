@@ -4,7 +4,7 @@ Title: United States Postal Service API Interface
 Version: 0.1.0
 Author: Amanda Dobbyn <amanda.e.dobbyn@gmail.com>
 Maintainer: Amanda Dobbyn <amanda.e.dobbyn@gmail.com>
-Description: This package serves as an interface to the United States Postal Service Post Calc and Zone Calc APIs. 
+Description: postal serves as an interface to the United States Postal Service Post Calc and Zone Calc APIs. 
   It allows users to find the postage price, delivery day, and other information for packages and envelopes, 
   as well as to find the postal zone for an origin and a destination zip code pair.
 Depends: R (>= 2.10)
