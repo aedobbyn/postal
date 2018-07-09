@@ -1,4 +1,4 @@
-This is a first-time submission.
+This is a resubmission that fixes the warning that `maps` is required for `map_data`.
 
 ## Test environments
 
