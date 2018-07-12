@@ -48,7 +48,7 @@ Currently only destinations in the US are supported.
 
 ### Usage
 
-Specify a 5-digit origin zip and destination zip, along with the date and time you're going to be shipping (`"today"` and `"now"` are allowed). Other specifics are optionals. 
+Specify a 5-digit origin zip and destination zip, along with the date and time you're going to be shipping (`"today"` and `"now"` are allowed). Other specifics are optional. 
 
 ```{r}
 library(postal)
