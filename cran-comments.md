@@ -1,8 +1,8 @@
-This is a resubmission that fixes the warning that `maps` is required for `map_data`.
+This is a resubmission that fixes the an outdated test (the first test in test_fetch_mail.R) that requested data for a date that is too far in the past now. The test now asks for data for the current day and time.
 
 ## Test environments
 
-* Local OS X install, R 3.5.0
+* Local OS X install, R 3.5.1
 * Linux "trusty" and OS X on Travis-CI
 * Windows on Appveyor
 

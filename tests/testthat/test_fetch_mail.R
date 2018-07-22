@@ -1,7 +1,15 @@
 testthat::context("Test mail fetching")
 
 testthat::test_that("postcalc returns something", {
-  test <- "https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&origin=60647&isOrigMil=False&destination=11238&isDestMil=False&shippingDate=6%2F22%2F2018+12%3A00%3A00+AM&shippingTime=14%3A29&itemValue=&dayOldPoultry=False&groundTransportation=False&hazmat=False&liveAnimals=False&nonnegotiableDocument=False&mailShapeAndSize=Package&pounds=15&ounces=0&length=0&height=0&width=0&girth=0&shape=Rectangular&nonmachinable=False&isEmbedded=False"
+  this_date <- get_shipping_date("today") %>%
+    stringr::str_replace_all("-", "%2F")
+
+  this_time <- get_shipping_date("now") %>%
+    stringr::str_replace_all(":", "%3A")
+
+  test <- glue::glue("https://postcalc.usps.com/Calculator/GetMailServices?countryID=0&countryCode=US&origin=60647&isOrigMil=False&destination=11238&isDestMil=False&shippingDate={this_date}&shippingTime={this_time}6%2F22%2F2018+12%3A00%3A00+AM&shippingTime=14%3A29&itemValue=&dayOldPoultry=False&groundTransportation=False&hazmat=False&liveAnimals=False&nonnegotiableDocument=False&mailShapeAndSize=Package&pounds=15&ounces=0&length=0&height=0&width=0&girth=0&shape=Rectangular&nonmachinable=False&isEmbedded=False")
+
+  # Original hard-coded day and time: "shippingDate=6%2F22%2F2018+12%3A00%3A00+AM&shippingTime=14%3A29"
 
   lst <- jsonlite::fromJSON(test)
 

@@ -109,8 +109,7 @@ fetch_mail <- function(origin_zip = NULL,
   } else if (type == "package") {
     if (length(shape) > 1 |
       !shape %in% c("rectangular", "nonrectangular")) {
-      stop("If type is package, \\
-           shape must be either rectangular or nonrectangular")
+      stop("If type is package, shape must be either rectangular or nonrectangular")
     }
     if (shape == "nonrectangular") {
       if (is.null(girth) | girth == 0) {
@@ -245,7 +244,7 @@ fetch_mail <- function(origin_zip = NULL,
         delivery_option = "no_success"
       )
 
-    # We successfully got a response, and it was that there were no services
+  # We successfully got a response, and it was that there were no services
   } else if (resp$result$PageError == "No Mail Services were found.") {
     message("No Mail Services were found for this request. Try modifying the argument inputs.")
     out <-
@@ -260,7 +259,7 @@ fetch_mail <- function(origin_zip = NULL,
         delivery_option = NA_character_
       )
 
-    # We got a good response
+  # We got a good response
   } else {
     resp <- resp$result
 
