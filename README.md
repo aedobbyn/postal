@@ -8,7 +8,8 @@ developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repo
 status](https://travis-ci.org/aedobbyn/postal.svg?branch=master)](https://travis-ci.org/aedobbyn/postal)
 [![Coverage
 status](https://codecov.io/gh/aedobbyn/postal/branch/master/graph/badge.svg)](https://codecov.io/github/aedobbyn/postal?branch=master)
-<!-- [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/aedobbyn/postal?branch=master&svg=true)](https://ci.appveyor.com/project/aedobbyn/postal) -->
+[![AppVeyor Build
+Status](https://ci.appveyor.com/api/projects/status/github/aedobbyn/postal?branch=master&svg=true)](https://ci.appveyor.com/project/aedobbyn/postal)
 
 Want an estimate of the price of sending a package somewhere via the US
 Postal Service? Need to get the USPS shipping zone between two zip
@@ -109,14 +110,14 @@ their prices, dimensions, and delivery dates.
          shape = "rectangular",
          show_details = TRUE)) %>% 
   dplyr::slice(1:3)
-#> Using ship on date 2018-07-16.
-#> Using ship on time 10:28.
+#> Using ship on date 2018-07-22.
+#> Using ship on time 16:05.
 #> # A tibble: 3 x 10
 #>   origin_zip dest_zip title    delivery_day  retail_price click_n_ship_pr…
 #>   <chr>      <chr>    <chr>    <chr>         <chr>        <chr>           
-#> 1 04101      97211    Priorit… Tue, Jul 17 … $114.50      $114.50         
-#> 2 04101      97211    Priorit… Tue, Jul 17 … $114.50      $114.50         
-#> 3 04101      97211    Priorit… Tue, Jul 17 … $119.50      $119.50         
+#> 1 04101      97211    Priorit… Tue, Jul 24 … $114.50      $114.50         
+#> 2 04101      97211    Priorit… Tue, Jul 24 … $114.50      $114.50         
+#> 3 04101      97211    Priorit… Tue, Jul 24 … $119.50      $119.50         
 #> # ... with 4 more variables: dimensions <chr>, delivery_option <chr>,
 #> #   shipping_date <chr>, shipping_time <chr>
 
@@ -127,9 +128,9 @@ mail %>%
 
 | origin\_zip | dest\_zip | title                        | delivery\_day           | retail\_price | click\_n\_ship\_price | dimensions | delivery\_option     | shipping\_date | shipping\_time |
 | :---------- | :-------- | :--------------------------- | :---------------------- | :------------ | :-------------------- | :--------- | :------------------- | :------------- | :------------- |
-| 04101       | 97211     | Priority Mail Express 1-Day™ | Tue, Jul 17 by 3:00 PM  | $114.50       | $114.50               |            | Normal Delivery Time | 2018-07-16     | 10:28          |
-| 04101       | 97211     | Priority Mail Express 1-Day™ | Tue, Jul 17 by 10:30 AM | $114.50       | $114.50               |            | Hold For Pickup      | 2018-07-16     | 10:28          |
-| 04101       | 97211     | Priority Mail Express 1-Day™ | Tue, Jul 17 by 10:30 AM | $119.50       | $119.50               |            | 10:30 AM Delivery    | 2018-07-16     | 10:28          |
+| 04101       | 97211     | Priority Mail Express 2-Day™ | Tue, Jul 24 by 3:00 PM  | $114.50       | $114.50               |            | Normal Delivery Time | 2018-07-22     | 16:05          |
+| 04101       | 97211     | Priority Mail Express 2-Day™ | Tue, Jul 24 by 10:30 AM | $114.50       | $114.50               |            | Hold For Pickup      | 2018-07-22     | 16:05          |
+| 04101       | 97211     | Priority Mail Express 2-Day™ | Tue, Jul 24 by 10:30 AM | $119.50       | $119.50               |            | 10:30 AM Delivery    | 2018-07-22     | 16:05          |
 
 The web interface should display the same
 results:
@@ -161,9 +162,9 @@ mail %>%
 #> # A tibble: 3 x 12
 #>   delivery_date delivery_by_time delivery_duration retail_price
 #>   <date>        <chr>            <time>                   <dbl>
-#> 1 2018-07-17    15:00            1                         114.
-#> 2 2018-07-17    10:30            1                         114.
-#> 3 2018-07-17    10:30            1                         120.
+#> 1 2018-07-24    15:00            2                         114.
+#> 2 2018-07-24    10:30            2                         114.
+#> 3 2018-07-24    10:30            2                         120.
 #> # ... with 8 more variables: click_n_ship_price <dbl>, origin_zip <chr>,
 #> #   dest_zip <chr>, title <chr>, dimensions <chr>, delivery_option <chr>,
 #> #   shipping_date <chr>, shipping_time <chr>
@@ -206,20 +207,20 @@ purrr::map2_dfr(
 #> # A tibble: 14 x 9
 #>    origin_zip dest_zip title    delivery_day retail_price click_n_ship_pr…
 #>    <chr>      <chr>    <chr>    <chr>        <chr>        <chr>           
-#>  1 11238      98109    Priorit… Wed, Jul 18  $18.90       $18.90          
-#>  2 11238      98109    Priorit… Wed, Jul 18  Not availab… $18.90          
-#>  3 11238      98109    Priorit… Wed, Jul 18  $13.65       $13.65          
-#>  4 11238      98109    Priorit… Wed, Jul 18  Not availab… $13.65          
-#>  5 11238      98109    Priorit… Wed, Jul 18  $7.20        $7.20           
-#>  6 11238      98109    Priorit… Wed, Jul 18  Not availab… $7.20           
+#>  1 11238      98109    Priorit… Wed, Jul 25  $18.90       $18.90          
+#>  2 11238      98109    Priorit… Wed, Jul 25  Not availab… $18.90          
+#>  3 11238      98109    Priorit… Wed, Jul 25  $13.65       $13.65          
+#>  4 11238      98109    Priorit… Wed, Jul 25  Not availab… $13.65          
+#>  5 11238      98109    Priorit… Wed, Jul 25  $7.20        $7.20           
+#>  6 11238      98109    Priorit… Wed, Jul 25  Not availab… $7.20           
 #>  7 foo        94707    no_succ… no_success   no_success   no_success      
 #>  8 60647      bar      no_succ… no_success   no_success   no_success      
-#>  9 80222      04123    Priorit… Wed, Jul 18  $18.90       $18.90          
-#> 10 80222      04123    Priorit… Wed, Jul 18  Not availab… $18.90          
-#> 11 80222      04123    Priorit… Wed, Jul 18  $13.65       $13.65          
-#> 12 80222      04123    Priorit… Wed, Jul 18  Not availab… $13.65          
-#> 13 80222      04123    Priorit… Wed, Jul 18  $7.20        $7.20           
-#> 14 80222      04123    Priorit… Wed, Jul 18  Not availab… $7.20           
+#>  9 80222      04123    Priorit… Wed, Jul 25  $18.90       $18.90          
+#> 10 80222      04123    Priorit… Wed, Jul 25  Not availab… $18.90          
+#> 11 80222      04123    Priorit… Wed, Jul 25  $13.65       $13.65          
+#> 12 80222      04123    Priorit… Wed, Jul 25  Not availab… $13.65          
+#> 13 80222      04123    Priorit… Wed, Jul 25  $7.20        $7.20           
+#> 14 80222      04123    Priorit… Wed, Jul 25  Not availab… $7.20           
 #> # ... with 3 more variables: dimensions <chr>, shipping_date <chr>,
 #> #   shipping_time <chr>
 ```
@@ -233,7 +234,7 @@ fetch_mail(origin_zip = "04101",
          shipping_date = "3018-07-04",  # way in the future!
          type = "package",
          show_details = TRUE)
-#> Using ship on time 10:29.
+#> Using ship on time 16:06.
 #> No Mail Services were found for this request. Try modifying the argument inputs.
 #> # A tibble: 1 x 10
 #>   origin_zip dest_zip title delivery_day retail_price click_n_ship_price

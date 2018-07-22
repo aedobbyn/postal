@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 [![Project Status: Active - The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
 [![Travis build status](https://travis-ci.org/aedobbyn/postal.svg?branch=master)](https://travis-ci.org/aedobbyn/postal)
 [![Coverage status](https://codecov.io/gh/aedobbyn/postal/branch/master/graph/badge.svg)](https://codecov.io/github/aedobbyn/postal?branch=master)
-<!-- [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/aedobbyn/postal?branch=master&svg=true)](https://ci.appveyor.com/project/aedobbyn/postal) -->
+[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/aedobbyn/postal?branch=master&svg=true)](https://ci.appveyor.com/project/aedobbyn/postal)
 
 
 Want an estimate of the price of sending a package somewhere via the US Postal Service? Need to get the USPS shipping zone between two zip codes? 
