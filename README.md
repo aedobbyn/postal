@@ -23,7 +23,7 @@ calc](https://postcalc.postal.com/Calculator/) APIs.
 
 ### Installation
 
-From CRAN:
+From [CRAN](https://cran.r-project.org/web/packages/postal/index.html):
 
 ``` r
 install.packages("postal")
@@ -120,7 +120,7 @@ their prices, dimensions, and delivery dates.
          show_details = TRUE)) %>% 
   dplyr::slice(1:3)
 #> Using ship on date 2018-07-30.
-#> Using ship on time 7:23.
+#> Using ship on time 18:18.
 #> # A tibble: 3 x 10
 #>   origin_zip dest_zip title    delivery_day  retail_price click_n_ship_pr…
 #>   <chr>      <chr>    <chr>    <chr>         <chr>        <chr>           
@@ -137,9 +137,9 @@ mail %>%
 
 | origin\_zip | dest\_zip | title                        | delivery\_day           | retail\_price | click\_n\_ship\_price | dimensions | delivery\_option     | shipping\_date | shipping\_time |
 | :---------- | :-------- | :--------------------------- | :---------------------- | :------------ | :-------------------- | :--------- | :------------------- | :------------- | :------------- |
-| 04101       | 97211     | Priority Mail Express 1-Day™ | Tue, Jul 31 by 3:00 PM  | $114.50       | $114.50               |            | Normal Delivery Time | 2018-07-30     | 7:23           |
-| 04101       | 97211     | Priority Mail Express 1-Day™ | Tue, Jul 31 by 10:30 AM | $114.50       | $114.50               |            | Hold For Pickup      | 2018-07-30     | 7:23           |
-| 04101       | 97211     | Priority Mail Express 1-Day™ | Tue, Jul 31 by 10:30 AM | $119.50       | $119.50               |            | 10:30 AM Delivery    | 2018-07-30     | 7:23           |
+| 04101       | 97211     | Priority Mail Express 1-Day™ | Tue, Jul 31 by 3:00 PM  | $114.50       | $114.50               |            | Normal Delivery Time | 2018-07-30     | 18:18          |
+| 04101       | 97211     | Priority Mail Express 1-Day™ | Tue, Jul 31 by 10:30 AM | $114.50       | $114.50               |            | Hold For Pickup      | 2018-07-30     | 18:18          |
+| 04101       | 97211     | Priority Mail Express 1-Day™ | Tue, Jul 31 by 10:30 AM | $119.50       | $119.50               |            | 10:30 AM Delivery    | 2018-07-30     | 18:18          |
 
 The web interface should display the same
 results:
@@ -216,20 +216,20 @@ purrr::map2_dfr(
 #> # A tibble: 14 x 9
 #>    origin_zip dest_zip title    delivery_day retail_price click_n_ship_pr…
 #>    <chr>      <chr>    <chr>    <chr>        <chr>        <chr>           
-#>  1 11238      98109    Priorit… Wed, Aug 1   $18.90       $18.90          
-#>  2 11238      98109    Priorit… Wed, Aug 1   Not availab… $18.90          
-#>  3 11238      98109    Priorit… Wed, Aug 1   $13.65       $13.65          
-#>  4 11238      98109    Priorit… Wed, Aug 1   Not availab… $13.65          
-#>  5 11238      98109    Priorit… Wed, Aug 1   $7.20        $7.20           
-#>  6 11238      98109    Priorit… Wed, Aug 1   Not availab… $7.20           
+#>  1 11238      98109    Priorit… Thu, Aug 2   $18.90       $18.90          
+#>  2 11238      98109    Priorit… Thu, Aug 2   Not availab… $18.90          
+#>  3 11238      98109    Priorit… Thu, Aug 2   $13.65       $13.65          
+#>  4 11238      98109    Priorit… Thu, Aug 2   Not availab… $13.65          
+#>  5 11238      98109    Priorit… Thu, Aug 2   $7.20        $7.20           
+#>  6 11238      98109    Priorit… Thu, Aug 2   Not availab… $7.20           
 #>  7 foo        94707    no_succ… no_success   no_success   no_success      
 #>  8 60647      bar      no_succ… no_success   no_success   no_success      
-#>  9 80222      04123    Priorit… Wed, Aug 1   $18.90       $18.90          
-#> 10 80222      04123    Priorit… Wed, Aug 1   Not availab… $18.90          
-#> 11 80222      04123    Priorit… Wed, Aug 1   $13.65       $13.65          
-#> 12 80222      04123    Priorit… Wed, Aug 1   Not availab… $13.65          
-#> 13 80222      04123    Priorit… Wed, Aug 1   $7.20        $7.20           
-#> 14 80222      04123    Priorit… Wed, Aug 1   Not availab… $7.20           
+#>  9 80222      04123    Priorit… Thu, Aug 2   $18.90       $18.90          
+#> 10 80222      04123    Priorit… Thu, Aug 2   Not availab… $18.90          
+#> 11 80222      04123    Priorit… Thu, Aug 2   $13.65       $13.65          
+#> 12 80222      04123    Priorit… Thu, Aug 2   Not availab… $13.65          
+#> 13 80222      04123    Priorit… Thu, Aug 2   $7.20        $7.20           
+#> 14 80222      04123    Priorit… Thu, Aug 2   Not availab… $7.20           
 #> # ... with 3 more variables: dimensions <chr>, shipping_date <chr>,
 #> #   shipping_time <chr>
 ```
@@ -243,7 +243,7 @@ fetch_mail(origin_zip = "04101",
          shipping_date = "3018-07-04",  # way in the future!
          type = "package",
          show_details = TRUE)
-#> Using ship on time 7:23.
+#> Using ship on time 18:19.
 #> No Mail Services were found for this request. Try modifying the argument inputs.
 #> # A tibble: 1 x 10
 #>   origin_zip dest_zip title delivery_day retail_price click_n_ship_price

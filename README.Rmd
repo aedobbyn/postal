@@ -8,7 +8,7 @@ knitr::opts_chunk$set(
   comment = "#>",
   fig.path = "man/figures/README-",
   out.width = "100%",
-  cache = FALSE
+  cache = TRUE
 )
 ```
 
@@ -26,7 +26,7 @@ Well, this is a `r emo::ji("package")` for your `r emo::ji("package")`s. `postal
 
 ### Installation 
 
-From CRAN:
+From [CRAN](https://cran.r-project.org/web/packages/postal/index.html):
 
 ```{r, eval=FALSE}
 install.packages("postal")
