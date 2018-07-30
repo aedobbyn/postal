@@ -18,13 +18,21 @@ knitr::opts_chunk$set(
 [![Travis build status](https://travis-ci.org/aedobbyn/postal.svg?branch=master)](https://travis-ci.org/aedobbyn/postal)
 [![Coverage status](https://codecov.io/gh/aedobbyn/postal/branch/master/graph/badge.svg)](https://codecov.io/github/aedobbyn/postal?branch=master)
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/aedobbyn/postal?branch=master&svg=true)](https://ci.appveyor.com/project/aedobbyn/postal)
-
+[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/postal)](https://cran.r-project.org/package=postal)
 
 Want an estimate of the price of sending a package somewhere via the US Postal Service? Need to get the USPS shipping zone between two zip codes? 
 
 Well, this is a `r emo::ji("package")` for your `r emo::ji("package")`s. `postal` provides a tidy interface to the USPS domestic [zone calc](https://postcalc.postal.com/DomesticZoneChart/) and [post calc](https://postcalc.postal.com/Calculator/) APIs. 
 
 ### Installation 
+
+From CRAN:
+
+```{r, eval=FALSE}
+install.packages("postal")
+```
+
+The development version:
 
 ```{r, eval=FALSE}
 # install.packages("devtools")
