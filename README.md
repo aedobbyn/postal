@@ -19,7 +19,18 @@ codes?
 Well, this is a 📦 for your 📦s. `postal` provides a tidy interface to the
 USPS domestic [zone
 calc](https://postcalc.postal.com/DomesticZoneChart/) and [post
-calc](https://postcalc.postal.com/Calculator/) APIs.
+calc](https://postcalc.postal.com/Calculator/)
+APIs.
+
+<br>
+
+<p align="center">
+
+<img src="https://media.giphy.com/media/iVoiJfBtSsi0o/giphy.gif" alt="im_not_an_owl">
+
+</p>
+
+<br>
 
 ### Installation
 
@@ -35,16 +46,6 @@ The development version:
 # install.packages("devtools")
 devtools::install_github("aedobbyn/postal")
 ```
-
-<br>
-
-<p align="center">
-
-<img src="https://media.giphy.com/media/iVoiJfBtSsi0o/giphy.gif" alt="im_not_an_owl">
-
-</p>
-
-<br>
 
 ## Postage Price Calculator
 
