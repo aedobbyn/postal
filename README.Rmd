@@ -358,6 +358,7 @@ The entire set is also made available from a read-only MySQL database, which you
 ```
 host: knotsql.cimbccxns4ka.us-east-2.rds.amazonaws.com
 port: 3306
+database: master
 user: public
 password: password
 ```
