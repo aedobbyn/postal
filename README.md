@@ -565,6 +565,7 @@ which you can connect to with these creds:
 
     host: knotsql.cimbccxns4ka.us-east-2.rds.amazonaws.com
     port: 3306
+    database: master
     user: public
     password: password
 
