@@ -559,9 +559,19 @@ asking for origin `"456"` and origin `"789"`:
     #> 8 789        010        7         
     #> 9 ...        ...        ...
 
+The entire set is also made available from a read-only MySQL database,
+which you can connect to with these creds:
+
+    host: knotsql.cimbccxns4ka.us-east-2.rds.amazonaws.com
+    port: 3306
+    user: public
+    password: password
+
 <br>
 
 #### Or some of it, for free
+
+Free as in even less effort than the free as in beer stuff up there.
 
 The `zips_zones_sample` dataset included in this package contains a
 random sample of 1,000,000 rows of all the 3 digit origin-destination
