@@ -23,9 +23,11 @@ Imports:
     magrittr,
     purrr,
     readr,
+    stats,
     stringr,
     tibble (>= 1.2),
-    tidyr
+    tidyr,
+    utils
 Suggests: 
     covr,
     cowsay,
@@ -34,7 +36,6 @@ Suggests:
     knitr,
     maps,
     rmarkdown,
-    stats,
     testthat,
     zipcode
 VignetteBuilder: knitr

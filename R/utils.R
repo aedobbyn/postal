@@ -209,14 +209,8 @@ clean_zones <- function(dat, origin_zip) {
       zone = stringr::str_extract_all(Zone, "[0-9]", simplify = TRUE),
       modifier_star = stringr::str_extract(Zone, "[*]"),
       modifier_plus = stringr::str_extract(Zone, "[+]"),
-      same_ndc = dplyr::case_when(
-        !is.na(modifier_star) ~ TRUE,
-        is.na(modifier_star) ~ FALSE
-      ),
-      has_five_digit_exceptions = dplyr::case_when(
-        !is.na(modifier_plus) ~ TRUE,
-        is.na(modifier_plus) ~ FALSE
-      ),
+      same_ndc = ! is.na(modifier_star),
+      has_five_digit_exceptions = ! is.na(modifier_plus),
       specific_to_priority_mail = dplyr::case_when(
         MailService == "Priority Mail" ~ TRUE,
         MailService == "" ~ FALSE
@@ -440,7 +434,7 @@ extract_times <- function(t) {
     stringr::str_extract(":[0-9]+") %>%
     stringr::str_extract("[0-9]+")
 
-  if (stringr::str_detect(t, "PM") &
+  if (stringr::str_detect(t, "PM") &&
     hr != "12") {
     hr <- (hr %>% as.numeric() + 12) %>%
       as.character()

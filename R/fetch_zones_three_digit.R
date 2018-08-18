@@ -45,7 +45,7 @@ fetch_zones_three_digit <-
              show_details = FALSE,
              n_tries = 3,
              verbose = FALSE) {
-    if (length(origin_zip) < 0 | is.null(origin_zip) | is.na(origin_zip)) {
+    if (length(origin_zip) < 0 || is.null(origin_zip) || is.na(origin_zip)) {
       stop("origin_zip cannot be missing.")
     }
 
@@ -53,7 +53,7 @@ fetch_zones_three_digit <-
       origin_zip %>%
       prep_zip(verbose = verbose)
 
-    if (nchar(origin_zip) > 3 & verbose) {
+    if (nchar(origin_zip) > 3 && verbose) {
       message(glue::glue("Only 3-character origin zips can be \\
                        sent to the API. Zip {origin_zip} will \\
                        be requested as {substr(origin_zip, 1, 3)}."))
@@ -107,7 +107,7 @@ fetch_zones_three_digit <-
         }
         # Should be no way we get to this point
         # nocov start
-        if (nrow(out) == 0 & verbose) {
+        if (nrow(out) == 0 && verbose) {
           message(glue::glue("No zones found for the \\
                            {origin_zip} to {destination_zip} pair."))
         }
