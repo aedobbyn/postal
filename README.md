@@ -11,6 +11,8 @@ status](https://codecov.io/gh/aedobbyn/postal/branch/master/graph/badge.svg)](ht
 [![AppVeyor Build
 Status](https://ci.appveyor.com/api/projects/status/github/aedobbyn/postal?branch=master&svg=true)](https://ci.appveyor.com/project/aedobbyn/postal)
 [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/postal)](https://cran.r-project.org/package=postal)
+[![rstudio mirror
+downloads](https://cranlogs.r-pkg.org/badges/grand-total/postal)](https://github.com/metacran/cranlogs.app)
 
 Want an estimate of the price of sending a package somewhere via the US
 Postal Service? Need to get the USPS shipping zone between two zip
