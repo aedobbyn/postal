@@ -230,7 +230,7 @@ testthat::test_that("Scrubbing works", {
 
 testthat::test_that("Extract date works", {
   future_month <-
-    months(lubridate::today() + 365)
+    months(lubridate::today() + 50)
 
   future_date <-
     glue::glue("Fri, {future_month} 20")
