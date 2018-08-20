@@ -26,8 +26,7 @@ Imports:
     stats,
     stringr,
     tibble (>= 1.2),
-    tidyr,
-    utils
+    tidyr
 Suggests: 
     covr,
     cowsay,
