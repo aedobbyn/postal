@@ -96,7 +96,7 @@ fetch_mail <- function(origin_zip = NULL,
                        show_details = FALSE,
                        n_tries = 3,
                        verbose = TRUE) {
-  if (is.null(type) | length(type) > 1) {
+  if (is.null(type) || length(type) > 1) {
     stop("type must be envelope, box, or package")
   }
 
@@ -107,12 +107,12 @@ fetch_mail <- function(origin_zip = NULL,
     type <- "FlatRateBox"
     shape <- "rectangular"
   } else if (type == "package") {
-    if (length(shape) > 1 |
+    if (length(shape) > 1 ||
       !shape %in% c("rectangular", "nonrectangular")) {
       stop("If type is package, shape must be either rectangular or nonrectangular")
     }
     if (shape == "nonrectangular") {
-      if (is.null(girth) | girth == 0) {
+      if (is.null(girth) || girth == 0) {
         stop("If shape is nonrectangular, girth must be > 0.")
       }
     }
@@ -121,7 +121,7 @@ fetch_mail <- function(origin_zip = NULL,
     stop("type must be envelope, box, or package")
   }
 
-  if (nchar(origin_zip) != 5 | nchar(destination_zip) != 5) {
+  if (nchar(origin_zip) != 5 || nchar(destination_zip) != 5) {
     warning("Zip codes supplied must be 5 digits.")
   }
 
@@ -130,9 +130,9 @@ fetch_mail <- function(origin_zip = NULL,
     shipping_date, shipping_time, type, shape
   )
 
-  if (any(purrr::map(char_args, is.character) == FALSE)) {
+  if (any(! purrr::map_lgl(char_args, is.character))) {
     not_char <-
-      char_args[which(purrr::map(char_args, is.character) == FALSE)] %>%
+      char_args[! purrr::map_lgl(char_args, is.character)] %>%
       stringr::str_c(collapse = ", ")
     stop(glue::glue("Argument {not_char} is not of type character."))
   }
@@ -141,8 +141,8 @@ fetch_mail <- function(origin_zip = NULL,
     pounds, ounces, length, width, height, girth
   )
 
-  if (any(purrr::map(num_args, is.numeric) == FALSE) |
-    any(purrr::map(num_args, ~.x < 0) == TRUE)) {
+  if (any(! purrr::map_lgl(num_args, is.numeric)) ||
+    any(purrr::map_lgl(num_args, ~.x < 0))) {
     not_num <- num_args[which(purrr::map(num_args, is.numeric) == FALSE)] %>%
       stringr::str_c(collapse = ", ")
     stop(glue::glue("Argument {not_num} is not of type numeric or is < 0."))
@@ -154,8 +154,8 @@ fetch_mail <- function(origin_zip = NULL,
     show_details
   )
 
-  if (any(purrr::map(lgl_args, is.logical) == FALSE)) {
-    not_lgl <- lgl_args[which(purrr::map(lgl_args, is.logical) == FALSE)] %>%
+  if (any(! purrr::map_lgl(lgl_args, is.logical))) {
+    not_lgl <- lgl_args[! purrr::map_lgl(lgl_args, is.logical)] %>%
       stringr::str_c(collapse = ", ")
     stop(glue::glue("Argument {not_lgl} is not of type logical."))
   }
@@ -167,7 +167,8 @@ fetch_mail <- function(origin_zip = NULL,
     verbose = verbose
   )
 
-  if (live_animals == TRUE && verbose == TRUE) {
+  if (live_animals == TRUE && verbose == TRUE &&
+      requireNamespace("cowsay", quietly = TRUE)) {
     cowsay::say("Woah Nelly!", by = "buffalo")
   }
 

@@ -1,4 +1,4 @@
-globalVariables(c(
+utils::globalVariables(c(
   # ---- Zones ---- #
   "MailService",
   "ZipCodes",

@@ -81,20 +81,15 @@ fetch_zones_five_digit <- function(origin_zip, destination_zip,
   if (show_details == TRUE) {
     out <- out %>%
       dplyr::mutate(
-        local = ifelse(
-          stringr::str_detect(
+        local =
+          ! stringr::str_detect(
             full_response, "This is not a Local Zone"
-          ),
-          FALSE, TRUE
         ),
-
-        same_ndc = ifelse(
-          stringr::str_detect(
+        same_ndc =
+          ! stringr::str_detect(
             full_response, "The destination ZIP Code is not \\
             within the same NDC as the origin ZIP Code"
-          ),
-          FALSE, TRUE
-        ),
+          )
       ) %>%
       dplyr::select(
         origin_zip, dest_zip, zone,
