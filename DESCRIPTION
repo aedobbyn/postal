@@ -1,7 +1,7 @@
 Package: postal
 Type: Package
 Title: United States Postal Service API Interface
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: c(
     person("Amanda", "Dobbyn", email = "amanda.e.dobbyn@gmail.com", role = c("aut", "cre")),
     person("Bernie", "Gray", role = "ctb"))
