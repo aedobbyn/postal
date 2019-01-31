@@ -4,8 +4,9 @@
 \alias{fetch_all}
 \title{Grab all the 3-digit origin-destination pairs.}
 \usage{
-fetch_all(origins = all_possible_origins, write_to = NULL, sleep_time = 1,
-  n_tries = 3, as_range = FALSE, show_details = FALSE, verbose = TRUE)
+fetch_all(origins = all_possible_origins, write_to = NULL,
+  sleep_time = 1, n_tries = 3, as_range = FALSE,
+  show_details = FALSE, verbose = TRUE)
 }
 \arguments{
 \item{origins}{A vector of origin zips. Defaults to all possible origin zips from 000 to 999.}
