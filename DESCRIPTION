@@ -6,7 +6,7 @@ Authors@R: c(
     person("Amanda", "Dobbyn", email = "amanda.e.dobbyn@gmail.com", role = c("aut", "cre")),
     person("Bernie", "Gray", role = "ctb"))
 Maintainer: Amanda Dobbyn <amanda.e.dobbyn@gmail.com>
-Description: An interface to the United States Postal Service Post Calc and Zone Calc APIs (https://postcalc.usps.com/), postal
+Description: An interface to the United States Postal Service Post Calc and Zone Calc APIs <https://postcalc.usps.com/>, postal
   allows users to find the postage price, delivery day, and other information for packages and envelopes, 
   as well as to find the postal zone for an origin and a destination zip code pair.
 Depends: R (>= 2.10)
